@@ -1,0 +1,14 @@
+name = "image-site-test"
+compatibility_date = "2023-04-04"
+
+#compatibility-flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = ""
+
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
