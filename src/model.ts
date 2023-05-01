@@ -35,7 +35,7 @@ export function toPercentRectangle(full: Size, rectangle: RelativeRectangle): Pe
     };
 }
 
-export function toRectangle(full: Size, rectangle: PercentageRectangle): RelativeRectangle {
+export function toRelativeRectangle(full: Size, rectangle: PercentageRectangle): RelativeRectangle {
     return {
         width: fromPercentage(full.width, rectangle.percentageWidth),
         height: fromPercentage(full.height, rectangle.percentageHeight),

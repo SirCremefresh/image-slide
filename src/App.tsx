@@ -6,7 +6,7 @@ import {
     RelativePoint,
     RelativeRectangle,
     toPercentRectangle,
-    toRectangle,
+    toRelativeRectangle,
     toRelativePoint,
     ViewportRectangle
 } from "./model.ts";
@@ -123,7 +123,7 @@ function App() {
 
     const getRectangles = () => {
         return rectangles.map(
-            (rectangle) => toRectangle(imageRectangle, rectangle)
+            (rectangle) => toRelativeRectangle(imageRectangle, rectangle)
         );
     }
 
