@@ -1,4 +1,4 @@
-import {useRef, useState} from 'react'
+import {MouseEvent, useEffect, useRef, useState} from 'react'
 import './App.css'
 import useSWR from "swr";
 
@@ -121,14 +121,12 @@ type Point = {
     y: number;
 }
 
-type Rectangle = {
-    x: number;
-    y: number,
-    width: number,
-    height: number
-};
+type Size = { width: number, height: number };
+
+type Rectangle = Point & Size;
 
 type PaintingState = { start: Point, rectangle: Rectangle };
+
 
 function initialPaintingState(x: number, y: number): PaintingState {
     return {
@@ -145,23 +143,36 @@ function initialPaintingState(x: number, y: number): PaintingState {
 function App() {
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
     const [rectangles, setRectangles] = useState<Rectangle[]>([]);
-    const paintAreaRef = useRef<HTMLDivElement>(null);
+    const [imageSize, setImageSize] = useState<Size | undefined>(undefined);
     const imageRef = useRef<HTMLImageElement>(null);
 
-    const createRectangle = (e: React.MouseEvent) => {
-        if (!paintAreaRef.current) return;
+    useEffect(() => {
+        if (!imageRef.current) return; // wait for the elementRef to be available
+        const resizeObserver = new ResizeObserver(() => {
+            if (!imageRef.current) return; // wait for the elementRef to be available
+            setImageSize({
+                width: imageRef.current.offsetWidth,
+                height: imageRef.current.offsetHeight
+            });
+        });
+        resizeObserver.observe(imageRef.current);
+        return () => resizeObserver.disconnect(); // clean up
+    }, []);
 
-        const rect = paintAreaRef.current.getBoundingClientRect();
+    const createRectangle = (e: MouseEvent) => {
+        if (!imageRef.current) return;
+
+        const rect = imageRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
         setPainting(initialPaintingState(x, y));
     };
 
-    const updateRectangle = (e: React.MouseEvent) => {
-        if (!painting || !paintAreaRef.current) return;
+    const updateRectangle = (e: MouseEvent) => {
+        if (!painting || !imageRef.current) return;
 
-        const rect = paintAreaRef.current.getBoundingClientRect();
+        const rect = imageRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
@@ -181,7 +192,7 @@ function App() {
     };
 
     const finishRectangle = () => {
-        if (!painting || !paintAreaRef.current) return;
+        if (!painting || !imageRef.current) return;
 
         setPainting(undefined);
         setRectangles((rectangles) => [...rectangles, painting.rectangle]);
@@ -199,7 +210,6 @@ function App() {
     return (
         <div
             className="paintArea"
-            ref={paintAreaRef}
             onMouseDown={createRectangle}
             onMouseUp={finishRectangle}
             onMouseLeave={finishRectangle}
@@ -213,11 +223,14 @@ function App() {
                     style={getRectangleStyle(rectangle)}
                 ></div>
             ))}
-            {painting && <div
-                className={'square'}
-                style={getRectangleStyle(painting.rectangle)}
-            >
-            </div>}
+            {
+                painting &&
+                <div
+                    className={'square'}
+                    style={getRectangleStyle(painting.rectangle)}
+                >
+                </div>
+            }
         </div>
     );
 }
