@@ -6,11 +6,16 @@ export type PercentagePoint = {
     percentageX: number;
     percentageY: number;
 }
+export type ViewportPoint = {
+    viewportX: number;
+    viewportY: number;
+}
 
 export type Size = { width: number, height: number };
 export type PercentageSize = { percentageWidth: number, percentageHeight: number };
 
 export type Rectangle = Point & Size;
+export type ViewportRectangle = ViewportPoint & Size;
 export type PercentageRectangle = PercentagePoint & PercentageSize;
 
 export function toPercentage(full: number, part: number): number {
