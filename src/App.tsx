@@ -1,6 +1,7 @@
 import {MouseEvent, useEffect, useRef, useState} from 'react'
 import './App.css'
 import useSWR from "swr";
+import {PercentageRectangle, Point, Rectangle, Size, toPercentRectangle, toRectangle} from "./model.ts";
 
 const fetcher = (args: RequestInfo) => fetch(args).then(res => res.json())
 
@@ -116,61 +117,18 @@ const images = [
 //     )
 // }
 
-type Point = {
-    x: number;
-    y: number;
-}
-type PercentagePoint = {
-    percentageX: number;
-    percentageY: number;
-}
-
-type Size = { width: number, height: number };
-type PercentageSize = { percentageWidth: number, percentageHeight: number };
-
-type Rectangle = Point & Size;
-type PercentageRectangle = PercentagePoint & PercentageSize;
-
-
 type PaintingState = { start: Point, rectangle: Rectangle };
 
-
-function initialPaintingState(x: number, y: number): PaintingState {
+function initialPaintingState(start: Point): PaintingState {
     return {
-        start: {x, y},
+        start,
         rectangle: {
             width: 0,
             height: 0,
-            x,
-            y,
+            x: start.x,
+            y: start.y,
         }
     }
-}
-
-function toPercentage(full: number, part: number): number {
-    return 100 / full * part;
-}
-
-function fromPercentage(full: number, part: number): number {
-    return full / 100 * part;
-}
-
-function toPercentRectangle(full: Size, rectangle: Rectangle): PercentageRectangle {
-    return {
-        percentageWidth: toPercentage(full.width, rectangle.width),
-        percentageHeight: toPercentage(full.height, rectangle.height),
-        percentageX: toPercentage(full.width, rectangle.x),
-        percentageY: toPercentage(full.height, rectangle.y),
-    };
-}
-
-function toRectangle(full: Size, rectangle: PercentageRectangle): Rectangle {
-    return {
-        width: fromPercentage(full.width, rectangle.percentageWidth),
-        height: fromPercentage(full.height, rectangle.percentageHeight),
-        x: fromPercentage(full.width, rectangle.percentageX),
-        y: fromPercentage(full.height, rectangle.percentageY),
-    };
 }
 
 function App() {
@@ -206,7 +164,7 @@ function App() {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        setPainting(initialPaintingState(x, y));
+        setPainting(initialPaintingState({x, y}));
     };
 
     const updateRectangle = (e: MouseEvent) => {
