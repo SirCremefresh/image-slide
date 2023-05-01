@@ -1,4 +1,4 @@
-import {RelativeRectangle} from "./model.ts";
+import {RelativeRectangle} from "./models/model.ts";
 import './RectangleDiv.css'
 
 export function RectangleDiv(props: { rectangle: RelativeRectangle, onClick?: () => void }) {

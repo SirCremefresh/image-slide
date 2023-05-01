@@ -18,6 +18,8 @@ export type RelativeRectangle = RelativePoint & Size;
 export type PercentageRectangle = PercentagePoint & PercentageSize;
 export type ViewportRectangle = ViewportPoint & Size;
 
+export type PaintingState = { start: RelativePoint, rectangle: RelativeRectangle };
+
 export function toPercentage(full: number, part: number): number {
     return 100 / full * part;
 }
@@ -61,4 +63,16 @@ export function buildRelativeRectangle(point1: RelativePoint, point2: RelativePo
         relativeX: point2.relativeX < point1.relativeX ? point1.relativeX - width : point1.relativeX,
         relativeY: point2.relativeY < point1.relativeY ? point1.relativeY - height : point1.relativeY,
     };
+}
+
+export function initialPaintingState(start: RelativePoint): PaintingState {
+    return {
+        start,
+        rectangle: {
+            width: 0,
+            height: 0,
+            relativeX: start.relativeX,
+            relativeY: start.relativeY,
+        }
+    }
 }
