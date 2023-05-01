@@ -6,8 +6,8 @@ import {
     RelativePoint,
     RelativeRectangle,
     toPercentRectangle,
-    toRelativeRectangle,
     toRelativePoint,
+    toRelativeRectangle,
     ViewportRectangle
 } from "./model.ts";
 import {RectangleDiv} from "./RectangleDiv.tsx";
@@ -98,15 +98,16 @@ function App() {
         const width = Math.abs(relativeX - painting.start.relativeX);
         const height = Math.abs(relativeY - painting.start.relativeY);
 
+        let rectangle = {
+            width: width,
+            height: height,
+            relativeX: relativeX < painting.start.relativeX ? painting.start.relativeX - width : painting.start.relativeX,
+            relativeY: relativeY < painting.start.relativeY ? painting.start.relativeY - height : painting.start.relativeY,
+        };
         setPainting(
             {
                 start: painting.start,
-                rectangle: {
-                    width: width,
-                    height: height,
-                    relativeX: relativeX < painting.start.relativeX ? painting.start.relativeX - width : painting.start.relativeX,
-                    relativeY: relativeY < painting.start.relativeY ? painting.start.relativeY - height : painting.start.relativeY,
-                }
+                rectangle: rectangle
             });
     };
 

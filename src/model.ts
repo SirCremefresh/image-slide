@@ -50,3 +50,4 @@ export function toRelativePoint(base: ViewportPoint, point: ViewportPoint): Rela
         relativeY: point.viewportY - base.viewportY,
     };
 }
+
