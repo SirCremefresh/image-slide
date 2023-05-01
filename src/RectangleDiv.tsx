@@ -1,4 +1,5 @@
 import {Rectangle} from "./model.ts";
+import './RectangleDiv.css'
 
 export function RectangleDiv(props: { rectangle: Rectangle }) {
     const getRectangleStyle = (rectangle: Rectangle) => {
@@ -10,7 +11,7 @@ export function RectangleDiv(props: { rectangle: Rectangle }) {
         }
     }
     return <div
-        className={'square'}
+        className={'rectangle'}
         style={getRectangleStyle(props.rectangle)}
     ></div>
 }

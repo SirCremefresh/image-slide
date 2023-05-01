@@ -11,15 +11,6 @@
     display: inline-block;
 }
 
-.square {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border: 1px solid black;
-    box-sizing: border-box;
-    pointer-events: none;
-}
-
 .image {
     display: block;
     max-width: 100%;

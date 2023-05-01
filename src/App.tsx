@@ -2,7 +2,7 @@ import {MouseEvent, useEffect, useRef, useState} from 'react'
 import './App.css'
 import useSWR from "swr";
 import {PercentageRectangle, Point, Rectangle, Size, toPercentRectangle, toRectangle} from "./model.ts";
-import {RectangleDiv} from "./Rectangle.tsx";
+import {RectangleDiv} from "./RectangleDiv.tsx";
 
 const fetcher = (args: RequestInfo) => fetch(args).then(res => res.json())
 
