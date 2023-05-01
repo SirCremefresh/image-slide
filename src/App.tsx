@@ -116,6 +116,10 @@ const images = [
 //     )
 // }
 
+type Point = {
+    x: number;
+    y: number;
+}
 
 type Rectangle = {
     x: number;
@@ -124,55 +128,62 @@ type Rectangle = {
     height: number
 };
 
-function App() {
-    const [painting, setPainting] = useState(false);
-    const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
-    const [rectangles, setRectangles] = useState<Rectangle[]>([]);
-    const [currentRectangle, setCurrentRectangle] = useState<Rectangle | null>(null);
-    const paintAreaRef = useRef<HTMLDivElement>(null);
+type PaintingState = { start: Point, rectangle: Rectangle };
 
-    const createRectangle = (e: React.MouseEvent) => {
-        if (!paintAreaRef.current) return;
-        setPainting(true);
-
-        const rect = paintAreaRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        setStartPoint({x, y});
-
-        setCurrentRectangle({
+function initialPaintingState(x: number, y: number): PaintingState {
+    return {
+        start: {x, y},
+        rectangle: {
             width: 0,
             height: 0,
             x,
             y,
-        });
-    };
+        }
+    }
+}
 
-    const updateRectangle = (e: React.MouseEvent) => {
-        if (!painting || !startPoint || !paintAreaRef.current) return;
+function App() {
+    const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
+    const [rectangles, setRectangles] = useState<Rectangle[]>([]);
+    const paintAreaRef = useRef<HTMLDivElement>(null);
+
+    const createRectangle = (e: React.MouseEvent) => {
+        if (!paintAreaRef.current) return;
 
         const rect = paintAreaRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        const width = Math.abs(x - startPoint.x);
-        const height = Math.abs(y - startPoint.y);
+        setPainting(initialPaintingState(x, y));
+    };
 
-        setCurrentRectangle({
-            width: width,
-            height: height,
-            x: x < startPoint.x ? startPoint.x - width : startPoint.x,
-            y: y < startPoint.y ? startPoint.y - height : startPoint.y,
-        });
+    const updateRectangle = (e: React.MouseEvent) => {
+        if (!painting || !paintAreaRef.current) return;
+
+        const rect = paintAreaRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const width = Math.abs(x - painting.start.x);
+        const height = Math.abs(y - painting.start.y);
+
+        setPainting(
+            {
+                start: painting.start,
+                rectangle: {
+                    width: width,
+                    height: height,
+                    x: x < painting.start.x ? painting.start.x - width : painting.start.x,
+                    y: y < painting.start.y ? painting.start.y - height : painting.start.y,
+                }
+            });
     };
 
     const finishRectangle = () => {
-        if (!painting || !startPoint || !paintAreaRef.current || !currentRectangle) return;
+        if (!painting || !paintAreaRef.current) return;
 
-        setPainting(false);
-        setStartPoint(null);
-        setRectangles([...rectangles, currentRectangle])
-        setCurrentRectangle(null);
+        setPainting(undefined);
+        setRectangles((rectangles) => [...rectangles, painting.rectangle]);
     }
 
     return (
@@ -199,13 +210,13 @@ function App() {
                     }}
                 ></div>
             ))}
-            {currentRectangle && <div
+            {painting && <div
                 className={'square'}
                 style={{
-                    top: currentRectangle.y + 'px',
-                    left: currentRectangle.x + 'px',
-                    width: currentRectangle.width + 'px',
-                    height: currentRectangle.height + 'px',
+                    top: painting.rectangle.y + 'px',
+                    left: painting.rectangle.x + 'px',
+                    width: painting.rectangle.width + 'px',
+                    height: painting.rectangle.height + 'px',
                 }}
             >
 
