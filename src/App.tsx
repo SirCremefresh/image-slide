@@ -120,10 +120,16 @@ type Point = {
     x: number;
     y: number;
 }
+type ScaledPoint = {
+    scaledX: number;
+    scaledY: number;
+}
 
 type Size = { width: number, height: number };
+type ScaledSize = { scaledWith: number, scaledHeight: number };
 
 type Rectangle = Point & Size;
+type ScaledRectangle = ScaledPoint & ScaledSize;
 
 type PaintingState = { start: Point, rectangle: Rectangle };
 
@@ -142,8 +148,15 @@ function initialPaintingState(x: number, y: number): PaintingState {
 
 function App() {
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
-    const [rectangles, setRectangles] = useState<Rectangle[]>([]);
-    const [imageSize, setImageSize] = useState<Size | undefined>(undefined);
+    const [rectangles, setRectangles] = useState<ScaledRectangle[]>([
+        {
+            scaledWith: 9.078014184397164,
+            scaledHeight: 7.0962319151599695,
+            scaledX: 21.134751773049647,
+            scaledY: 19.55577015934331
+        },
+    ]);
+    const [imageSize, setImageSize] = useState<Size>({width: 0, height: 0});
     const imageRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
@@ -194,8 +207,33 @@ function App() {
     const finishRectangle = () => {
         if (!painting || !imageRef.current) return;
 
+        const rect = imageRef.current.getBoundingClientRect();
+        const scaledWith = 100 / rect.width * painting.rectangle.width;
+        const scaledHeight = 100 / rect.height * painting.rectangle.height;
+        const scaledX = 100 / rect.width * painting.rectangle.x;
+        const scaledY = 100 / rect.height * painting.rectangle.y;
+
+        const scaledRectangle = {
+            scaledWith, scaledHeight,
+            scaledX, scaledY
+        }
+
+        console.log(scaledRectangle);
+
+        setRectangles((rectangles) => [...rectangles, scaledRectangle]);
         setPainting(undefined);
-        setRectangles((rectangles) => [...rectangles, painting.rectangle]);
+    }
+
+    const getRectangles = () => {
+        const imageWith = imageSize.width;
+        const imageHeight = imageSize.height;
+
+        return rectangles.map((rectangle) => ({
+            width: imageWith / 100 * rectangle.scaledWith,
+            height: imageHeight / 100 * rectangle.scaledHeight,
+            x: imageWith / 100 * rectangle.scaledX,
+            y: imageHeight / 100 * rectangle.scaledY,
+        }))
     }
 
     const getRectangleStyle = (rectangle: Rectangle) => {
@@ -216,7 +254,7 @@ function App() {
             onMouseMove={updateRectangle}
         >
             <img ref={imageRef} className="image" src={'./Basis.jpg'} alt="Background" draggable={false}/>
-            {rectangles.map((rectangle, index) => (
+            {getRectangles().map((rectangle, index) => (
                 <div
                     key={index}
                     className={'square'}
