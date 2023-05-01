@@ -117,15 +117,18 @@ const images = [
 // }
 
 
+type Rectangle = {
+    x: number;
+    y: number,
+    width: number,
+    height: number
+};
+
 function App() {
     const [painting, setPainting] = useState(false);
     const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
-    const [currentRectangle, setCurrentRectangle] = useState<{
-        x: number;
-        y: number,
-        width: number,
-        height: number
-    } | null>(null);
+    const [rectangles, setRectangles] = useState<Rectangle[]>([]);
+    const [currentRectangle, setCurrentRectangle] = useState<Rectangle | null>(null);
     const paintAreaRef = useRef<HTMLDivElement>(null);
 
     const createRectangle = (e: React.MouseEvent) => {
@@ -164,10 +167,12 @@ function App() {
     };
 
     const finishRectangle = () => {
-        if (!painting || !startPoint || !paintAreaRef.current) return;
+        if (!painting || !startPoint || !paintAreaRef.current || !currentRectangle) return;
 
         setPainting(false);
         setStartPoint(null);
+        setRectangles([...rectangles, currentRectangle])
+        setCurrentRectangle(null);
     }
 
     return (
@@ -180,6 +185,20 @@ function App() {
             onMouseMove={updateRectangle}
         >
             <img className="image" src={'./Basis.jpg'} alt="Background" draggable={false}/>
+            {rectangles.map((rectangle, index) => (
+                <div
+                    key={index}
+                    className={'square'}
+                    style={{
+                        top: rectangle.y + 'px',
+                        left: rectangle.x + 'px',
+                        width: rectangle.width + 'px',
+                        height: rectangle.height + 'px',
+
+
+                    }}
+                ></div>
+            ))}
             {currentRectangle && <div
                 className={'square'}
                 style={{
