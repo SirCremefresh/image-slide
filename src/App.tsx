@@ -120,16 +120,17 @@ type Point = {
     x: number;
     y: number;
 }
-type ScaledPoint = {
-    scaledX: number;
-    scaledY: number;
+type PercentagePoint = {
+    percentageX: number;
+    percentageY: number;
 }
 
 type Size = { width: number, height: number };
-type ScaledSize = { scaledWith: number, scaledHeight: number };
+type PercentageSize = { percentageWidth: number, percentageHeight: number };
 
 type Rectangle = Point & Size;
-type ScaledRectangle = ScaledPoint & ScaledSize;
+type PercentageRectangle = PercentagePoint & PercentageSize;
+
 
 type PaintingState = { start: Point, rectangle: Rectangle };
 
@@ -146,14 +147,40 @@ function initialPaintingState(x: number, y: number): PaintingState {
     }
 }
 
+function toPercentage(full: number, part: number): number {
+    return 100 / full * part;
+}
+
+function fromPercentage(full: number, part: number): number {
+    return full / 100 * part;
+}
+
+function toPercentRectangle(full: Size, rectangle: Rectangle): PercentageRectangle {
+    return {
+        percentageWidth: toPercentage(full.width, rectangle.width),
+        percentageHeight: toPercentage(full.height, rectangle.height),
+        percentageX: toPercentage(full.width, rectangle.x),
+        percentageY: toPercentage(full.height, rectangle.y),
+    };
+}
+
+function toRectangle(full: Size, rectangle: PercentageRectangle): Rectangle {
+    return {
+        width: fromPercentage(full.width, rectangle.percentageWidth),
+        height: fromPercentage(full.height, rectangle.percentageHeight),
+        x: fromPercentage(full.width, rectangle.percentageX),
+        y: fromPercentage(full.height, rectangle.percentageY),
+    };
+}
+
 function App() {
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
-    const [rectangles, setRectangles] = useState<ScaledRectangle[]>([
+    const [rectangles, setRectangles] = useState<PercentageRectangle[]>([
         {
-            scaledWith: 9.078014184397164,
-            scaledHeight: 7.0962319151599695,
-            scaledX: 21.134751773049647,
-            scaledY: 19.55577015934331
+            percentageWidth: 9.078014184397164,
+            percentageHeight: 7.0962319151599695,
+            percentageX: 21.134751773049647,
+            percentageY: 19.55577015934331
         },
     ]);
     const [imageSize, setImageSize] = useState<Size>({width: 0, height: 0});
@@ -208,41 +235,18 @@ function App() {
         if (!painting || !imageRef.current) return;
 
         const rect = imageRef.current.getBoundingClientRect();
-        const scaledWith = 100 / rect.width * painting.rectangle.width;
-        const scaledHeight = 100 / rect.height * painting.rectangle.height;
-        const scaledX = 100 / rect.width * painting.rectangle.x;
-        const scaledY = 100 / rect.height * painting.rectangle.y;
+        const percentageRectangle = toPercentRectangle(rect, painting.rectangle);
 
-        const scaledRectangle = {
-            scaledWith, scaledHeight,
-            scaledX, scaledY
-        }
+        console.log(percentageRectangle);
 
-        console.log(scaledRectangle);
-
-        setRectangles((rectangles) => [...rectangles, scaledRectangle]);
+        setRectangles((rectangles) => [...rectangles, percentageRectangle]);
         setPainting(undefined);
     }
 
     const getRectangles = () => {
-        const imageWith = imageSize.width;
-        const imageHeight = imageSize.height;
-
-        return rectangles.map((rectangle) => ({
-            width: imageWith / 100 * rectangle.scaledWith,
-            height: imageHeight / 100 * rectangle.scaledHeight,
-            x: imageWith / 100 * rectangle.scaledX,
-            y: imageHeight / 100 * rectangle.scaledY,
-        }))
-    }
-
-    const getRectangleStyle = (rectangle: Rectangle) => {
-        return {
-            top: rectangle.y + 'px',
-            left: rectangle.x + 'px',
-            width: rectangle.width + 'px',
-            height: rectangle.height + 'px',
-        }
+        return rectangles.map(
+            (rectangle) => toRectangle(imageSize, rectangle)
+        );
     }
 
     return (
@@ -255,22 +259,34 @@ function App() {
         >
             <img ref={imageRef} className="image" src={'./Basis.jpg'} alt="Background" draggable={false}/>
             {getRectangles().map((rectangle, index) => (
-                <div
+                <Rectangle
                     key={index}
-                    className={'square'}
-                    style={getRectangleStyle(rectangle)}
-                ></div>
+                    rectangle={rectangle}
+                ></Rectangle>
             ))}
             {
                 painting &&
-                <div
-                    className={'square'}
-                    style={getRectangleStyle(painting.rectangle)}
-                >
-                </div>
+                <Rectangle
+                    rectangle={painting.rectangle}
+                ></Rectangle>
             }
         </div>
     );
+}
+
+function Rectangle(props: { rectangle: Rectangle }) {
+    const getRectangleStyle = (rectangle: Rectangle) => {
+        return {
+            top: rectangle.y + 'px',
+            left: rectangle.x + 'px',
+            width: rectangle.width + 'px',
+            height: rectangle.height + 'px',
+        }
+    }
+    return <div
+        className={'square'}
+        style={getRectangleStyle(props.rectangle)}
+    ></div>
 }
 
 
