@@ -4,5 +4,5 @@ interface Env {
 
 export const onRequest: PagesFunction<Env> = async (context) => {
     // const value = await context.env.KV.get('example');
-    return new Response(JSON.stringify({ name: 'Hello World' }));
+    return new Response(JSON.stringify({name: 'Hello World'}));
 }

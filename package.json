@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "vite --port 8000",
     "pages:dev": "wrangler pages dev --experimental-local --proxy 8000 --compatibility-flag=nodejs_compat --compatibility-date=2023-04-04 -- npm run dev",
-    "pages:dev2": "wrangler pages dev --experimental-local -- npm run dev",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
