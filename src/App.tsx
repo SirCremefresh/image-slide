@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react'
+import {useRef, useState} from 'react'
 import './App.css'
 import useSWR from "swr";
 
@@ -120,38 +120,33 @@ const images = [
 function App() {
     const [painting, setPainting] = useState(false);
     const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(null);
+    const [currentRectangle, setCurrentRectangle] = useState<{
+        x: number;
+        y: number,
+        width: number,
+        height: number
+    } | null>(null);
     const paintAreaRef = useRef<HTMLDivElement>(null);
-    const rectangleRef = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-        const handleMouseUp = () => {
-            setPainting(false);
-            setStartPoint(null);
-        };
-        document.addEventListener('mouseup', handleMouseUp);
-        return () => {
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, []);
 
     const createRectangle = (e: React.MouseEvent) => {
         if (!paintAreaRef.current) return;
+        setPainting(true);
 
         const rect = paintAreaRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         setStartPoint({x, y});
 
-        const rectangle = document.createElement('div');
-        rectangle.className = 'square';
-        rectangle.style.left = `${x}px`;
-        rectangle.style.top = `${y}px`;
-        paintAreaRef.current.appendChild(rectangle);
-        rectangleRef.current = rectangle;
+        setCurrentRectangle({
+            width: 0,
+            height: 0,
+            x,
+            y,
+        });
     };
 
     const updateRectangle = (e: React.MouseEvent) => {
-        if (!painting || !startPoint || !rectangleRef.current || !paintAreaRef.current) return;
+        if (!painting || !startPoint || !paintAreaRef.current) return;
 
         const rect = paintAreaRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -160,22 +155,42 @@ function App() {
         const width = Math.abs(x - startPoint.x);
         const height = Math.abs(y - startPoint.y);
 
-        rectangleRef.current.style.width = `${width}px`;
-        rectangleRef.current.style.height = `${height}px`;
-        rectangleRef.current.style.left = `${x < startPoint.x ? startPoint.x - width : startPoint.x}px`;
-        rectangleRef.current.style.top = `${y < startPoint.y ? startPoint.y - height : startPoint.y}px`;
+        setCurrentRectangle({
+            width: width,
+            height: height,
+            x: x < startPoint.x ? startPoint.x - width : startPoint.x,
+            y: y < startPoint.y ? startPoint.y - height : startPoint.y,
+        });
     };
+
+    const finishRectangle = () => {
+        if (!painting || !startPoint || !paintAreaRef.current) return;
+
+        setPainting(false);
+        setStartPoint(null);
+    }
+
     return (
         <div
             className="paintArea"
             ref={paintAreaRef}
-            onMouseDown={(e) => {
-                setPainting(true);
-                createRectangle(e);
-            }}
+            onMouseDown={createRectangle}
+            onMouseUp={finishRectangle}
+            onMouseLeave={finishRectangle}
             onMouseMove={updateRectangle}
         >
             <img className="image" src={'./Basis.jpg'} alt="Background" draggable={false}/>
+            {currentRectangle && <div
+                className={'square'}
+                style={{
+                    top: currentRectangle.y + 'px',
+                    left: currentRectangle.x + 'px',
+                    width: currentRectangle.width + 'px',
+                    height: currentRectangle.height + 'px',
+                }}
+            >
+
+            </div>}
         </div>
     );
 }
