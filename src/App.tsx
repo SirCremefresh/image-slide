@@ -2,6 +2,7 @@ import {MouseEvent, useEffect, useRef, useState} from 'react'
 import './App.css'
 import useSWR from "swr";
 import {PercentageRectangle, Point, Rectangle, Size, toPercentRectangle, toRectangle} from "./model.ts";
+import {RectangleDiv} from "./Rectangle.tsx";
 
 const fetcher = (args: RequestInfo) => fetch(args).then(res => res.json())
 
@@ -217,34 +218,19 @@ function App() {
         >
             <img ref={imageRef} className="image" src={'./Basis.jpg'} alt="Background" draggable={false}/>
             {getRectangles().map((rectangle, index) => (
-                <Rectangle
+                <RectangleDiv
                     key={index}
                     rectangle={rectangle}
-                ></Rectangle>
+                ></RectangleDiv>
             ))}
             {
                 painting &&
-                <Rectangle
+                <RectangleDiv
                     rectangle={painting.rectangle}
-                ></Rectangle>
+                ></RectangleDiv>
             }
         </div>
     );
-}
-
-function Rectangle(props: { rectangle: Rectangle }) {
-    const getRectangleStyle = (rectangle: Rectangle) => {
-        return {
-            top: rectangle.y + 'px',
-            left: rectangle.x + 'px',
-            width: rectangle.width + 'px',
-            height: rectangle.height + 'px',
-        }
-    }
-    return <div
-        className={'square'}
-        style={getRectangleStyle(props.rectangle)}
-    ></div>
 }
 
 
