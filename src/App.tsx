@@ -1,7 +1,15 @@
 import {MouseEvent, MutableRefObject, useEffect, useRef, useState} from 'react'
 import './App.css'
 import useSWR from "swr";
-import {PercentageRectangle, Point, Rectangle, toPercentRectangle, toRectangle, ViewportRectangle} from "./model.ts";
+import {
+    PercentageRectangle,
+    RelativePoint,
+    RelativeRectangle,
+    toPercentRectangle,
+    toRectangle,
+    toRelativePoint,
+    ViewportRectangle
+} from "./model.ts";
 import {RectangleDiv} from "./RectangleDiv.tsx";
 
 const fetcher = (args: RequestInfo) => fetch(args).then(res => res.json())
@@ -29,16 +37,16 @@ const images = [
     },
 ]
 
-type PaintingState = { start: Point, rectangle: Rectangle };
+type PaintingState = { start: RelativePoint, rectangle: RelativeRectangle };
 
-function initialPaintingState(start: Point): PaintingState {
+function initialPaintingState(start: RelativePoint): PaintingState {
     return {
         start,
         rectangle: {
             width: 0,
             height: 0,
-            x: start.x,
-            y: start.y,
+            relativeX: start.relativeX,
+            relativeY: start.relativeY,
         }
     }
 }
@@ -76,21 +84,19 @@ function App() {
     const imageRef = useRef<HTMLImageElement>(null);
     const imageRectangle = useImageRectangle(imageRef);
 
-    const createRectangle = (e: MouseEvent) => {
-        const x = e.clientX - imageRectangle.viewportX;
-        const y = e.clientY - imageRectangle.viewportY;
 
-        setPainting(initialPaintingState({x, y}));
+    const createRectangle = (e: MouseEvent) => {
+        const relativePoint = toRelativePoint(imageRectangle, {viewportX: e.clientX, viewportY: e.clientY})
+        setPainting(initialPaintingState(relativePoint));
     };
 
     const updateRectangle = (e: MouseEvent) => {
         if (!painting) return;
 
-        const x = e.clientX - imageRectangle.viewportX;
-        const y = e.clientY - imageRectangle.viewportY;
+        const {relativeX, relativeY} = toRelativePoint(imageRectangle, {viewportX: e.clientX, viewportY: e.clientY})
 
-        const width = Math.abs(x - painting.start.x);
-        const height = Math.abs(y - painting.start.y);
+        const width = Math.abs(relativeX - painting.start.relativeX);
+        const height = Math.abs(relativeY - painting.start.relativeY);
 
         setPainting(
             {
@@ -98,8 +104,8 @@ function App() {
                 rectangle: {
                     width: width,
                     height: height,
-                    x: x < painting.start.x ? painting.start.x - width : painting.start.x,
-                    y: y < painting.start.y ? painting.start.y - height : painting.start.y,
+                    relativeX: relativeX < painting.start.relativeX ? painting.start.relativeX - width : painting.start.relativeX,
+                    relativeY: relativeY < painting.start.relativeY ? painting.start.relativeY - height : painting.start.relativeY,
                 }
             });
     };

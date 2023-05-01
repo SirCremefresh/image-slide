@@ -1,11 +1,11 @@
-import {Rectangle} from "./model.ts";
+import {RelativeRectangle} from "./model.ts";
 import './RectangleDiv.css'
 
-export function RectangleDiv(props: { rectangle: Rectangle }) {
-    const getRectangleStyle = (rectangle: Rectangle) => {
+export function RectangleDiv(props: { rectangle: RelativeRectangle }) {
+    const getRectangleStyle = (rectangle: RelativeRectangle) => {
         return {
-            top: rectangle.y + 'px',
-            left: rectangle.x + 'px',
+            top: rectangle.relativeY + 'px',
+            left: rectangle.relativeX + 'px',
             width: rectangle.width + 'px',
             height: rectangle.height + 'px',
         }
