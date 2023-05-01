@@ -2,6 +2,7 @@ import {MouseEvent, MutableRefObject, useEffect, useRef, useState} from 'react'
 import './App.css'
 import useSWR from "swr";
 import {
+    buildRelativeRectangle,
     PercentageRectangle,
     RelativePoint,
     RelativeRectangle,
@@ -28,12 +29,39 @@ function Profile() {
     )
 }
 
-const images = [
+type Link = {
+    targetId: string,
+    rectangle: PercentageRectangle,
+};
+type Image = {
+    id: string,
+    title: string,
+    src: string,
+    links: Array<Link>,
+}
+
+const images: Image[] = [
     {
+        id: 'Basis',
+        title: 'Basis',
         src: './Basis.jpg',
+        links: [
+            {
+                targetId: 'Bedeutung',
+                rectangle: {
+                    percentageWidth: 9.078014184397164,
+                    percentageHeight: 7.0962319151599695,
+                    percentageX: 21.134751773049647,
+                    percentageY: 19.55577015934331
+                },
+            },
+        ],
     },
     {
+        id: 'Bedeutung',
+        title: 'Bedeutung',
         src: './Bedeutung.jpg',
+        links: [],
     },
 ]
 
@@ -71,19 +99,20 @@ function useImageRectangle(imageRef: MutableRefObject<HTMLImageElement | null>):
     return imageSize;
 }
 
+
 function App() {
+    const [imageId, setImageId] = useState<string>('Basis');
+
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
-    const [rectangles, setRectangles] = useState<PercentageRectangle[]>([
-        {
-            percentageWidth: 9.078014184397164,
-            percentageHeight: 7.0962319151599695,
-            percentageX: 21.134751773049647,
-            percentageY: 19.55577015934331
-        },
-    ]);
+    const [rectangles, setRectangles] = useState<PercentageRectangle[]>([]);
     const imageRef = useRef<HTMLImageElement>(null);
     const imageRectangle = useImageRectangle(imageRef);
 
+    const image = () => {
+        const image = images.find((image) => image.id === imageId);
+        if (!image) throw new Error(`Image with id ${imageId} not found`);
+        return image;
+    };
 
     const createRectangle = (e: MouseEvent) => {
         const relativePoint = toRelativePoint(imageRectangle, {viewportX: e.clientX, viewportY: e.clientY})
@@ -92,31 +121,19 @@ function App() {
 
     const updateRectangle = (e: MouseEvent) => {
         if (!painting) return;
+        const start = painting.start;
+        const currentMousePosition = toRelativePoint(imageRectangle, {viewportX: e.clientX, viewportY: e.clientY})
 
-        const {relativeX, relativeY} = toRelativePoint(imageRectangle, {viewportX: e.clientX, viewportY: e.clientY})
-
-        const width = Math.abs(relativeX - painting.start.relativeX);
-        const height = Math.abs(relativeY - painting.start.relativeY);
-
-        let rectangle = {
-            width: width,
-            height: height,
-            relativeX: relativeX < painting.start.relativeX ? painting.start.relativeX - width : painting.start.relativeX,
-            relativeY: relativeY < painting.start.relativeY ? painting.start.relativeY - height : painting.start.relativeY,
-        };
-        setPainting(
-            {
-                start: painting.start,
-                rectangle: rectangle
-            });
+        setPainting({
+            start: start,
+            rectangle: buildRelativeRectangle(start, currentMousePosition)
+        });
     };
 
     const finishRectangle = () => {
         if (!painting) return;
 
         const percentageRectangle = toPercentRectangle(imageRectangle, painting.rectangle);
-
-        console.log(percentageRectangle);
 
         setRectangles((rectangles) => [...rectangles, percentageRectangle]);
         setPainting(undefined);
@@ -137,6 +154,13 @@ function App() {
             onMouseMove={updateRectangle}
         >
             <img ref={imageRef} className="image" src={'./Basis.jpg'} alt="Background" draggable={false}/>
+            {image().links.map((link, index) => (
+                    <RectangleDiv
+                        onClick={() => setImageId(link.targetId)}
+                        key={index}
+                        rectangle={toRelativeRectangle(imageRectangle, link.rectangle)}
+                    ></RectangleDiv>
+            ))}
             {getRectangles().map((rectangle, index) => (
                 <RectangleDiv
                     key={index}

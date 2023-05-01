@@ -51,3 +51,14 @@ export function toRelativePoint(base: ViewportPoint, point: ViewportPoint): Rela
     };
 }
 
+export function buildRelativeRectangle(point1: RelativePoint, point2: RelativePoint): RelativeRectangle {
+    const width = Math.abs(point2.relativeX - point1.relativeX);
+    const height = Math.abs(point2.relativeY - point1.relativeY);
+
+    return {
+        width: width,
+        height: height,
+        relativeX: point2.relativeX < point1.relativeX ? point1.relativeX - width : point1.relativeX,
+        relativeY: point2.relativeY < point1.relativeY ? point1.relativeY - height : point1.relativeY,
+    };
+}
