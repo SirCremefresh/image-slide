@@ -146,6 +146,7 @@ function App() {
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
     const [rectangles, setRectangles] = useState<Rectangle[]>([]);
     const paintAreaRef = useRef<HTMLDivElement>(null);
+    const imageRef = useRef<HTMLImageElement>(null);
 
     const createRectangle = (e: React.MouseEvent) => {
         if (!paintAreaRef.current) return;
@@ -186,6 +187,15 @@ function App() {
         setRectangles((rectangles) => [...rectangles, painting.rectangle]);
     }
 
+    const getRectangleStyle = (rectangle: Rectangle) => {
+        return {
+            top: rectangle.y + 'px',
+            left: rectangle.x + 'px',
+            width: rectangle.width + 'px',
+            height: rectangle.height + 'px',
+        }
+    }
+
     return (
         <div
             className="paintArea"
@@ -195,31 +205,18 @@ function App() {
             onMouseLeave={finishRectangle}
             onMouseMove={updateRectangle}
         >
-            <img className="image" src={'./Basis.jpg'} alt="Background" draggable={false}/>
+            <img ref={imageRef} className="image" src={'./Basis.jpg'} alt="Background" draggable={false}/>
             {rectangles.map((rectangle, index) => (
                 <div
                     key={index}
                     className={'square'}
-                    style={{
-                        top: rectangle.y + 'px',
-                        left: rectangle.x + 'px',
-                        width: rectangle.width + 'px',
-                        height: rectangle.height + 'px',
-
-
-                    }}
+                    style={getRectangleStyle(rectangle)}
                 ></div>
             ))}
             {painting && <div
                 className={'square'}
-                style={{
-                    top: painting.rectangle.y + 'px',
-                    left: painting.rectangle.x + 'px',
-                    width: painting.rectangle.width + 'px',
-                    height: painting.rectangle.height + 'px',
-                }}
+                style={getRectangleStyle(painting.rectangle)}
             >
-
             </div>}
         </div>
     );
