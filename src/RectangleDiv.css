@@ -4,5 +4,6 @@
     height: 10px;
     border: 1px solid black;
     box-sizing: border-box;
+    background-color: #1a1a1a;
     pointer-events: none;
 }

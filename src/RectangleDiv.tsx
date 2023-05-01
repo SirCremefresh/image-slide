@@ -18,6 +18,5 @@ export function RectangleDiv(props: { rectangle: RelativeRectangle, onClick?: ()
         }}
         style={getRectangleStyle(props.rectangle)}
     >
-
     </div>
 }

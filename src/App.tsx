@@ -148,18 +148,23 @@ function App() {
     return (
         <div
             className="paintArea"
-            onMouseDown={createRectangle}
-            onMouseUp={finishRectangle}
-            onMouseLeave={finishRectangle}
-            onMouseMove={updateRectangle}
         >
-            <img ref={imageRef} className="image" src={'./Basis.jpg'} alt="Background" draggable={false}/>
+            <img ref={imageRef}
+                 className="image"
+                 src={'./Basis.jpg'}
+                 alt="Background"
+                 draggable={false}
+                 onMouseDown={createRectangle}
+                 onMouseMove={updateRectangle}
+                 onMouseUp={finishRectangle}
+                 onMouseLeave={finishRectangle}
+            />
             {image().links.map((link, index) => (
-                    <RectangleDiv
-                        onClick={() => setImageId(link.targetId)}
-                        key={index}
-                        rectangle={toRelativeRectangle(imageRectangle, link.rectangle)}
-                    ></RectangleDiv>
+                <RectangleDiv
+                    onClick={() => setImageId(link.targetId)}
+                    key={index}
+                    rectangle={toRelativeRectangle(imageRectangle, link.rectangle)}
+                ></RectangleDiv>
             ))}
             {getRectangles().map((rectangle, index) => (
                 <RectangleDiv
