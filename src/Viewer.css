@@ -1,0 +1,11 @@
+.paintArea {
+    position: relative;
+    display: inline-block;
+}
+
+.image {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+}
+

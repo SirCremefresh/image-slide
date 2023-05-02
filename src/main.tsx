@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import {createBrowserRouter, RouterProvider,} from "react-router-dom";
 import Editor from './Editor.tsx'
 import './index.css'
+import Viewer from "./Viewer.tsx";
 
 const router = createBrowserRouter([
 
@@ -18,7 +19,7 @@ const router = createBrowserRouter([
     },
     {
         path: "view",
-        element: <div>About</div>,
+        element: <Viewer></Viewer>,
     },
 ]);
 

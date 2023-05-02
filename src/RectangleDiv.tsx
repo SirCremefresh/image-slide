@@ -1,7 +1,12 @@
-import {RelativeRectangle} from "./models/model.ts";
 import './RectangleDiv.css'
+import {RelativeRectangle} from "./models/graphic.ts";
 
-export function RectangleDiv(props: { rectangle: RelativeRectangle, onClick?: () => void }) {
+export function RectangleDiv(props: {
+    rectangle: RelativeRectangle,
+    onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
+    clickable?: boolean
+}) {
+    const clickable = props.clickable ?? false;
     const getRectangleStyle = (rectangle: RelativeRectangle) => {
         return {
             top: rectangle.relativeY + 'px',
@@ -11,10 +16,9 @@ export function RectangleDiv(props: { rectangle: RelativeRectangle, onClick?: ()
         }
     }
     return <div
-        className={'rectangle'}
+        className={['rectangle', clickable ? 'clickable' : ''].join(' ')}
         onClick={(e) => {
-            e.preventDefault();
-            console.log('click');
+            props.onClick?.(e);
         }}
         style={getRectangleStyle(props.rectangle)}
     >
