@@ -1,4 +1,4 @@
-import {MouseEvent, useRef, useState} from 'react'
+import {MouseEvent, useState} from 'react'
 import './Editor.css'
 import {
     buildRelativeRectangle,
@@ -18,8 +18,8 @@ function Editor() {
     const [imageId, setImageId] = useState<string>('Basis');
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
     const [rectangles, setRectangles] = useState<PercentageRectangle[]>([]);
-    const imageRef = useRef<HTMLImageElement>(null);
-    const imageRectangle = useImageRectangle(imageRef);
+    const [imageRectangle, imageRef] = useImageRectangle();
+
 
     const image = () => {
         const image = images[imageId];
