@@ -1,9 +1,10 @@
-import React from 'react'
+import React, {lazy} from 'react'
 import ReactDOM from 'react-dom/client'
 import {createBrowserRouter, Link, RouterProvider,} from "react-router-dom";
-import Editor from './pages/Editor.tsx'
 import './index.css'
-import Viewer from "./pages/Viewer.tsx";
+
+const Editor = lazy(() => import('./pages/Editor.tsx'));
+const Viewer = lazy(() => import('./pages/Viewer.tsx'));
 
 const router = createBrowserRouter([
 
