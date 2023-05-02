@@ -1,7 +1,7 @@
-import {Images} from "./models/image.ts";
+import {Image} from "./models/image.ts";
 
-export const images: Images = {
-    Basis: {
+export const images: Image[] = [
+    {
         id: 'Basis',
         title: 'Basis',
         src: './Basis.jpg',
@@ -17,10 +17,10 @@ export const images: Images = {
             },
         ],
     },
-    Bedeutung: {
+    {
         id: 'Bedeutung',
         title: 'Bedeutung',
         src: './Bedeutung.jpg',
         links: [],
     },
-};
+];

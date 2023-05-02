@@ -21,7 +21,7 @@ function ViewerLoaded(props: { collection: Collection }) {
     const [imageRectangle, imageRef] = useImageRectangle();
 
     const image = useMemo(() => {
-        const image = props.collection.images[imageId];
+        const image = props.collection.images.find((image) => image.id === imageId);
         if (!image) throw new Error(`Image with id ${imageId} not found`);
         return image;
     }, [props.collection, imageId]);

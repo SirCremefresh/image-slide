@@ -1,21 +1,24 @@
-import {PercentageRectangle} from "./graphic.ts";
+import {ZPercentageRectangle} from "./graphic.ts";
+import z from 'zod';
 
-export type Link = {
-    targetId: string,
-    rectangle: PercentageRectangle,
-};
-export type Image = {
-    id: string,
-    title: string,
-    src: string,
-    links: Array<Link>,
-}
-export type Images = {
-    [key: string]: Image,
-}
+export const ZLink = z.object({
+    targetId: z.string(),
+    rectangle: ZPercentageRectangle,
+});
+export type Link = z.infer<typeof ZLink>;
 
-export type Collection = {
-    id: string,
-    title: string,
-    images: Images,
-}
+export const ZImage = z.object({
+    id: z.string(),
+    title: z.string(),
+    src: z.string(),
+    links: z.array(ZLink),
+});
+export type Image = z.infer<typeof ZImage>;
+
+export const ZCollection = z.object({
+    id: z.string(),
+    title: z.string(),
+    images: z.array(ZImage),
+});
+export type Collection = z.infer<typeof ZCollection>;
+

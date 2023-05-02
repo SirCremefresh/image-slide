@@ -1,24 +1,49 @@
-export type RelativePoint = {
-    relativeX: number;
-    relativeY: number;
-}
-export type PercentagePoint = {
-    percentageX: number;
-    percentageY: number;
-}
-export type ViewportPoint = {
-    viewportX: number;
-    viewportY: number;
-}
+import z from 'zod';
 
-export type Size = { width: number, height: number };
-export type PercentageSize = { percentageWidth: number, percentageHeight: number };
+export const ZRelativePoint = z.object({
+    relativeX: z.number(),
+    relativeY: z.number(),
+});
+export type RelativePoint = z.infer<typeof ZRelativePoint>;
 
-export type RelativeRectangle = RelativePoint & Size;
-export type PercentageRectangle = PercentagePoint & PercentageSize;
-export type ViewportRectangle = ViewportPoint & Size;
+export const ZPercentagePoint = z.object({
+    percentageX: z.number(),
+    percentageY: z.number(),
+});
+export type PercentagePoint = z.infer<typeof ZPercentagePoint>;
 
-export type PaintingState = { start: RelativePoint, rectangle: RelativeRectangle };
+export const ZViewportPoint = z.object({
+    viewportX: z.number(),
+    viewportY: z.number(),
+});
+export type ViewportPoint = z.infer<typeof ZViewportPoint>;
+
+export const ZSize = z.object({
+    width: z.number(),
+    height: z.number(),
+});
+export type Size = z.infer<typeof ZSize>;
+
+export const ZPercentageSize = z.object({
+    percentageWidth: z.number(),
+    percentageHeight: z.number(),
+});
+export type PercentageSize = z.infer<typeof ZPercentageSize>;
+
+export const ZRelativeRectangle = ZRelativePoint.merge(ZSize);
+export type RelativeRectangle = z.infer<typeof ZRelativeRectangle>;
+
+export const ZPercentageRectangle = ZPercentagePoint.merge(ZPercentageSize);
+export type PercentageRectangle = z.infer<typeof ZPercentageRectangle>;
+
+export const ZViewportRectangle = ZViewportPoint.merge(ZSize);
+export type ViewportRectangle = z.infer<typeof ZViewportRectangle>;
+
+export const ZPaintingState = z.object({
+    start: ZRelativePoint,
+    rectangle: ZRelativeRectangle,
+});
+export type PaintingState = z.infer<typeof ZPaintingState>;
 
 export function toPercentage(full: number, part: number): number {
     return 100 / full * part;
