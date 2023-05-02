@@ -1,4 +1,4 @@
-POST http://127.0.0.1:8788/api/collections/example
+POST {{host}}/api/collections/example
 Content-Type: application/json
 Accept: application/json
 
@@ -6,6 +6,6 @@ Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8788/api/collections/98059f16-486d-4984-87ae-47cb389436aa
+GET {{host}}/api/collections/b7a65c98-7661-4a31-8798-2dc447cfd4e0
 Accept: application/json
 
