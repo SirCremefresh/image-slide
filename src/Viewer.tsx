@@ -4,12 +4,16 @@ import {toRelativeRectangle} from "./models/graphic.ts";
 import {RectangleDiv} from "./RectangleDiv.tsx";
 import {useImageRectangle} from "./hooks/ImageRectangle.ts";
 import {images} from "./store.ts";
+import {useCollection} from "./api-client/collections.ts";
 
 
 function Viewer() {
+    const {data} = useCollection('some-id');
     const [imageId, setImageId] = useState<string>('Basis');
     const imageRef = useRef<HTMLImageElement>(null);
     const imageRectangle = useImageRectangle(imageRef);
+
+    if (data === undefined) return <div>Loading...</div>;
 
     const image = () => {
         const image = images[imageId];
