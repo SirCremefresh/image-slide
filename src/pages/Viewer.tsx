@@ -45,7 +45,6 @@ function ViewerLoaded(props: { collection: Collection }) {
                      src={image.src}
                      alt={image.title}
                      draggable={false}
-                     onSelect={(e) => e.preventDefault()}
                 />
                 {links}
             </div>

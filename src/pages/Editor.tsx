@@ -12,14 +12,16 @@ import {
 import {useImageRectangle} from "../hooks/ImageRectangle.ts";
 import {images} from "../store.ts";
 import {BoxButton} from "../components/BoxButton.tsx";
+import {FloatingToolbar} from "../components/FloatingToolbar.tsx";
 
+
+const imageList = Object.values(images);
 
 function Editor() {
     const [imageId, setImageId] = useState<string>('Basis');
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
     const [rectangles, setRectangles] = useState<PercentageRectangle[]>([]);
     const [imageRectangle, imageRef] = useImageRectangle();
-
 
     const image = () => {
         const image = images[imageId];
@@ -58,38 +60,72 @@ function Editor() {
         );
     }
 
+    const handleEditTitle = () => {
+        console.log('Edit title');
+    };
+
+    const handleCreate = () => {
+        console.log('Create');
+    };
+
+    const handleEditMode = () => {
+        console.log('Edit mode');
+    };
+
     return (
-        <div className="paintArea">
-            <img ref={imageRef}
-                 className="image"
-                 src={image().src}
-                 alt={image().title}
-                 draggable={false}
-                 onMouseDown={createRectangle}
-                 onMouseMove={updateRectangle}
-                 onMouseUp={finishRectangle}
-                 onMouseLeave={finishRectangle}
+        <>
+            <div className={"flex flex-row gap-2"}>
+                <div className="relative inline-block select-none" draggable={false}>
+                    <img ref={imageRef}
+                         className="block max-w-[100%] max-h-[100%] rounded"
+                         src={image().src}
+                         alt={image().title}
+                         draggable={false}
+                         onMouseDown={createRectangle}
+                         onMouseMove={updateRectangle}
+                         onMouseUp={finishRectangle}
+                         onMouseLeave={finishRectangle}
+                    />
+                    {image().links.map((link, index) => (
+                        <BoxButton
+                            onClick={() => setImageId(link.targetId)}
+                            key={index}
+                            rectangle={toRelativeRectangle(imageRectangle, link.rectangle)}
+                        ></BoxButton>
+                    ))}
+                    {getRectangles().map((rectangle, index) => (
+                        <BoxButton
+                            key={index}
+                            rectangle={rectangle}
+                        ></BoxButton>
+                    ))}
+                    {
+                        painting &&
+                        <BoxButton
+                            rectangle={painting.rectangle}
+                        ></BoxButton>
+                    }
+                </div>
+                <div className={"border-2 border-solid border-amber-950"}>
+                    {imageList.map((image, index) => (
+                        <div key={index} className={"flex flex-row gap-2"}>
+                            <img className={"w-40 h-20 rounded object-cover"} src={image.src} alt={image.title}/>
+                            <div className={"flex flex-col"}>
+                                <span className={"text-sm"}>{image.title}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+
+            <FloatingToolbar
+                initialTitle="Collection Title"
+                onTitleChange={handleEditTitle}
+                onCreate={handleCreate}
+                onEditMode={handleEditMode}
             />
-            {image().links.map((link, index) => (
-                <BoxButton
-                    onClick={() => setImageId(link.targetId)}
-                    key={index}
-                    rectangle={toRelativeRectangle(imageRectangle, link.rectangle)}
-                ></BoxButton>
-            ))}
-            {getRectangles().map((rectangle, index) => (
-                <BoxButton
-                    key={index}
-                    rectangle={rectangle}
-                ></BoxButton>
-            ))}
-            {
-                painting &&
-                <BoxButton
-                    rectangle={painting.rectangle}
-                ></BoxButton>
-            }
-        </div>
+        </>
     );
 }
 
