@@ -1,45 +1,18 @@
-import {Collection, Images} from "../../../src/models/image";
+import z from "zod";
+import {Env} from "../../env.js";
 
-interface Env {
-    KV: KVNamespace;
-}
+const ZCollectionId = z.string().min(1).max(100);
 
-const images: Images = {
-    Basis: {
-        id: 'Basis',
-        title: 'Basis',
-        src: './Basis.jpg',
-        links: [
-            {
-                targetId: 'Bedeutung',
-                rectangle: {
-                    percentageWidth: 9.078014184397164,
-                    percentageHeight: 7.0962319151599695,
-                    percentageX: 21.134751773049647,
-                    percentageY: 19.55577015934331
-                },
-            },
-        ],
-    },
-    Bedeutung: {
-        id: 'Bedeutung',
-        title: 'Bedeutung',
-        src: './Bedeutung.jpg',
-        links: [],
-    },
-};
-
-const collection: Collection = {
-    id: 'collectionId',
-    title: 'collectionTitle',
-    images: images,
-}
-
-export const onRequest: PagesFunction<Env> = async (context) => {
-    // const value = await context.env.KV.get('example');
-    console.log(context.params.collectionId);
-    await sleep(100);
-    return new Response(JSON.stringify(collection));
+export const onRequestGet: PagesFunction<Env> = async (context) => {
+    const result = ZCollectionId.safeParse(context.params.collectionId);
+    if (result.success === false) {
+        return new Response(JSON.stringify(result.error), {status: 400});
+    }
+    const collection = await context.env.MAIN.get('COLLECTIONS:' + result.data, 'text')
+    if (collection === null) {
+        return new Response('Not found', {status: 404});
+    }
+    return new Response(collection);
 }
 
 

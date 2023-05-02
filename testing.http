@@ -1,0 +1,11 @@
+POST http://127.0.0.1:8788/api/collections/example
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+###
+
+GET http://127.0.0.1:8788/api/collections/98059f16-486d-4984-87ae-47cb389436aa
+Accept: application/json
+
