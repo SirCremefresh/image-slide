@@ -32,11 +32,11 @@ const images: Images = {
 export const onRequest: PagesFunction<Env> = async (context) => {
     // const value = await context.env.KV.get('example');
     console.log(context.params.collectionId);
-    await sleep();
+    await sleep(100);
     return new Response(JSON.stringify(images));
 }
 
 
-function sleep() {
-    return new Promise(resolve => setTimeout(resolve, 1000));
+function sleep(timeMs: number) {
+    return new Promise(resolve => setTimeout(resolve, timeMs));
 }

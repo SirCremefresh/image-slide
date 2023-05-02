@@ -3,13 +3,12 @@ import './Viewer.css'
 import {toRelativeRectangle} from "./models/graphic.ts";
 import {RectangleDiv} from "./RectangleDiv.tsx";
 import {useImageRectangle} from "./hooks/ImageRectangle.ts";
-import {fetcher} from "./api-client/collections.ts";
-import useSWR from "swr";
+import {useCollection} from "./api-client/collections.ts";
 import {Images} from "./models/image.ts";
 
 
 function Viewer() {
-    const {data} = useSWR<Images>(`/api/collections/${'some-id'}`, fetcher);
+    const {data} = useCollection('some-collection-id');
 
     if (data === undefined) return <div>Loading...</div>;
     return (
