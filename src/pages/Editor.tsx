@@ -8,10 +8,10 @@ import {
     toPercentRectangle,
     toRelativePoint,
     toRelativeRectangle
-} from "./models/graphic.ts";
-import {RectangleDiv} from "./RectangleDiv.tsx";
-import {useImageRectangle} from "./hooks/ImageRectangle.ts";
-import {images} from "./store.ts";
+} from "../models/graphic.ts";
+import {RectangleDiv} from "../components/RectangleDiv.tsx";
+import {useImageRectangle} from "../hooks/ImageRectangle.ts";
+import {images} from "../store.ts";
 
 
 function Editor() {

@@ -13,3 +13,9 @@ export type Image = {
 export type Images = {
     [key: string]: Image,
 }
+
+export type Collection = {
+    id: string,
+    title: string,
+    images: Images,
+}

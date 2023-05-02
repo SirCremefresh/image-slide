@@ -1,4 +1,4 @@
-import {Images} from "../../../src/models/image";
+import {Collection, Images} from "../../../src/models/image";
 
 interface Env {
     KV: KVNamespace;
@@ -29,11 +29,17 @@ const images: Images = {
     },
 };
 
+const collection: Collection = {
+    id: 'collectionId',
+    title: 'collectionTitle',
+    images: images,
+}
+
 export const onRequest: PagesFunction<Env> = async (context) => {
     // const value = await context.env.KV.get('example');
     console.log(context.params.collectionId);
     await sleep(100);
-    return new Response(JSON.stringify(images));
+    return new Response(JSON.stringify(collection));
 }
 
 

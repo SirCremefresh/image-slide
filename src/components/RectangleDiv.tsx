@@ -1,5 +1,6 @@
 import './RectangleDiv.css'
-import {RelativeRectangle} from "./models/graphic.ts";
+import {RelativeRectangle} from "../models/graphic.ts";
+import {classNames} from "../util/classNames.ts";
 
 export function RectangleDiv(props: {
     rectangle: RelativeRectangle,
@@ -16,7 +17,7 @@ export function RectangleDiv(props: {
         }
     }
     return <div
-        className={['rectangle', clickable ? 'clickable' : ''].join(' ')}
+        className={classNames('absolute box-border rounded-md shadow-sm hover:shadow-xl transition-shadow border-indigo-500 border-2 border-dashed bg-sky-500/50', clickable ? 'pointer-events-auto' : 'pointer-events-none')}
         onClick={(e) => {
             props.onClick?.(e);
         }}
