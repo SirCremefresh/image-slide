@@ -23,7 +23,6 @@ function ViewerLoaded(props: { collection: Images }) {
 
     const image = () => {
         const image = props.collection[imageId];
-        console.log(image);
         if (!image) throw new Error(`Image with id ${imageId} not found`);
         return image;
     };
@@ -37,7 +36,6 @@ function ViewerLoaded(props: { collection: Images }) {
                  draggable={false}
             />
             {image().links.map((link, index) => {
-                console.log("render link", imageRectangle)
                 return (
                     <RectangleDiv
                         onClick={() => setImageId(link.targetId)}
