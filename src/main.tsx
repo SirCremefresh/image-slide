@@ -1,13 +1,10 @@
-import React, {lazy} from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {createBrowserRouter, Link, RouterProvider,} from "react-router-dom";
 import './index.css'
-
-const Editor = lazy(() => import('./pages/Editor.tsx'));
-const Viewer = lazy(() => import('./pages/Viewer.tsx'));
+import {LazyEditor, LazyViewer} from "./pages/LazyPages.ts";
 
 const router = createBrowserRouter([
-
     {
         path: "/",
         element: <div className="bg-gray-100 min-h-screen">
@@ -42,12 +39,12 @@ const router = createBrowserRouter([
     {
         path: "edit",
         element: (
-            <Editor></Editor>
+            <LazyEditor/>
         ),
     },
     {
         path: "view",
-        element: <Viewer></Viewer>,
+        element: <LazyViewer/>,
     },
 ]);
 
