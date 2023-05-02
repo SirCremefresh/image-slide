@@ -9,9 +9,9 @@ import {
     toRelativePoint,
     toRelativeRectangle
 } from "../models/graphic.ts";
-import {RectangleDiv} from "../components/RectangleDiv.tsx";
 import {useImageRectangle} from "../hooks/ImageRectangle.ts";
 import {images} from "../store.ts";
+import {BoxButton} from "../components/BoxButton.tsx";
 
 
 function Editor() {
@@ -71,23 +71,23 @@ function Editor() {
                  onMouseLeave={finishRectangle}
             />
             {image().links.map((link, index) => (
-                <RectangleDiv
+                <BoxButton
                     onClick={() => setImageId(link.targetId)}
                     key={index}
                     rectangle={toRelativeRectangle(imageRectangle, link.rectangle)}
-                ></RectangleDiv>
+                ></BoxButton>
             ))}
             {getRectangles().map((rectangle, index) => (
-                <RectangleDiv
+                <BoxButton
                     key={index}
                     rectangle={rectangle}
-                ></RectangleDiv>
+                ></BoxButton>
             ))}
             {
                 painting &&
-                <RectangleDiv
+                <BoxButton
                     rectangle={painting.rectangle}
-                ></RectangleDiv>
+                ></BoxButton>
             }
         </div>
     );

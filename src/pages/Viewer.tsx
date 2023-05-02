@@ -1,10 +1,10 @@
 import {useMemo, useState} from 'react'
 import './Viewer.css'
 import {toRelativeRectangle} from "../models/graphic.ts";
-import {RectangleDiv} from "../components/RectangleDiv.tsx";
 import {useImageRectangle} from "../hooks/ImageRectangle.ts";
 import {useCollection} from "../api-client/collections.ts";
 import {Collection} from "../models/image.ts";
+import {BoxButton} from "../components/BoxButton.tsx";
 
 
 function Viewer() {
@@ -28,12 +28,12 @@ function ViewerLoaded(props: { collection: Collection }) {
 
     const links = useMemo(() => image.links.map((link, index) => {
         return (
-            <RectangleDiv
+            <BoxButton
                 onClick={() => setImageId(link.targetId)}
                 clickable={true}
                 key={index}
                 rectangle={toRelativeRectangle(imageRectangle, link.rectangle)}
-            ></RectangleDiv>
+            ></BoxButton>
         );
     }), [image, imageRectangle]);
 

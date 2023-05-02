@@ -1,10 +1,10 @@
-import './RectangleDiv.css'
+import {MouseEvent} from "react";
 import {RelativeRectangle} from "../models/graphic.ts";
 import {classNames} from "../util/classNames.ts";
 
-export function RectangleDiv(props: {
+export function BoxButton(props: {
     rectangle: RelativeRectangle,
-    onClick?: (event: React.MouseEvent<HTMLDivElement>) => void,
+    onClick?: (event: MouseEvent<HTMLDivElement>) => void,
     clickable?: boolean
 }) {
     const clickable = props.clickable ?? false;
