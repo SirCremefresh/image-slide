@@ -2,7 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {createBrowserRouter, Link, RouterProvider,} from "react-router-dom";
 import './index.css'
-import {LazyEditor, LazyViewer} from "./pages/LazyPages.ts";
+import Editor from "./pages/Editor.tsx";
+import Viewer from "./pages/Viewer.tsx";
 
 const router = createBrowserRouter([
     {
@@ -39,12 +40,12 @@ const router = createBrowserRouter([
     {
         path: "edit",
         element: (
-            <LazyEditor/>
+            <Editor/>
         ),
     },
     {
         path: "view",
-        element: <LazyViewer/>,
+        element: <Viewer/>,
     },
 ]);
 
