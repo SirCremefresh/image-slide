@@ -1,10 +1,18 @@
 import z from "zod";
 import {Env} from "../../env.js";
+import {ZCollection} from "../../../src/models/image.js";
+import {hashString} from "../../hash.js";
+import {parseOrThrow} from "../../type-check.js";
 
-const ZCollectionId = z.string().min(1).max(100);
+const ZuUID = z.string().length(36);
+const ZCollectionMetadata = z.object({
+    hashedSecret: z.string(),
+});
 
+
+// noinspection JSUnusedGlobalSymbols
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-    const result = ZCollectionId.safeParse(context.params.collectionId);
+    const result = ZuUID.safeParse(context.params.collectionId);
     if (!result.success) {
         return new Response(JSON.stringify(result.error), {status: 400});
     }
@@ -15,7 +23,29 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return new Response(collection);
 }
 
+async function getMetadataOrThrow<Z extends z.ZodType<any, any, any>>(kv: KVNamespace, key: string, z: Z): Promise<z.infer<Z>> {
+    const object = await kv.getWithMetadata(key);
+    return parseOrThrow(z, object, 'server');
+}
 
-function sleep(timeMs: number) {
-    return new Promise(resolve => setTimeout(resolve, timeMs));
+// noinspection JSUnusedGlobalSymbols
+export const onRequestPut: PagesFunction<Env> = async (context) => {
+    const collection = parseOrThrow(ZCollection, context.request.json());
+    const secret = parseOrThrow(ZuUID, context.request.headers.get('Authorization'));
+    const secretHash = await hashString(secret);
+
+    const metadata = await getMetadataOrThrow(context.env.MAIN, 'COLLECTIONS:' + collection.collectionId, ZCollectionMetadata);
+
+    if (metadata.hashedSecret !== secretHash) {
+        return new Response('Unauthorized', {status: 401});
+    }
+
+    await context.env.MAIN.put(
+        'COLLECTIONS:' + collection.collectionId,
+        JSON.stringify(collection),
+        {
+            metadata: metadata
+        })
+
+    return new Response(JSON.stringify(collection));
 }

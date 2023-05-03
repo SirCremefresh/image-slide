@@ -1,5 +1,6 @@
 import {Collection} from "../../../src/models/image.js";
 import {Env} from "../../env.js";
+import {hashString} from "../../hash.js";
 
 function getSampleCollection(id: string): Collection {
     return {
@@ -34,16 +35,6 @@ function getSampleCollection(id: string): Collection {
 }
 
 
-async function hashMessage(secret: string): Promise<string> {
-    const hashBuffer = await crypto.subtle.digest(
-        'SHA-256',
-        new TextEncoder().encode(secret)
-    );
-    const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-    return hashArray
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-}
 
 // Is called by pages
 // noinspection JSUnusedGlobalSymbols
@@ -52,7 +43,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const collection = getSampleCollection(collectionId);
     const secret = crypto.randomUUID();
 
-    const hashedSecret = await hashMessage(secret);
+    const hashedSecret = await hashString(secret);
 
     await context.env.MAIN.put(
         'COLLECTIONS:' + collectionId,
