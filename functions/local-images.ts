@@ -8,10 +8,10 @@ export function getLocalImages(collectionId = '') {
                 {
                     imageId: collectionId + '80e7eaea-30bf-41e2-ac2a-a60dd92a11d6',
                     rectangle: {
-                        percentageWidth: 9.078014184397164,
-                        percentageHeight: 7.0962319151599695,
-                        percentageX: 21.134751773049647,
-                        percentageY: 19.55577015934331
+                        percentageHeight: 9.4370717321537,
+                        percentageWidth: 10.352098437364607,
+                        percentageX: 36.60206233211057,
+                        percentageY: 39.13609159510799,
                     },
                 },
             ],
