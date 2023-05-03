@@ -1,7 +1,7 @@
 import {Collection} from "../../../src/models/image.js";
 import {Env} from "../../env.js";
 
-function getCollection(id: string): Collection {
+function getSampleCollection(id: string): Collection {
     return {
         id: id,
         title: 'Sample Collection',
@@ -9,7 +9,7 @@ function getCollection(id: string): Collection {
             {
                 id: 'Basis',
                 title: 'Basis',
-                src: './Basis.jpg',
+                src: '/Basis.jpg',
                 links: [
                     {
                         targetId: 'Bedeutung',
@@ -25,7 +25,7 @@ function getCollection(id: string): Collection {
             {
                 id: 'Bedeutung',
                 title: 'Bedeutung',
-                src: './Bedeutung.jpg',
+                src: '/Bedeutung.jpg',
                 links: [],
             },
         ],
@@ -35,10 +35,16 @@ function getCollection(id: string): Collection {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
     const uuid = crypto.randomUUID();
-    const collection = getCollection(uuid);
+    const collection = getSampleCollection(uuid);
     const collectionJson = JSON.stringify(collection);
 
     await context.env.MAIN.put('COLLECTIONS:' + uuid, collectionJson)
-    return new Response(collectionJson);
+    return new Response(collectionJson, {
+        status: 201,
+        headers: {
+            'Content-Type': 'application/json',
+            'Location': '/api/collections/' + uuid,
+        }
+    });
 }
 

@@ -5,10 +5,16 @@ import {useImageRectangle} from "../hooks/ImageRectangle.ts";
 import {useCollection} from "../api-client/collections.ts";
 import {Collection} from "../models/image.ts";
 import {BoxButton} from "../components/BoxButton.tsx";
+import {useParams} from "react-router-dom";
 
+function assertNotNull<T>(value: T | null | undefined): T {
+    if (value === null || value === undefined) throw new Error("Value is null");
+    return value;
+}
 
 function Viewer() {
-    const {data} = useCollection('some-collection-id');
+    const {collectionId} = useParams<{ collectionId: string }>();
+    const {data} = useCollection(assertNotNull(collectionId));
 
     if (data === undefined) return <div>Loading...</div>;
     return (
