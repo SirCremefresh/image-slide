@@ -1,4 +1,4 @@
-POST {{host}}/api/collections/example
+POST {{host}}/api/collections
 Content-Type: application/json
 Accept: application/json
 

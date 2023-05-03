@@ -5,6 +5,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     try {
         return await context.next();
     } catch (err) {
+        console.error(err);
         if (err instanceof ResponseError) {
             return err.toResponse();
         }
