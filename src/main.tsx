@@ -13,7 +13,7 @@ const router = createBrowserRouter([
         element: <Home/>,
     },
     {
-        path: "edit/:collectionId",
+        path: "edit/:collectionId/:secret",
         element: (
             <Editor/>
         ),

@@ -33,17 +33,40 @@ function getSampleCollection(id: string): Collection {
 }
 
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-    const uuid = crypto.randomUUID();
-    const collection = getSampleCollection(uuid);
-    const collectionJson = JSON.stringify(collection);
+async function hashMessage(secret: string): Promise<string> {
+    const hashBuffer = await crypto.subtle.digest(
+        'SHA-256',
+        new TextEncoder().encode(secret)
+    );
+    const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+    return hashArray
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+}
 
-    await context.env.MAIN.put('COLLECTIONS:' + uuid, collectionJson)
-    return new Response(collectionJson, {
+export const onRequestPost: PagesFunction<Env> = async (context) => {
+    const collectionId = crypto.randomUUID();
+    const collection = getSampleCollection(collectionId);
+    const secret = crypto.randomUUID();
+
+    const hashedSecret = await hashMessage(secret);
+
+    await context.env.MAIN.put(
+        'COLLECTIONS:' + collectionId,
+        JSON.stringify(collection),
+        {
+            metadata: {
+                hashedSecret: hashedSecret,
+            }
+        })
+    return new Response(JSON.stringify({
+        collectionId: collectionId,
+        secret: secret,
+    }), {
         status: 201,
         headers: {
             'Content-Type': 'application/json',
-            'Location': '/api/collections/' + uuid,
+            'Location': '/api/collections/' + collectionId,
         }
     });
 }

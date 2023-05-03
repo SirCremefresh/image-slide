@@ -6,11 +6,8 @@ import {useCollection} from "../api-client/collections.ts";
 import {Collection} from "../models/image.ts";
 import {BoxButton} from "../components/BoxButton.tsx";
 import {useParams} from "react-router-dom";
+import {assertNotNull} from "../util/assert.ts";
 
-function assertNotNull<T>(value: T | null | undefined): T {
-    if (value === null || value === undefined) throw new Error("Value is null");
-    return value;
-}
 
 function Viewer() {
     const {collectionId} = useParams<{ collectionId: string }>();

@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 export function Home() {
     const [collectionId, setCollectionId] = useState('');
@@ -11,14 +11,14 @@ export function Home() {
 
     const handleCreateCollection = async () => {
         try {
-            const response = await fetch('/api/collections/example', {
+            const response = await fetch('/api/collections', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
             const data = await response.json();
-            navigate(`/edit/${data.id}`);
+            navigate(`/edit/${data.collectionId}/${data.secret}`);
         } catch (error) {
             console.error('Failed to create collection:', error);
         }
@@ -55,13 +55,6 @@ export function Home() {
                         >
                             Create Collection
                         </button>
-                    </div>
-                    <div className={"pt-1"}>
-                        <Link
-                            to={"/view"}
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded block text-center w-full">
-                            Create Sample Collection
-                        </Link>
                     </div>
                 </div>
             </div>

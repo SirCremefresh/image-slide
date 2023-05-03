@@ -10,19 +10,31 @@ import {
     toRelativeRectangle
 } from "../models/graphic.ts";
 import {useImageRectangle} from "../hooks/ImageRectangle.ts";
-import {images} from "../store.ts";
 import {BoxButton} from "../components/BoxButton.tsx";
 import {FloatingToolbar} from "../components/FloatingToolbar.tsx";
-
+import {useParams} from "react-router-dom";
+import {useCollection} from "../api-client/collections.ts";
+import {assertNotNull} from "../util/assert.ts";
+import {Collection} from "../models/image.ts";
 
 function Editor() {
+    const {collectionId, secret} = useParams<{ collectionId: string, secret: string }>();
+    const {data} = useCollection(assertNotNull(collectionId));
+
+    if (data === undefined) return <div>Loading...</div>;
+    return (
+        <EditorLoaded collection={data} secret={assertNotNull(secret)}></EditorLoaded>
+    );
+}
+
+function EditorLoaded(props: { collection: Collection, secret: string }) {
     const [imageId, setImageId] = useState<string>('Basis');
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
     const [rectangles, setRectangles] = useState<PercentageRectangle[]>([]);
     const [imageRectangle, imageRef] = useImageRectangle();
 
     const image = () => {
-        const image = images.find((image) => image.id === imageId);
+        const image = props.collection.images.find((image) => image.id === imageId);
         if (!image) throw new Error(`Image with id ${imageId} not found`);
         return image;
     };
@@ -105,7 +117,7 @@ function Editor() {
                     }
                 </div>
                 <div className={"border-2 border-solid border-amber-950"}>
-                    {images.map((image, index) => (
+                    {props.collection.images.map((image, index) => (
                         <div key={index} className={"flex flex-row gap-2"}>
                             <img className={"w-40 h-20 rounded object-cover"} src={image.src} alt={image.title}/>
                             <div className={"flex flex-col"}>
