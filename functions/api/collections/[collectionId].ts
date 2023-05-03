@@ -22,12 +22,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
 async function getMetadataOrThrow<Z extends z.ZodType<any, any, any>>(kv: KVNamespace, key: string, z: Z): Promise<z.infer<Z>> {
     const object = await kv.getWithMetadata(key);
-    return parseOrThrow(z, object, 'server');
+    return parseOrThrow(z, object.metadata, 'server');
 }
 
 // noinspection JSUnusedGlobalSymbols
 export const onRequestPut: PagesFunction<Env> = async (context) => {
-    const collection = parseOrThrow(ZCollection, context.request.json());
+    const collection = parseOrThrow(ZCollection, await context.request.json());
     const secret = parseOrThrow(ZuUID, context.request.headers.get('Authorization'));
     const secretHash = await hashString(secret);
 

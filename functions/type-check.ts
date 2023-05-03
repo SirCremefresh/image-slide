@@ -11,7 +11,7 @@ class TypeCheckException extends ResponseError {
         public readonly error: z.ZodError,
         public readonly source: "user" | "server",
     ) {
-        super(`Could not parse ${JSON.stringify(object)} as ${schema.toString()} with error ${JSON.stringify(error)}`);
+        super(`Could not parse ${JSON.stringify(object)} with error ${JSON.stringify(error)}`);
         this.name = "TypeCheckException";
     }
 

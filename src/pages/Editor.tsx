@@ -1,10 +1,9 @@
-import {MouseEvent, useState} from 'react'
+import {MouseEvent, useCallback, useState} from 'react'
 import './Editor.css'
 import {
     buildRelativeRectangle,
     initialPaintingState,
     PaintingState,
-    PercentageRectangle,
     toPercentRectangle,
     toRelativePoint
 } from "../models/graphic.ts";
@@ -14,7 +13,7 @@ import {FloatingToolbar} from "../components/FloatingToolbar.tsx";
 import {useParams} from "react-router-dom";
 import {useCollection} from "../api-client/collections.ts";
 import {assertNotNull} from "../util/assert.ts";
-import {Collection} from "../models/image.ts";
+import {Collection, Image} from "../models/image.ts";
 
 function Editor() {
     const {collectionId, secret} = useParams<{ collectionId: string, secret: string }>();
@@ -27,13 +26,26 @@ function Editor() {
 }
 
 function EditorLoaded(props: { collection: Collection, secret: string }) {
-    const [imageId, setImageId] = useState<string>(props.collection.initialImageId);
-    const [rectangles, setRectangles] = useState<PercentageRectangle[]>([]);
+    const [collection, setCollection] = useState<Collection>(props.collection);
+    const [imageId, setImageId] = useState<string>(collection.initialImageId);
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
     const [imageRectangle, imageRef] = useImageRectangle();
 
+    const safeCollection = useCallback(async (newCollection: Collection) => {
+        console.log('safeCollection')
+        const response = await fetch(`/api/collections/${newCollection.collectionId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': props.secret,
+            },
+            body: JSON.stringify(newCollection),
+        });
+        console.log(response.status);
+    }, [props.secret]);
+
     const image = () => {
-        const image = props.collection.images.find((image) => image.imageId === imageId);
+        const image = collection.images.find((image) => image.imageId === imageId);
         if (!image) throw new Error(`Image with id ${imageId} not found`);
         return image;
     };
@@ -59,7 +71,26 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
     const finishRectangle = () => {
         if (!painting) return;
 
-        setRectangles((rectangles) => [...rectangles, painting.rectangle]);
+        const newCollection: Collection = {
+            ...collection,
+            images: collection.images.map((image): Image => {
+                    if (image.imageId !== imageId) return image;
+                    return {
+                        ...image,
+                        links: [
+                            ...image.links,
+                            {
+                                imageId: "imageId",
+                                rectangle: painting.rectangle
+                            },
+                        ]
+                    }
+                }
+            )
+        };
+
+        setCollection(newCollection);
+        safeCollection(newCollection);
         setPainting(undefined);
     }
 
@@ -94,12 +125,6 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
                             onClick={() => setImageId(link.imageId)}
                             key={index}
                             rectangle={link.rectangle}
-                        ></PercentageBoxButton>
-                    ))}
-                    {rectangles.map((rectangle, index) => (
-                        <PercentageBoxButton
-                            key={index}
-                            rectangle={rectangle}
                         ></PercentageBoxButton>
                     ))}
                     {
