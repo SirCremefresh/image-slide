@@ -41,7 +41,7 @@ export type ViewportRectangle = z.infer<typeof ZViewportRectangle>;
 
 export const ZPaintingState = z.object({
     start: ZRelativePoint,
-    rectangle: ZRelativeRectangle,
+    rectangle: ZPercentageRectangle,
 });
 export type PaintingState = z.infer<typeof ZPaintingState>;
 
@@ -94,10 +94,10 @@ export function initialPaintingState(start: RelativePoint): PaintingState {
     return {
         start,
         rectangle: {
-            width: 0,
-            height: 0,
-            relativeX: start.relativeX,
-            relativeY: start.relativeY,
+            percentageWidth: 0,
+            percentageHeight: 0,
+            percentageX: 0,
+            percentageY: 0,
         }
     }
 }

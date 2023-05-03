@@ -5,7 +5,7 @@ const ZCollectionId = z.string().min(1).max(100);
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
     const result = ZCollectionId.safeParse(context.params.collectionId);
-    if (result.success === false) {
+    if (!result.success) {
         return new Response(JSON.stringify(result.error), {status: 400});
     }
     const collection = await context.env.MAIN.get('COLLECTIONS:' + result.data, 'text')

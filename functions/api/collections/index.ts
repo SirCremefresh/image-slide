@@ -3,16 +3,17 @@ import {Env} from "../../env.js";
 
 function getSampleCollection(id: string): Collection {
     return {
-        id: id,
+        collectionId: id,
+        initialImageId: 'Basis',
         title: 'Sample Collection',
         images: [
             {
-                id: 'Basis',
+                imageId: 'Basis',
                 title: 'Basis',
                 src: '/Basis.jpg',
                 links: [
                     {
-                        targetId: 'Bedeutung',
+                        imageId: 'Bedeutung',
                         rectangle: {
                             percentageWidth: 9.078014184397164,
                             percentageHeight: 7.0962319151599695,
@@ -23,7 +24,7 @@ function getSampleCollection(id: string): Collection {
                 ],
             },
             {
-                id: 'Bedeutung',
+                imageId: 'Bedeutung',
                 title: 'Bedeutung',
                 src: '/Bedeutung.jpg',
                 links: [],
@@ -44,6 +45,8 @@ async function hashMessage(secret: string): Promise<string> {
         .join("");
 }
 
+// Is called by pages
+// noinspection JSUnusedGlobalSymbols
 export const onRequestPost: PagesFunction<Env> = async (context) => {
     const collectionId = crypto.randomUUID();
     const collection = getSampleCollection(collectionId);

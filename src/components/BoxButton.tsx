@@ -1,27 +1,26 @@
 import {MouseEvent} from "react";
-import {RelativeRectangle} from "../models/graphic.ts";
+import {PercentageRectangle} from "../models/graphic.ts";
 import {classNames} from "../util/classNames.ts";
 
-export function BoxButton(props: {
-    rectangle: RelativeRectangle,
+export function PercentageBoxButton(props: {
+    rectangle: PercentageRectangle,
     onClick?: (event: MouseEvent<HTMLDivElement>) => void,
     clickable?: boolean
 }) {
     const clickable = props.clickable ?? false;
-    const getRectangleStyle = (rectangle: RelativeRectangle) => {
-        return {
-            top: rectangle.relativeY + 'px',
-            left: rectangle.relativeX + 'px',
-            width: rectangle.width + 'px',
-            height: rectangle.height + 'px',
-        }
+
+    const style = {
+        top: props.rectangle.percentageY + '%',
+        left: props.rectangle.percentageX + '%',
+        width: props.rectangle.percentageWidth + '%',
+        height: props.rectangle.percentageHeight + '%',
     }
     return <div
         className={classNames('absolute box-border rounded-md shadow-sm hover:shadow-xl transition-shadow border-indigo-500 border-2 border-dashed bg-sky-500/50', clickable ? 'pointer-events-auto' : 'pointer-events-none')}
         onClick={(e) => {
             props.onClick?.(e);
         }}
-        style={getRectangleStyle(props.rectangle)}
+        style={style}
     >
     </div>
 }

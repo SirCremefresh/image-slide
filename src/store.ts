@@ -2,12 +2,12 @@ import {Image} from "./models/image.ts";
 
 export const images: Image[] = [
     {
-        id: 'Basis',
+        imageId: 'Basis',
         title: 'Basis',
         src: './Basis.jpg',
         links: [
             {
-                targetId: 'Bedeutung',
+                imageId: 'Bedeutung',
                 rectangle: {
                     percentageWidth: 9.078014184397164,
                     percentageHeight: 7.0962319151599695,
@@ -18,7 +18,7 @@ export const images: Image[] = [
         ],
     },
     {
-        id: 'Bedeutung',
+        imageId: 'Bedeutung',
         title: 'Bedeutung',
         src: './Bedeutung.jpg',
         links: [],

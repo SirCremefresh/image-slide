@@ -6,11 +6,10 @@ import {
     PaintingState,
     PercentageRectangle,
     toPercentRectangle,
-    toRelativePoint,
-    toRelativeRectangle
+    toRelativePoint
 } from "../models/graphic.ts";
 import {useImageRectangle} from "../hooks/ImageRectangle.ts";
-import {BoxButton} from "../components/BoxButton.tsx";
+import {PercentageBoxButton} from "../components/BoxButton.tsx";
 import {FloatingToolbar} from "../components/FloatingToolbar.tsx";
 import {useParams} from "react-router-dom";
 import {useCollection} from "../api-client/collections.ts";
@@ -28,13 +27,13 @@ function Editor() {
 }
 
 function EditorLoaded(props: { collection: Collection, secret: string }) {
-    const [imageId, setImageId] = useState<string>('Basis');
-    const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
+    const [imageId, setImageId] = useState<string>(props.collection.initialImageId);
     const [rectangles, setRectangles] = useState<PercentageRectangle[]>([]);
+    const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
     const [imageRectangle, imageRef] = useImageRectangle();
 
     const image = () => {
-        const image = props.collection.images.find((image) => image.id === imageId);
+        const image = props.collection.images.find((image) => image.imageId === imageId);
         if (!image) throw new Error(`Image with id ${imageId} not found`);
         return image;
     };
@@ -48,26 +47,20 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
         if (!painting) return;
         const start = painting.start;
         const currentMousePosition = toRelativePoint(imageRectangle, {viewportX: e.clientX, viewportY: e.clientY})
+        const relativeRectangle = buildRelativeRectangle(start, currentMousePosition);
+        const percentageRectangle = toPercentRectangle(imageRectangle, relativeRectangle);
 
         setPainting({
             start: start,
-            rectangle: buildRelativeRectangle(start, currentMousePosition)
+            rectangle: percentageRectangle
         });
     };
 
     const finishRectangle = () => {
         if (!painting) return;
 
-        const percentageRectangle = toPercentRectangle(imageRectangle, painting.rectangle);
-
-        setRectangles((rectangles) => [...rectangles, percentageRectangle]);
+        setRectangles((rectangles) => [...rectangles, painting.rectangle]);
         setPainting(undefined);
-    }
-
-    const getRectangles = () => {
-        return rectangles.map(
-            (rectangle) => toRelativeRectangle(imageRectangle, rectangle)
-        );
     }
 
     const handleEditTitle = () => {
@@ -83,8 +76,8 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
     };
 
     return (
-        <>
-            <div className={"flex flex-row gap-2"}>
+        <div className={"min-h-screen bg-gray-300 px-2"}>
+            <div className={"flex flex-row gap-2 pt-[80px]"}>
                 <div className="relative inline-block select-none" draggable={false}>
                     <img ref={imageRef}
                          className="block max-w-[100%] max-h-[100%] rounded"
@@ -97,32 +90,30 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
                          onMouseLeave={finishRectangle}
                     />
                     {image().links.map((link, index) => (
-                        <BoxButton
-                            onClick={() => setImageId(link.targetId)}
+                        <PercentageBoxButton
+                            onClick={() => setImageId(link.imageId)}
                             key={index}
-                            rectangle={toRelativeRectangle(imageRectangle, link.rectangle)}
-                        ></BoxButton>
+                            rectangle={link.rectangle}
+                        ></PercentageBoxButton>
                     ))}
-                    {getRectangles().map((rectangle, index) => (
-                        <BoxButton
+                    {rectangles.map((rectangle, index) => (
+                        <PercentageBoxButton
                             key={index}
                             rectangle={rectangle}
-                        ></BoxButton>
+                        ></PercentageBoxButton>
                     ))}
                     {
                         painting &&
-                        <BoxButton
+                        <PercentageBoxButton
                             rectangle={painting.rectangle}
-                        ></BoxButton>
+                        ></PercentageBoxButton>
                     }
                 </div>
-                <div className={"border-2 border-solid border-amber-950"}>
+                <div className={"shadow-md rounded-lg border border-gray-300 bg-white p-2"}>
                     {props.collection.images.map((image, index) => (
-                        <div key={index} className={"flex flex-row gap-2"}>
-                            <img className={"w-40 h-20 rounded object-cover"} src={image.src} alt={image.title}/>
-                            <div className={"flex flex-col"}>
-                                <span className={"text-sm"}>{image.title}</span>
-                            </div>
+                        <div key={index} className={"flex flex-col gap-2"}>
+                            <img className={"w-80 h-30 rounded object-cover"} src={image.src} alt={image.title}/>
+                            <span className={"text-sm"}>{image.title}</span>
                         </div>
                     ))}
                 </div>
@@ -135,7 +126,7 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
                 onCreate={handleCreate}
                 onEditMode={handleEditMode}
             />
-        </>
+        </div>
     );
 }
 
