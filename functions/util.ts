@@ -1,3 +1,5 @@
 import z from "zod";
 
-export const ZuUID = z.string().length(36);
+const uuidLength = 36;
+export const ZuUID = z.string().length(uuidLength);
+export const ZDoubleUUID = z.string().length(uuidLength * 2);

@@ -112,7 +112,7 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
                 <div className="relative inline-block select-none" draggable={false}>
                     <img ref={imageRef}
                          className="block max-w-[100%] max-h-[100%] rounded"
-                         src={image().src}
+                         src={"/api/collections/" + collection.collectionId + "/images/" + image().imageId}
                          alt={image().title}
                          draggable={false}
                          onMouseDown={createRectangle}
@@ -137,7 +137,11 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
                 <div className={"shadow-md rounded-lg border border-gray-300 bg-white p-2"}>
                     {props.collection.images.map((image, index) => (
                         <div key={index} className={"flex flex-col gap-2"}>
-                            <img className={"w-80 h-30 rounded object-cover"} src={image.src} alt={image.title}/>
+                            <img
+                                className={"w-80 h-30 rounded object-cover"}
+                                src={"/api/collections/" + collection.collectionId + "/images/" + image.imageId}
+                                alt={image.title}
+                            />
                             <span className={"text-sm"}>{image.title}</span>
                         </div>
                     ))}

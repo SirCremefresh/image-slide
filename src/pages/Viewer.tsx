@@ -18,7 +18,7 @@ function Viewer() {
 }
 
 function ViewerLoaded(props: { collection: Collection }) {
-    const [imageId, setImageId] = useState<string>('Basis');
+    const [imageId, setImageId] = useState<string>(props.collection.initialImageId);
 
     const image = useMemo(() => {
         const image = props.collection.images.find((image) => image.imageId === imageId);
@@ -42,7 +42,7 @@ function ViewerLoaded(props: { collection: Collection }) {
             <div className="relative inline-block select-none" draggable={false}>
                 <img
                     className="block max-w-[100%] max-h-[100%]"
-                    src={image.src}
+                    src={"/api/collections/" + props.collection.collectionId + "/images/" + image.imageId}
                     alt={image.title}
                     draggable={false}
                 />

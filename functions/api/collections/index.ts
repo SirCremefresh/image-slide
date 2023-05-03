@@ -1,36 +1,16 @@
 import {Collection} from "../../../src/models/image.js";
 import {Env} from "../../env.js";
 import {hashString} from "../../hash.js";
+import {getLocalImages} from "../../local-images.js";
+
 
 function getSampleCollection(id: string): Collection {
+    const localImages = getLocalImages(id);
     return {
         collectionId: id,
-        initialImageId: 'Basis',
+        initialImageId: localImages[0].imageId,
         title: 'Sample Collection',
-        images: [
-            {
-                imageId: 'Basis',
-                title: 'Basis',
-                src: '/Basis.jpg',
-                links: [
-                    {
-                        imageId: 'Bedeutung',
-                        rectangle: {
-                            percentageWidth: 9.078014184397164,
-                            percentageHeight: 7.0962319151599695,
-                            percentageX: 21.134751773049647,
-                            percentageY: 19.55577015934331
-                        },
-                    },
-                ],
-            },
-            {
-                imageId: 'Bedeutung',
-                title: 'Bedeutung',
-                src: '/Bedeutung.jpg',
-                links: [],
-            },
-        ],
+        images: localImages,
     }
 }
 
