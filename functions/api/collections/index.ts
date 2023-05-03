@@ -35,8 +35,6 @@ function getSampleCollection(id: string): Collection {
 }
 
 
-
-// Is called by pages
 // noinspection JSUnusedGlobalSymbols
 export const onRequestPost: PagesFunction<Env> = async (context) => {
     const collectionId = crypto.randomUUID();

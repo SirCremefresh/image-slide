@@ -1,8 +1,8 @@
 import z from "zod";
-import {Env} from "../../env.js";
-import {ZCollection} from "../../../src/models/image.js";
-import {hashString} from "../../hash.js";
-import {parseOrThrow} from "../../type-check.js";
+import {Env} from "../../../env.js";
+import {ZCollection} from "../../../../src/models/image.js";
+import {hashString} from "../../../hash.js";
+import {parseOrThrow} from "../../../type-check.js";
 
 const ZuUID = z.string().length(36);
 const ZCollectionMetadata = z.object({
