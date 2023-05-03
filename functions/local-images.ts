@@ -1,9 +1,10 @@
-export function getLocalImages(collectionId = '') {
+import {Image} from "../src/models/image.js";
+
+export function getLocalImages(collectionId = ''): Image[] {
     return [
         {
             imageId: collectionId + '6b324990-7b9f-4bc3-80bd-ebc9278ef0de',
             title: 'Obwaldner Taal',
-            src: '/Basis.jpg',
             links: [
                 {
                     imageId: collectionId + '80e7eaea-30bf-41e2-ac2a-a60dd92a11d6',
@@ -19,7 +20,6 @@ export function getLocalImages(collectionId = '') {
         {
             imageId: collectionId + '80e7eaea-30bf-41e2-ac2a-a60dd92a11d6',
             title: 'Giswilerstock',
-            src: '/Bedeutung.jpg',
             links: [],
         },
     ];

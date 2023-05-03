@@ -10,7 +10,6 @@ export type Link = z.infer<typeof ZLink>;
 export const ZImage = z.object({
     imageId: z.string(),
     title: z.string(),
-    src: z.string(),
     links: z.array(ZLink),
 });
 export type Image = z.infer<typeof ZImage>;
