@@ -9,14 +9,11 @@ const ZCollectionMetadata = z.object({
     hashedSecret: z.string(),
 });
 
-
 // noinspection JSUnusedGlobalSymbols
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-    const result = ZuUID.safeParse(context.params.collectionId);
-    if (!result.success) {
-        return new Response(JSON.stringify(result.error), {status: 400});
-    }
-    const collection = await context.env.MAIN.get('COLLECTIONS:' + result.data, 'text')
+    const collectionId = parseOrThrow(ZuUID, context.params.collectionId);
+
+    const collection = await context.env.MAIN.get('COLLECTIONS:' + collectionId, 'text')
     if (collection === null) {
         return new Response('Not found', {status: 404});
     }
