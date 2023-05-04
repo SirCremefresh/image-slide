@@ -14,6 +14,7 @@ import {useParams} from "react-router-dom";
 import {useCollection} from "../api-client/collections.ts";
 import {assertNotNull} from "../util/assert.ts";
 import {Collection, Image} from "../models/image.ts";
+import Modal from "../components/Modal.tsx";
 
 function Editor() {
     const {collectionId, secret} = useParams<{ collectionId: string, secret: string }>();
@@ -28,6 +29,7 @@ function Editor() {
 function EditorLoaded(props: { collection: Collection, secret: string }) {
     const [collection, setCollection] = useState<Collection>(props.collection);
     const [imageId, setImageId] = useState<string>(collection.initialImageId);
+    const [uploadModalOpen, setUploadModalOpen] = useState(false);
     const [painting, setPainting] = useState<PaintingState | undefined>(undefined);
     const [imageRectangle, imageRef] = useImageRectangle();
 
@@ -90,7 +92,7 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
         };
 
         setCollection(newCollection);
-        safeCollection(newCollection);
+        safeCollection(newCollection).then(() => console.log('saved'))
         setPainting(undefined);
     }
 
@@ -105,6 +107,10 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
     const handleEditMode = () => {
         console.log('Edit mode');
     };
+
+    const handleUpload = () => {
+        setUploadModalOpen(true);
+    }
 
     return (
         <div className={"min-h-screen bg-gray-300 px-2"}>
@@ -154,7 +160,10 @@ function EditorLoaded(props: { collection: Collection, secret: string }) {
                 onTitleChange={handleEditTitle}
                 onCreate={handleCreate}
                 onEditMode={handleEditMode}
+                onUpload={handleUpload}
             />
+
+            {uploadModalOpen && <Modal setOpenModal={setUploadModalOpen}/>}
         </div>
     );
 }

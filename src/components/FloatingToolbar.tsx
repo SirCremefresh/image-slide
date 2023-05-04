@@ -1,19 +1,21 @@
-import React, {useRef, useState} from 'react';
-import { PencilIcon, PlusIcon, CheckIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import {useRef, useState} from 'react';
+import {CheckIcon, CloudArrowUpIcon, PencilIcon, PlusIcon, XMarkIcon} from '@heroicons/react/20/solid';
 
 interface FloatingToolbarProps {
     initialTitle: string;
     onTitleChange: (newTitle: string) => void;
     onCreate: () => void;
     onEditMode: () => void;
+    onUpload: () => void;
 }
 
-export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
-                                                             initialTitle,
-                                                             onTitleChange,
-                                                             onCreate,
-                                                             onEditMode,
-                                                         }) => {
+export function FloatingToolbar({
+                                    initialTitle,
+                                    onTitleChange,
+                                    onCreate,
+                                    onEditMode,
+                                    onUpload,
+                                }: FloatingToolbarProps) {
     const [title, setTitle] = useState(initialTitle);
     const [editingTitle, setEditingTitle] = useState(false);
     const titleRef = useRef<HTMLSpanElement>(null);
@@ -40,7 +42,8 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     };
 
     return (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white text-gray-700 shadow-md p-2 rounded-lg flex items-center space-x-4 border border-gray-300">
+        <div
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white text-gray-700 shadow-md p-2 rounded-lg flex items-center space-x-4 border border-gray-300">
             <div className="flex-grow">
         <span
             ref={titleRef}
@@ -78,6 +81,10 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
                     <PencilIcon
                         className="h-5 w-5 text-gray-700 hover:text-black cursor-pointer transition-colors"
                         onClick={onEditMode}
+                    />
+                    <CloudArrowUpIcon
+                        className="h-5 w-5 text-gray-700 hover:text-black cursor-pointer transition-colors"
+                        onClick={onUpload}
                     />
                 </>
             )}
