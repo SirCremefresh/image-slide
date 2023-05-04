@@ -90,4 +90,4 @@ export function FloatingToolbar({
             )}
         </div>
     );
-};
+}
