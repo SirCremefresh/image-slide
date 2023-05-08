@@ -152,7 +152,10 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   return (
     <div className={"min-h-screen bg-gray-300 px-2"}>
       <div className={"flex flex-row gap-2 pt-[80px]"}>
-        <div className="relative inline-block select-none" draggable={false}>
+        <div
+          className="relative inline-block flex-1 select-none"
+          draggable={false}
+        >
           <img
             ref={imageRef}
             className="block max-h-[100%] max-w-[100%] rounded"
