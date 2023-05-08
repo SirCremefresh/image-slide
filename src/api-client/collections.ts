@@ -1,8 +1,9 @@
 import useSWR from "swr";
-import {Collection} from "../models/image.ts";
+import { Collection } from "../models/image.ts";
 
-export const fetcher = (args: RequestInfo) => fetch(args).then(res => res.json())
+export const fetcher = (args: RequestInfo) =>
+  fetch(args).then((res) => res.json());
 
 export function useCollection(collectionId: string) {
-    return useSWR<Collection>(`/api/collections/${collectionId}`, fetcher)
+  return useSWR<Collection>(`/api/collections/${collectionId}`, fetcher);
 }
