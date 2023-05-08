@@ -77,11 +77,13 @@ function ImageAutocomplete(props: {
 export default function LinkEditModal({
                                           setOpenModal,
                                           images,
-                                          onLinkCreated
+                                          onLinkCreated,
+                                          onCanceled,
                                       }: {
     setOpenModal: (open: boolean) => void;
     images: Image[];
     onLinkCreated: (image: Image) => void;
+    onCanceled: () => void;
 }) {
     const [selectedImage, setSelectedImage] = useState<Image | null>(null);
 
@@ -90,7 +92,10 @@ export default function LinkEditModal({
             <div className="fixed inset-0 z-10 overflow-y-auto">
                 <div
                     className="fixed inset-0 h-full w-full bg-black opacity-40"
-                    onClick={() => setOpenModal(false)}
+                    onClick={() => {
+                        setOpenModal(false);
+                        onCanceled();
+                    }}
                 ></div>
                 <div className="flex min-h-screen items-center px-4 py-8">
                     <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
@@ -102,7 +107,7 @@ export default function LinkEditModal({
                                                images={images}></ImageAutocomplete>
                             <div className="mt-3 items-center gap-2 sm:flex">
                                 <button
-                                    className="mt-2 w-full flex-1 rounded-md bg-blue-600 p-2.5 text-white outline-none ring-red-600 ring-offset-2 focus:ring-2"
+                                    className="mt-2 w-full flex-1 rounded-md bg-blue-600 p-2.5 text-white outline-none ring-indigo-600 ring-offset-2 focus:ring-2"
                                     disabled={selectedImage === null}
                                     onClick={() => {
                                         setOpenModal(false);
@@ -113,7 +118,10 @@ export default function LinkEditModal({
                                 </button>
                                 <button
                                     className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 outline-none ring-indigo-600 ring-offset-2 focus:ring-2"
-                                    onClick={() => setOpenModal(false)}
+                                    onClick={() => {
+                                        setOpenModal(false);
+                                        onCanceled();
+                                    }}
                                 >
                                     Cancel
                                 </button>

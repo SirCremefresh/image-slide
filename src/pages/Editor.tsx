@@ -141,8 +141,11 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
         setCollection(newCollection);
         safeCollection(newCollection).then(() => console.log("saved"));
         setPainting(undefined);
-
     };
+
+    const onLinkEditCanceled = () => {
+        setPainting(undefined);
+    }
     return (
         <div className={"min-h-screen bg-gray-300 px-2"}>
             <div className={"flex flex-row gap-2 pt-[80px]"}>
@@ -206,7 +209,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             />
 
             {linkEditModalOpen && <LinkEditModal onLinkCreated={onLinkCreate} images={collection.images}
-                                                 setOpenModal={setLinkEditModalOpen}/>}
+                                                 setOpenModal={setLinkEditModalOpen} onCanceled={onLinkEditCanceled}/>}
         </div>
     );
 }
