@@ -1,4 +1,4 @@
-import {MouseEvent, useCallback, useState} from "react";
+import {MouseEvent, useCallback, useMemo, useState} from "react";
 import "./Editor.css";
 import {
     buildRelativeRectangle,
@@ -32,6 +32,13 @@ function Editor() {
     );
 }
 
+function imageUrl(collectionId: string, imageId: string) {
+    return "/api/collections/" +
+        collectionId +
+        "/images/" +
+        imageId;
+}
+
 function EditorLoaded(props: { collection: Collection; secret: string }) {
     const [collection, setCollection] = useState<Collection>(props.collection);
     const [imageId, setImageId] = useState<string>(collection.initialImageId);
@@ -60,11 +67,14 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
         [props.secret]
     );
 
-    const image = () => {
-        const image = collection.images.find((image) => image.imageId === imageId);
+    const image = useMemo(() => {
+        const image = collection.images.find(
+            (image) => image.imageId === imageId
+        );
         if (!image) throw new Error(`Image with id ${imageId} not found`);
         return image;
-    };
+    }, [collection, imageId]);
+
 
     const createRectangle = (e: MouseEvent) => {
         const relativePoint = toRelativePoint(imageRectangle, {
@@ -153,20 +163,15 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
                     <img
                         ref={imageRef}
                         className="block max-h-[100%] max-w-[100%] rounded"
-                        src={
-                            "/api/collections/" +
-                            collection.collectionId +
-                            "/images/" +
-                            image().imageId
-                        }
-                        alt={image().title}
+                        src={imageUrl(collection.collectionId, image.imageId)}
+                        alt={image.title}
                         draggable={false}
                         onMouseDown={createRectangle}
                         onMouseMove={updateRectangle}
                         onMouseUp={finishRectangle}
                         onMouseLeave={finishRectangle}
                     />
-                    {image().links.map((link, index) => (
+                    {image.links.map((link, index) => (
                         <PercentageBoxButton
                             onClick={() => setImageId(link.imageId)}
                             key={index}
@@ -186,12 +191,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
                         <div onClick={() => setImageId(image.imageId)} key={index} className={"flex flex-col gap-2"}>
                             <img
                                 className={"h-30 w-80 rounded object-cover"}
-                                src={
-                                    "/api/collections/" +
-                                    collection.collectionId +
-                                    "/images/" +
-                                    image.imageId
-                                }
+                                src={imageUrl(collection.collectionId, image.imageId)}
                                 alt={image.title}
                             />
                             <span className={"text-sm"}>{image.title}</span>
