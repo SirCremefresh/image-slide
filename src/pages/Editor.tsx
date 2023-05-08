@@ -183,7 +183,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
                     className={"rounded-lg border border-gray-300 bg-white p-2 shadow-md"}
                 >
                     {props.collection.images.map((image, index) => (
-                        <div key={index} className={"flex flex-col gap-2"}>
+                        <div onClick={() => setImageId(image.imageId)} key={index} className={"flex flex-col gap-2"}>
                             <img
                                 className={"h-30 w-80 rounded object-cover"}
                                 src={
