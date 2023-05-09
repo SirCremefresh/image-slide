@@ -15,5 +15,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     if (image === null) {
         return new Response('Not found', {status: 404});
     }
-    return new Response(image.body);
+    return new Response(image.body, {
+        headers: {
+            'Content-Type': 'image/jpeg',
+            'Cache-Control': 'public, max-age=31536000, immutable',
+        }
+    });
 }
