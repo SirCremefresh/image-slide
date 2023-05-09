@@ -5,7 +5,7 @@ import {getLocalImages} from "../../local-images.js";
 
 
 function getSampleCollection(id: string): Collection {
-    const localImages = getLocalImages(id);
+    const localImages = getLocalImages();
     return {
         collectionId: id,
         initialImageId: localImages[0].imageId,

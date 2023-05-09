@@ -5,7 +5,7 @@ import {hashString} from "../../../hash.js";
 import {parseOrThrow} from "../../../type-check.js";
 
 const ZuUID = z.string().length(36);
-const ZCollectionMetadata = z.object({
+export const ZCollectionMetadata = z.object({
     hashedSecret: z.string(),
 });
 
