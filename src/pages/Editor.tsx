@@ -149,14 +149,16 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     };
 
     const onFileUploaded = (newImage: Image) => {
-        const newCollection: Collection = {
-            ...collection,
-            images: [...collection.images, newImage],
-        };
+        setCollection(collection => {
+            const newCollection = {
+                ...collection,
+                images: [...collection.images, newImage],
+            };
+            safeCollection(newCollection).then(() => console.log("saved"));
+            console.log("onFileUploaded", newImage);
+            return newCollection
+        });
 
-        setCollection(newCollection);
-        safeCollection(newCollection).then(() => console.log("saved"));
-        console.log("onFileUploaded", newImage);
     };
 
     const onLinkEditCanceled = () => {
@@ -198,7 +200,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
                 <div
                     className={"rounded-lg border border-gray-300 bg-white p-2 shadow-md"}
                 >
-                    {props.collection.images.map((image, index) => (
+                    {collection.images.map((image, index) => (
                         <div
                             onClick={() => setImageId(image.imageId)}
                             key={index}
