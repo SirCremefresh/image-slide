@@ -20,7 +20,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return new Response(collection);
 }
 
-async function getMetadataOrThrow<Z extends z.ZodType<any, any, any>>(kv: KVNamespace, key: string, z: Z): Promise<z.infer<Z>> {
+export async function getMetadataOrThrow<Z extends z.ZodType<any, any, any>>(kv: KVNamespace, key: string, z: Z): Promise<z.infer<Z>> {
     const object = await kv.getWithMetadata(key);
     return parseOrThrow(z, object.metadata, 'server');
 }

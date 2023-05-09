@@ -69,6 +69,7 @@ export function FileUploadModal({
             const progress = Math.round(
               (progressEvent.loaded / assertNotNull(progressEvent.total)) * 100
             );
+            console.log(progress);
             setUploadProgress(progress);
           },
         }
@@ -186,7 +187,7 @@ export function FileUploadModal({
                     // setOpenModal(false);
                   }}
                 >
-                  Delete
+                  Upload
                 </button>
                 <button
                   className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 outline-none ring-indigo-600 ring-offset-2 focus:ring-2"
