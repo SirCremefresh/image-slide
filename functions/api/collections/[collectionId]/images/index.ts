@@ -21,7 +21,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     console.log('file size', file.size);
     console.log('title', formData.get('title'));
 
-    const imageId = collectionId + crypto.randomUUID();
+    const imageId = crypto.randomUUID();
 
     await context.env.IMAGES.put(collectionId + '_' + imageId, file.stream())
 
