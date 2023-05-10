@@ -1,4 +1,4 @@
 import z from "zod";
 
-const uuidLength = 36;
-export const ZuUID = z.string().length(uuidLength);
+export const ZuUID = z.string().length(36);
+export type UUID = string;

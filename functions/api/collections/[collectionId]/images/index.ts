@@ -1,7 +1,7 @@
-import {Env} from "../../../../env.js";
-import {ZuUID} from "../../../../util.js";
-import {parseOrThrow} from "../../../../type-check.js";
-import {hashString} from "../../../../hash.js";
+import {Env} from "@function/util/env.js";
+import {ZuUID} from "@function/util.js";
+import {parseOrThrow} from "@function/type-check.js";
+import {hashString} from "@function/util/hash.js";
 import {getMetadataOrThrow, ZCollectionMetadata} from "../index.js";
 
 // noinspection JSUnusedGlobalSymbols
@@ -18,8 +18,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
     const formData: FormData = await context.request.formData();
     const file = formData.get('file') as File;
-    console.log('file size', file.size);
-    console.log('title', formData.get('title'));
 
     const imageId = crypto.randomUUID();
 

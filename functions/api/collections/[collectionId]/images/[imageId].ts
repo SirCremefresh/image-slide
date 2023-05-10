@@ -1,7 +1,7 @@
-import {Env} from "../../../../env.js";
-import {parseOrThrow} from "../../../../type-check.js";
-import {ZuUID} from "../../../../util.js";
-import {localImageIds} from "../../../../local-images.js";
+import {Env} from "@function/util/env.js";
+import {parseOrThrow} from "@function/type-check.js";
+import {ZuUID} from "@function/util.js";
+import {localImageIds} from "@function/sample-data.js";
 
 // noinspection JSUnusedGlobalSymbols
 export const onRequestGet: PagesFunction<Env> = async (context) => {

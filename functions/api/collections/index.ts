@@ -1,18 +1,6 @@
-import {Collection} from "../../../src/models/image.js";
-import {Env} from "../../env.js";
-import {hashString} from "../../hash.js";
-import {getLocalImages} from "../../local-images.js";
-
-
-function getSampleCollection(id: string): Collection {
-    const localImages = getLocalImages();
-    return {
-        collectionId: id,
-        initialImageId: localImages[0].imageId,
-        title: 'Sample Collection',
-        images: localImages,
-    }
-}
+import {Env} from "@function/util/env.js";
+import {hashString} from "@function/util/hash.js";
+import {getSampleCollection} from "@function/sample-data.js";
 
 
 // noinspection JSUnusedGlobalSymbols

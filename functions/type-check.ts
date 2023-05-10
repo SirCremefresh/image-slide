@@ -30,6 +30,7 @@ class TypeCheckException extends ResponseError {
 }
 
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function parseOrThrow<Z extends z.ZodType<any, any, any>>(e: Z, object: any, source: 'user' | 'server' = 'user'): z.infer<Z> {
     const result = e.safeParse(object);
     if (!result.success) {

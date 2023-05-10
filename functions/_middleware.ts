@@ -1,4 +1,4 @@
-import {Env} from "./env.js";
+import {Env} from "./util/env.js";
 import {ResponseError} from "./type-check.js";
 
 export const onRequest: PagesFunction<Env> = async (context) => {
