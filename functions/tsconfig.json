@@ -12,6 +12,9 @@
     "paths": {
       "@function/*": [
         "./*"
+      ],
+      "@common/*": [
+        "../common/*"
       ]
     },
     "strict": true

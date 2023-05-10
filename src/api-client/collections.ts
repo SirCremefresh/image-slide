@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { Collection } from "../models/image.ts";
+import { Collection } from "../../common/models/image.ts";
 
 export const fetcher = (args: RequestInfo) =>
   fetch(args).then((res) => res.json());

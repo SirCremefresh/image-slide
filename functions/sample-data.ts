@@ -1,4 +1,4 @@
-import {Collection, Image} from "../src/models/image.js";
+import {Collection, Image} from "@common/models/image.js";
 
 const sampleImages: Image[] = [
     {

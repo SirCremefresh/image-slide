@@ -1,6 +1,6 @@
 import z from "zod";
 import {Env} from "@function/util/env.js";
-import {ZCollection} from "@function/../src/models/image.js";
+import {ZCollection} from "../../../../common/models/image.js";
 import {hashString} from "@function/util/hash.js";
 import {parseOrThrow} from "@function/type-check.js";
 

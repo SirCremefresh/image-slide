@@ -17,9 +17,14 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@common/*": [
+        "./common/*"
+      ]
+    }
   },
   "exclude": ["functions/**/*"],
-  "include": ["src"],
+  "include": ["src", "common"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
