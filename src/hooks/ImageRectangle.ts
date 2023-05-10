@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { ViewportRectangle } from "../../common/models/graphic.ts";
+
+import { ViewportRectangle } from "@common/models/rectangles.ts";
 
 export function useImageRectangle(): [
   ViewportRectangle,

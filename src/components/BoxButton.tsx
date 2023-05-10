@@ -1,6 +1,6 @@
 import { MouseEvent } from "react";
-import { PercentageRectangle } from "../../common/models/graphic.ts";
 import { classNames } from "../util/classNames.ts";
+import { PercentageRectangle } from "@common/models/rectangles.ts";
 
 export function PercentageBoxButton(props: {
   rectangle: PercentageRectangle;

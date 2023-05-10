@@ -1,5 +1,5 @@
-import { ZPercentageRectangle } from "./graphic.ts";
 import z from "zod";
+import {ZPercentageRectangle} from "@common/models/rectangles.ts";
 
 export const ZLink = z.object({
   imageId: z.string(),

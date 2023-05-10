@@ -1,12 +1,9 @@
 import { MouseEvent, useCallback, useMemo, useState } from "react";
 import "./Editor.css";
 import {
-  buildRelativeRectangle,
   initialPaintingState,
   PaintingState,
-  toPercentRectangle,
-
-} from "@common/models/graphic.ts";
+} from "@common/models/painting-state.ts";
 import { useImageRectangle } from "../hooks/ImageRectangle.ts";
 import { PercentageBoxButton } from "../components/BoxButton.tsx";
 import { FloatingToolbar } from "../components/FloatingToolbar.tsx";
@@ -16,7 +13,11 @@ import { assertNotNull } from "../util/assert.ts";
 import { Collection, Image } from "@common/models/collection.ts";
 import LinkEditModal from "../components/LinkEditModal.tsx";
 import { FileUploadModal } from "../components/FileUploadModal.tsx";
-import {toRelativePoint} from "@common/models/points.ts";
+import { toRelativePoint } from "@common/models/points.ts";
+import {
+  buildRelativeRectangle,
+  toPercentRectangle,
+} from "@common/models/rectangles.ts";
 
 function Editor() {
   const { collectionId, secret } = useParams<{
