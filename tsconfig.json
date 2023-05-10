@@ -19,9 +19,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@common/*": [
-        "./common/*"
-      ]
+      "@common/*": ["./common/*"]
     }
   },
   "exclude": ["functions/**/*"],

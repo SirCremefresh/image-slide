@@ -1,5 +1,5 @@
 import z from "zod";
-import {ZPercentageRectangle} from "@common/models/rectangles.ts";
+import { ZPercentageRectangle } from "@common/models/rectangles.ts";
 
 export const ZLink = z.object({
   imageId: z.string(),
@@ -21,3 +21,8 @@ export const ZCollection = z.object({
   images: z.array(ZImage),
 });
 export type Collection = z.infer<typeof ZCollection>;
+
+export const ZCollectionMetadata = z.object({
+  hashedSecret: z.string(),
+});
+export type CollectionMetadata = z.infer<typeof ZCollectionMetadata>;
