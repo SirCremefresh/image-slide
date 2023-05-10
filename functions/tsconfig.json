@@ -18,5 +18,12 @@
       ]
     },
     "strict": true
-  }
+  },
+  "include": [
+    ".",
+    "../common"
+  ],
+  "exclude": [
+    "../src/**/*"
+  ]
 }
