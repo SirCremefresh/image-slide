@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Image } from "@common/models/collection.ts";
 import { Combobox } from "@headlessui/react";
 import { classNames } from "../util/classNames.ts";
-import {assertNotNullOrUndefined} from "@common/util/assert-util.ts";
+import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
 
 function ImageAutocomplete(props: {
   images: Image[];

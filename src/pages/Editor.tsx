@@ -17,7 +17,7 @@ import {
   buildRelativeRectangle,
   toPercentRectangle,
 } from "@common/models/rectangles.ts";
-import {assertNotNullOrUndefined} from "@common/util/assert-util.ts";
+import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
 
 function Editor() {
   const { collectionId, secret } = useParams<{
