@@ -1,6 +1,6 @@
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
-import { Image } from "../../common/models/image.ts";
+import { Image } from "@common/models/collection.ts";
 import { Combobox } from "@headlessui/react";
 import { classNames } from "../util/classNames.ts";
 import { assertNotNull } from "../util/assert.ts";

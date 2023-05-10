@@ -1,6 +1,6 @@
 import z from "zod";
 import {Env} from "@function/util/env.js";
-import {ZCollection} from "../../../../common/models/image.js";
+import {Collection, ZCollection} from "@common/models/image.js";
 import {hashString} from "@function/util/hash.js";
 import {parseOrThrow} from "@function/type-check.js";
 
@@ -27,7 +27,7 @@ export async function getMetadataOrThrow<Z extends z.ZodType<any, any, any>>(kv:
 
 // noinspection JSUnusedGlobalSymbols
 export const onRequestPut: PagesFunction<Env> = async (context) => {
-    const collection = parseOrThrow(ZCollection, await context.request.json());
+    const collection: Collection = parseOrThrow(ZCollection, await context.request.json());
     const secret = parseOrThrow(ZuUID, context.request.headers.get('Authorization'));
     const secretHash = await hashString(secret);
 

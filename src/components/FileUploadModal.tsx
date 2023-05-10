@@ -1,7 +1,7 @@
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { ChangeEvent, useState } from "react";
 import imageCompression, { Options } from "browser-image-compression";
-import type { Image } from "../../common/models/image.ts";
+import type { Image } from "@common/models/collection.ts";
 import axios from "axios";
 import { assertNotNull } from "../util/assert.ts";
 

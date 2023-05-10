@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import "./Viewer.css";
 import { useCollection } from "../api-client/collections.ts";
-import { Collection } from "@common/models/image.ts";
+import { Collection } from "@common/models/collection.ts";
 import { PercentageBoxButton } from "../components/BoxButton.tsx";
 import { useParams } from "react-router-dom";
 import { assertNotNull } from "../util/assert.ts";
