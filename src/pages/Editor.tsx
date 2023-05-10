@@ -9,7 +9,6 @@ import { PercentageBoxButton } from "../components/BoxButton.tsx";
 import { FloatingToolbar } from "../components/FloatingToolbar.tsx";
 import { useParams } from "react-router-dom";
 import { useCollection } from "../api-client/collections.ts";
-import { assertNotNull } from "../util/assert.ts";
 import { Collection, Image } from "@common/models/collection.ts";
 import LinkEditModal from "../components/LinkEditModal.tsx";
 import { FileUploadModal } from "../components/FileUploadModal.tsx";
@@ -18,19 +17,20 @@ import {
   buildRelativeRectangle,
   toPercentRectangle,
 } from "@common/models/rectangles.ts";
+import {assertNotNullOrUndefined} from "@common/util/assert-util.ts";
 
 function Editor() {
   const { collectionId, secret } = useParams<{
     collectionId: string;
     secret: string;
   }>();
-  const { data } = useCollection(assertNotNull(collectionId));
+  const { data } = useCollection(assertNotNullOrUndefined(collectionId));
 
   if (data === undefined) return <div>Loading...</div>;
   return (
     <EditorLoaded
       collection={data}
-      secret={assertNotNull(secret)}
+      secret={assertNotNullOrUndefined(secret)}
     ></EditorLoaded>
   );
 }

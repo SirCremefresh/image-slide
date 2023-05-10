@@ -3,7 +3,7 @@ import { ChangeEvent, useState } from "react";
 import imageCompression, { Options } from "browser-image-compression";
 import type { Image } from "@common/models/collection.ts";
 import axios from "axios";
-import { assertNotNull } from "../util/assert.ts";
+import {assertNotNullOrUndefined} from "@common/util/assert-util.ts";
 
 function TitleInput(props: { text: string; setText: (text: string) => void }) {
   return (
@@ -72,7 +72,7 @@ export function FileUploadModal({
           },
           onUploadProgress: (progressEvent) => {
             const progress = Math.round(
-              (progressEvent.loaded / assertNotNull(progressEvent.total)) * 100
+              (progressEvent.loaded / assertNotNullOrUndefined(progressEvent.total)) * 100
             );
             console.log(progress);
             setUploadProgress(progress);

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Image } from "@common/models/collection.ts";
 import { Combobox } from "@headlessui/react";
 import { classNames } from "../util/classNames.ts";
-import { assertNotNull } from "../util/assert.ts";
+import {assertNotNullOrUndefined} from "@common/util/assert-util.ts";
 
 function ImageAutocomplete(props: {
   images: Image[];
@@ -126,7 +126,7 @@ export default function LinkEditModal({
                   disabled={selectedImage === null}
                   onClick={() => {
                     setOpenModal(false);
-                    onLinkCreated(assertNotNull(selectedImage));
+                    onLinkCreated(assertNotNullOrUndefined(selectedImage));
                   }}
                 >
                   Create
