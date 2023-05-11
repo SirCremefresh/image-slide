@@ -5,6 +5,10 @@ import {
 } from "@common/models/rectangles.ts";
 import { assertType, TypeEqualityGuard } from "@common/util/type-check.ts";
 import { ZuUID } from "@common/models/uuid.ts";
+import {
+  EXISTING_LINK_REFERENCES_REFINEMENT,
+  UNIQUE_IMAGE_ID_REFINEMENT,
+} from "@common/models/collection-refinements.ts";
 
 export const ZLink = z.object({
   imageId: z.string(),
@@ -34,17 +38,8 @@ export const ZCollection = z.object({
   backgroundColor: z.string().refine((s) => /^#[0-9a-fA-F]{6}$/i.test(s)),
   images: z
     .array(ZImage)
-    .refine((images) => {
-      const imageIds = new Set(images.map((image) => image.imageId));
-      return imageIds.size === images.length;
-    })
-    .refine((images) => {
-      const imageIds = new Set(images.map((image) => image.imageId));
-      const linkIds = new Set(
-        images.flatMap((image) => image.links.map((link) => link.imageId))
-      );
-      return Array.from(linkIds).every((linkId) => imageIds.has(linkId));
-    }),
+    .refine(...UNIQUE_IMAGE_ID_REFINEMENT)
+    .refine(...EXISTING_LINK_REFERENCES_REFINEMENT),
 });
 export type Collection = {
   collectionId: string;
