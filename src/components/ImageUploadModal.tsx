@@ -5,6 +5,7 @@ import { uploadImage } from "../api-client/images.ts";
 import { ImageUploadInput } from "./ImageUploadInput.tsx";
 import { classNames } from "../util/class-names.ts";
 import { isNullOrUndefined } from "@common/util/assert-util.ts";
+import { LoadingSpinner } from "./LoadingSpinner.tsx";
 
 function TitleInput(props: {
   text: string;
@@ -68,15 +69,20 @@ export function ImageUploadModal({
   const [isTitleDirty, setIsTitleDirty] = useState(false);
   const [isImageDirty, setIsImageDirty] = useState(false);
   const [file, setFile] = useState<undefined | File>(undefined);
+  const [hasUploadError, setHasUploadError] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const uploadFileWithAxios = async () => {
+    setHasUploadError(false);
     setIsTitleDirty(true);
     setIsImageDirty(true);
     if (isNullOrUndefined(file)) return;
     if (title.length === 0) return;
 
     try {
+      setIsUploading(true);
       const imageId = await uploadImage(collectionId, file, secret);
+      setIsUploading(false);
       onFileUploaded({
         imageId,
         title: title,
@@ -84,53 +90,63 @@ export function ImageUploadModal({
       });
       setOpenModal(false);
     } catch (err) {
-      console.log(err);
+      console.error("Error uploading image", err);
+      setHasUploadError(true);
     }
   };
 
   return (
-    <>
-      <div className="fixed inset-0 z-10 overflow-y-auto">
-        <div
-          className="fixed inset-0 h-full w-full bg-black opacity-40"
-          onClick={() => setOpenModal(false)}
-        ></div>
-        <div className="flex min-h-screen items-center px-4 py-8">
-          <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
-            <div className="mt-2 text-center sm:ml-4 sm:text-left">
-              <h4 className="text-lg font-medium text-gray-800">
-                Upload Image
-              </h4>
-              <div className="flex w-full items-center justify-center">
-                <ImageUploadInput
-                  onFileSelected={(file) => setFile(file)}
-                  isImageDirty={isImageDirty}
-                />
-              </div>
-              <TitleInput
-                setText={setTitle}
-                text={title}
-                isDirty={isTitleDirty}
-                setIsDirty={setIsTitleDirty}
+    <div className="fixed inset-0 z-10 overflow-y-auto">
+      <div
+        className="fixed inset-0 h-full w-full bg-black opacity-40"
+        onClick={() => setOpenModal(false)}
+      ></div>
+      <div className="flex min-h-screen items-center px-4 py-8">
+        <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
+          <div className="mt-2 text-center sm:ml-4 sm:text-left">
+            <h4 className="text-lg font-medium text-gray-800">Upload Image</h4>
+            <div className="flex w-full items-center justify-center">
+              <ImageUploadInput
+                onFileSelected={(file) => setFile(file)}
+                isImageDirty={isImageDirty}
               />
-              <div className="mt-3 items-center gap-2 sm:flex">
-                <button
-                  className="mt-2 w-full flex-1 rounded-md bg-blue-600 p-2.5 text-white outline-none ring-blue-500  ring-offset-2 focus:ring-2"
-                  onClick={uploadFileWithAxios}
-                >
-                  Upload
-                </button>
-                <button
-                  className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 outline-none ring-blue-500 ring-offset-2 focus:ring-2"
-                  onClick={() => setOpenModal(false)}
-                >
-                  Cancel
-                </button>
-              </div>
             </div>
+            <TitleInput
+              setText={setTitle}
+              text={title}
+              isDirty={isTitleDirty}
+              setIsDirty={setIsTitleDirty}
+            />
+            {hasUploadError && (
+              <p className="mt-2 text-sm text-red-600">
+                Upload failed, please try again.
+              </p>
+            )}
+            <div className="mt-3 items-center gap-2 sm:flex">
+              <button
+                className="mt-2 w-full flex-1 rounded-md bg-blue-600 p-2.5 text-white outline-none ring-blue-500  ring-offset-2 focus:ring-2"
+                onClick={uploadFileWithAxios}
+              >
+                Upload
+              </button>
+              <button
+                className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 outline-none ring-blue-500 ring-offset-2 focus:ring-2"
+                onClick={() => setOpenModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+          <div
+            className={`${
+              isUploading ? "flex" : "hidden"
+            } absolute left-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center bg-white bg-opacity-80`}
+          >
+            <LoadingSpinner />
+            <p className="text-center">Uploading...</p>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
