@@ -41,7 +41,9 @@ function imageUrl(collectionId: string, imageId: string) {
 
 function EditorLoaded(props: { collection: Collection; secret: string }) {
   const [collection, setCollection] = useState<Collection>(props.collection);
-  const [imageId, setImageId] = useState<string>(collection.initialImageId);
+  const [imageId, setImageId] = useState<string | undefined>(
+    collection.images.at(0)?.imageId
+  );
   const [linkEditModalOpen, setLinkEditModalOpen] = useState(false);
   const [fileUploadModalOpen, setFileUploadModalOpen] = useState(false);
   const [painting, setPainting] = useState<PaintingState | undefined>(
@@ -219,15 +221,23 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             <div
               onClick={() => setImageId(image.imageId)}
               key={index}
-              className={"flex flex-col gap-2"}
+              className={"relative"}
             >
               <img
-                className={"h-30 w-80 rounded object-cover"}
+                className={"w-[100%] rounded object-cover"}
                 src={imageUrl(collection.collectionId, image.imageId)}
                 alt={image.title}
                 loading={"lazy"}
               />
-              <span className={"text-sm"}>{image.title}</span>
+              <div
+                className={
+                  "absolute bottom-0 left-0 w-[100%] rounded-b-lg bg-black/50"
+                }
+              >
+                <span className={"text-sm font-semibold text-white"}>
+                  {image.title}
+                </span>
+              </div>
             </div>
           ))}
         </div>

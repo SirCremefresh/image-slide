@@ -30,13 +30,13 @@ assertType<TypeEqualityGuard<Image, z.infer<typeof ZImage>>>();
 export const ZCollection = z.object({
   collectionId: z.string(),
   title: z.string(),
-  initialImageId: z.string(),
+  backgroundColor: z.string(),
   images: z.array(ZImage),
 });
 export type Collection = {
   collectionId: string;
   title: string;
-  initialImageId: string;
+  backgroundColor: string;
   images: Image[];
 };
 assertType<TypeEqualityGuard<Collection, z.infer<typeof ZCollection>>>();

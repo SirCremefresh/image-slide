@@ -15,32 +15,36 @@ function Viewer() {
 }
 
 function ViewerLoaded(props: { collection: Collection }) {
-  const [imageId, setImageId] = useState<string>(
-    props.collection.initialImageId
+  const [imageId, setImageId] = useState<string | undefined>(
+    props.collection.images.at(0)?.imageId
   );
 
-  const image = useMemo(() => {
+  const current = useMemo(() => {
+    if (imageId === undefined) return undefined;
+
     const image = props.collection.images.find(
       (image) => image.imageId === imageId
     );
-    if (!image) throw new Error(`Image with id ${imageId} not found`);
-    return image;
+    if (image === undefined) return undefined;
+
+    const links = image.links.map((link, index) => {
+      return (
+        <PercentageBoxButton
+          onClick={() => setImageId(link.imageId)}
+          clickable={true}
+          key={index}
+          rectangle={link.rectangle}
+        ></PercentageBoxButton>
+      );
+    });
+
+    return {
+      image,
+      links,
+    };
   }, [props.collection, imageId]);
 
-  const links = useMemo(
-    () =>
-      image.links.map((link, index) => {
-        return (
-          <PercentageBoxButton
-            onClick={() => setImageId(link.imageId)}
-            clickable={true}
-            key={index}
-            rectangle={link.rectangle}
-          ></PercentageBoxButton>
-        );
-      }),
-    [image]
-  );
+  if (current === undefined) return <div>Loading...</div>;
 
   return (
     <div className={"grid min-h-screen place-content-center"}>
@@ -51,12 +55,12 @@ function ViewerLoaded(props: { collection: Collection }) {
             "/api/collections/" +
             props.collection.collectionId +
             "/images/" +
-            image.imageId
+            current.image.imageId
           }
-          alt={image.title}
+          alt={current.image.title}
           draggable={false}
         />
-        {links}
+        {current.links}
       </div>
     </div>
   );

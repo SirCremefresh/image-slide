@@ -19,7 +19,17 @@ const sampleImages: Image[] = [
   {
     imageId: "80e7eaea-30bf-41e2-ac2a-a60dd92a11d6",
     title: "Giswilerstock",
-    links: [],
+    links: [
+      {
+        imageId: "6b324990-7b9f-4bc3-80bd-ebc9278ef0de",
+        rectangle: {
+          percentageWidth: 8.061002178649238,
+          percentageHeight: 11.154684095860567,
+          percentageX: 55.773420479302835,
+          percentageY: 18.823529411764707,
+        },
+      },
+    ],
   },
 ];
 
@@ -30,7 +40,7 @@ export const localImageIds = new Set(
 export function getSampleCollection(id: string): Collection {
   return {
     collectionId: id,
-    initialImageId: sampleImages[0].imageId,
+    backgroundColor: "#EOEOEO",
     title: "Sample Collection",
     images: sampleImages,
   };
