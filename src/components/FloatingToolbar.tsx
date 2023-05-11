@@ -6,6 +6,51 @@ import {
   PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
+import { Popover, Transition } from "@headlessui/react";
+
+import { usePopper } from "react-popper";
+import { HexColorPicker } from "react-colorful";
+import { EyeDropperIcon } from "@heroicons/react/24/solid";
+
+function BackgroundColorSelector() {
+  const [referenceElement, setReferenceElement] =
+    useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null
+  );
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom",
+    modifiers: [{ name: "offset", options: { offset: [0, 10] } }],
+  });
+  const [color, setColor] = useState("#aabbcc");
+
+  return (
+    <Popover>
+      <Popover.Button ref={setReferenceElement}>
+        <EyeDropperIcon
+          style={{ fill: color }}
+          className={`h-5 w-5 cursor-pointer stroke-gray-700 text-gray-700 transition-colors hover:text-black`}
+        />
+      </Popover.Button>
+      <Transition
+        enter="transition duration-100 ease-out"
+        enterFrom="transform scale-95 opacity-0"
+        enterTo="transform scale-100 opacity-100"
+        leave="transition duration-75 ease-out"
+        leaveFrom="transform scale-100 opacity-100"
+        leaveTo="transform scale-95 opacity-0"
+      >
+        <Popover.Panel
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <HexColorPicker color={color} onChange={setColor} />
+        </Popover.Panel>
+      </Transition>
+    </Popover>
+  );
+}
 
 interface FloatingToolbarProps {
   initialTitle: string;
@@ -83,6 +128,7 @@ export function FloatingToolbar({
             className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
             onClick={onCreate}
           />
+          <BackgroundColorSelector></BackgroundColorSelector>
           <PencilIcon
             className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
             onClick={onEditMode}
