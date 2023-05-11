@@ -26,7 +26,7 @@ function BackgroundColorSelector() {
 
   return (
     <Popover>
-      <Popover.Button ref={setReferenceElement}>
+      <Popover.Button as={"span"} ref={setReferenceElement}>
         <EyeDropperIcon
           style={{ fill: color }}
           className={`h-5 w-5 cursor-pointer stroke-gray-700 text-gray-700 transition-colors hover:text-black`}
