@@ -167,8 +167,17 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   };
   return (
     <div className={"min-h-screen bg-gray-300 px-2"}>
-      <div className={"flex flex-row gap-2 pt-[80px]"}>
-        <div className={"flex-1"}>
+      <div className={"grid grid-cols-[1fr_300px] grid-rows-[120px_1fr]"}>
+        <div className={"col-span-2"}>
+          <FloatingToolbar
+            initialTitle="Collection Title"
+            onTitleChange={handleEditTitle}
+            onCreate={handleCreate}
+            onEditMode={handleEditMode}
+            onUpload={handleUpload}
+          />
+        </div>
+        <div className={""}>
           <div
             className="relative inline-block flex-1 select-none"
             draggable={false}
@@ -218,14 +227,6 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
           ))}
         </div>
       </div>
-
-      <FloatingToolbar
-        initialTitle="Collection Title"
-        onTitleChange={handleEditTitle}
-        onCreate={handleCreate}
-        onEditMode={handleEditMode}
-        onUpload={handleUpload}
-      />
 
       {linkEditModalOpen && (
         <LinkEditModal

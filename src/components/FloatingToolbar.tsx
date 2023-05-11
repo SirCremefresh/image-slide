@@ -48,7 +48,7 @@ export function FloatingToolbar({
   };
 
   return (
-    <div className="fixed left-1/2 top-4 flex -translate-x-1/2 transform items-center space-x-4 rounded-lg border border-gray-300 bg-white p-2 text-gray-700 shadow-md">
+    <div className="mt-2 flex items-center space-x-4 rounded-lg border border-gray-300 bg-white p-2 text-gray-700 shadow-md">
       <div className="flex-grow">
         <span
           ref={titleRef}
