@@ -65,18 +65,12 @@ export function ImageUploadModal({
 }) {
   const [title, setTitle] = useState("");
   const [isTitleDirty, setIsTitleDirty] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [file, setFile] = useState<undefined | File>(undefined);
 
   const uploadFileWithAxios = async () => {
     if (!file) return;
     try {
-      const imageId = await uploadImage(
-        collectionId,
-        file,
-        secret,
-        setUploadProgress
-      );
+      const imageId = await uploadImage(collectionId, file, secret);
       onFileUploaded({
         imageId,
         title: title,
