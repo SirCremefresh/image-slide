@@ -40,7 +40,7 @@ export const localImageIds = new Set(
 export function getSampleCollection(id: string): Collection {
   return {
     collectionId: id,
-    backgroundColor: "#EOEOEO",
+    backgroundColor: "#E0E0E0",
     title: "Sample Collection",
     images: sampleImages,
   };
