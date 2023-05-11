@@ -109,8 +109,13 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     setLinkEditModalOpen(true);
   };
 
-  const handleEditTitle = () => {
-    console.log("Edit title");
+  const handleEditTitle = (newTitle: string) => {
+    const newCollection = {
+      ...collection,
+      title: newTitle,
+    };
+    setCollection(newCollection);
+    safeCollection(newCollection).then(() => console.log("saved"));
   };
 
   const handleCreate = () => {
@@ -170,7 +175,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
       <div className={"grid grid-cols-[1fr_300px] grid-rows-[120px_1fr]"}>
         <div className={"col-span-2"}>
           <FloatingToolbar
-            initialTitle="Collection Title"
+            initialTitle={collection.title}
             onTitleChange={handleEditTitle}
             onCreate={handleCreate}
             onEditMode={handleEditMode}

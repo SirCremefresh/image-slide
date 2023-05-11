@@ -79,6 +79,10 @@ export function FloatingToolbar({
   const handleTitleBlur = () => {
     if (!titleRef.current || !editingTitle) return;
     const newTitle = sanitizeTitle(titleRef.current.textContent ?? "");
+    if (newTitle === "") {
+      setTitle(initialTitle);
+      return;
+    }
 
     setTitle(newTitle);
     onTitleChange(newTitle);
