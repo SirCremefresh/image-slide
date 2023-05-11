@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CheckIcon,
   CloudArrowUpIcon,
@@ -64,18 +64,28 @@ export function FloatingToolbar({
   initialTitle,
   onTitleChange,
   onCreate,
-  onEditMode,
   onUpload,
 }: FloatingToolbarProps) {
   const [title, setTitle] = useState(initialTitle);
   const [editingTitle, setEditingTitle] = useState(false);
   const titleRef = useRef<HTMLSpanElement>(null);
 
+  useEffect(() => {
+    if (titleRef.current && editingTitle) {
+      titleRef.current?.focus();
+    }
+  }, [titleRef, editingTitle]);
+
   const handleTitleBlur = () => {
     if (!titleRef.current || !editingTitle) return;
-    const newTitle = titleRef.current.textContent || "";
+    const newTitle = sanitizeTitle(titleRef.current.textContent ?? "");
+
     setTitle(newTitle);
     onTitleChange(newTitle);
+  };
+
+  const sanitizeTitle = (title: string) => {
+    return title.replace(/[^a-zA-Z0-9\s]/g, "");
   };
 
   const handleEditTitle = () => {
@@ -94,7 +104,7 @@ export function FloatingToolbar({
 
   return (
     <div className="mt-2 flex items-center space-x-4 rounded-lg border border-gray-300 bg-white p-2 text-gray-700 shadow-md">
-      <div className="flex-grow">
+      <div className="flex flex-grow items-center gap-2">
         <span
           ref={titleRef}
           className="inline-block text-xl font-semibold"
@@ -104,41 +114,34 @@ export function FloatingToolbar({
         >
           {title}
         </span>
-      </div>
-      {editingTitle ? (
-        <>
-          <CheckIcon
-            className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
-            onClick={handleSaveTitle}
-          />
-          <XMarkIcon
-            className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
-            onClick={handleCancelTitle}
-          />
-        </>
-      ) : (
-        <>
-          <button
-            className="rounded px-2 py-1 font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-black"
-            onClick={handleEditTitle}
-          >
-            Edit Title
-          </button>
-          <PlusIcon
-            className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
-            onClick={onCreate}
-          />
-          <BackgroundColorSelector></BackgroundColorSelector>
+        {editingTitle ? (
+          <>
+            <CheckIcon
+              className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
+              onClick={handleSaveTitle}
+            />
+            <XMarkIcon
+              className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
+              onClick={handleCancelTitle}
+            />
+          </>
+        ) : (
           <PencilIcon
             className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
-            onClick={onEditMode}
+            onClick={handleEditTitle}
           />
-          <CloudArrowUpIcon
-            className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
-            onClick={onUpload}
-          />
-        </>
-      )}
+        )}
+      </div>
+      <PlusIcon
+        className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
+        onClick={onCreate}
+      />
+      <BackgroundColorSelector></BackgroundColorSelector>
+
+      <CloudArrowUpIcon
+        className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
+        onClick={onUpload}
+      />
     </div>
   );
 }
