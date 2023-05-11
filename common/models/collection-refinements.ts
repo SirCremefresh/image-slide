@@ -19,6 +19,6 @@ export const EXISTING_LINK_REFERENCES_REFINEMENT = [
     return Array.from(linkIds).every((linkId) => imageIds.has(linkId));
   },
   {
-    message: "Image IDs must be unique",
+    message: "Link references must be to existing images",
   },
 ] as const;
