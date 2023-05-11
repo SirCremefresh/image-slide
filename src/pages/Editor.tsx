@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 import { useCollection } from "../api-client/collections.ts";
 import { Collection, Image } from "@common/models/collection.ts";
 import LinkEditModal from "../components/LinkEditModal.tsx";
-import { FileUploadModal } from "../components/FileUploadModal.tsx";
+import { ImageUploadModal } from "../components/ImageUploadModal.tsx";
 import { toRelativePoint } from "@common/models/points.ts";
 import {
   buildRelativeRectangle,
@@ -236,7 +236,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
         />
       )}
       {fileUploadModalOpen && (
-        <FileUploadModal
+        <ImageUploadModal
           secret={props.secret}
           setOpenModal={setFileUploadModalOpen}
           onFileUploaded={onFileUploaded}

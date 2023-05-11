@@ -3,43 +3,56 @@ import { useState } from "react";
 import type { Image } from "@common/models/collection.ts";
 import { uploadImage } from "../api-client/images.ts";
 import { ImageUploadInput } from "./ImageUploadInput.tsx";
+import { classNames } from "../util/class-names.ts";
 
-function TitleInput(props: { text: string; setText: (text: string) => void }) {
+function TitleInput(props: {
+  text: string;
+  setText: (text: string) => void;
+  isDirty: boolean;
+  setIsDirty: (isDirty: boolean) => void;
+}) {
+  const isInvalid = props.isDirty && props.text.length === 0;
+
   return (
     <div>
       <label
-        htmlFor="email"
+        htmlFor="title"
         className="block text-sm font-medium leading-6 text-gray-900"
       >
-        Email
+        Title
       </label>
       <div className="relative mt-2 rounded-md shadow-sm">
         <input
-          type="email"
-          name="email"
-          id="email"
-          className="block w-full rounded-md border-0 py-1.5 pr-10 text-red-900 ring-1 ring-inset ring-red-300 placeholder:text-red-300 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6"
-          placeholder="you@example.com"
+          type="title"
+          name="title"
+          className={classNames(
+            "block w-full rounded-md border-0 py-1.5 pr-10 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6",
+            isInvalid &&
+              "border-red-300 text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500"
+          )}
+          placeholder="Title"
           aria-invalid="true"
           aria-describedby="email-error"
           value={props.text}
-          onChange={(e) => props.setText(e.target.value)}
+          onChange={(e) => {
+            props.setText(e.target.value);
+            props.setIsDirty(true);
+          }}
         />
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          <ExclamationCircleIcon
-            className="h-5 w-5 text-red-500"
-            aria-hidden="true"
-          />
-        </div>
+        {isInvalid && (
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+            <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
+          </div>
+        )}
       </div>
-      <p className="mt-2 text-sm text-red-600" id="email-error">
-        Not a valid email address.
-      </p>
+      {isInvalid && (
+        <p className="mt-2 text-sm text-red-600">Title cannot be empty.</p>
+      )}
     </div>
   );
 }
 
-export function FileUploadModal({
+export function ImageUploadModal({
   setOpenModal,
   collectionId,
   onFileUploaded,
@@ -51,6 +64,7 @@ export function FileUploadModal({
   secret: string;
 }) {
   const [title, setTitle] = useState("");
+  const [isTitleDirty, setIsTitleDirty] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [file, setFile] = useState<undefined | File>(undefined);
 
@@ -88,19 +102,18 @@ export function FileUploadModal({
                 Upload Image
               </h4>
               <div className="flex w-full items-center justify-center">
-                <ImageUploadInput
-                  onFileSelected={(file) => setFile(file)}
-                ></ImageUploadInput>
+                <ImageUploadInput onFileSelected={(file) => setFile(file)} />
               </div>
-              <TitleInput setText={setTitle} text={title}></TitleInput>
-              {uploadProgress}
+              <TitleInput
+                setText={setTitle}
+                text={title}
+                isDirty={isTitleDirty}
+                setIsDirty={setIsTitleDirty}
+              />
               <div className="mt-3 items-center gap-2 sm:flex">
                 <button
                   className="mt-2 w-full flex-1 rounded-md bg-blue-600 p-2.5 text-white outline-none ring-red-600 ring-offset-2 focus:ring-2"
-                  onClick={() => {
-                    uploadFileWithAxios();
-                    // setOpenModal(false);
-                  }}
+                  onClick={uploadFileWithAxios}
                 >
                   Upload
                 </button>
