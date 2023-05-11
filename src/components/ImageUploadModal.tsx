@@ -28,7 +28,7 @@ function TitleInput(props: {
           className={classNames(
             "block w-full rounded-md border-0 py-1.5 pr-10 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6",
             isInvalid &&
-              "border-red-300 text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500"
+              "border-red-300 text-red-900 outline-red-300 ring-red-300 placeholder:text-red-300 focus:ring-red-500"
           )}
           placeholder="Title"
           aria-invalid="true"

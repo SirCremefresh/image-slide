@@ -7,17 +7,21 @@ export function ImageUploadInput(props: {
   onFileSelected: (image: File) => void;
 }) {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
+  const [hasError, setHasError] = useState(false);
 
   const onFileSelected = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setHasError(false);
 
     try {
       const compressedFile = await compressImage(file);
       setPreviewUrl(await imageCompression.getDataUrlFromFile(compressedFile));
       props.onFileSelected(compressedFile);
     } catch (error) {
-      console.log(error);
+      console.error("Could not convert image", error);
+      setPreviewUrl(undefined);
+      setHasError(true);
     }
   };
 
@@ -32,11 +36,21 @@ export function ImageUploadInput(props: {
         className="flex flex-col items-center justify-center pb-6 pt-5 group-hover:!flex"
       >
         <CloudArrowUpIcon className="h-10 w-10 text-black" />
+        {previewUrl && (
+          <p className="mb-2 text-sm font-semibold text-black">
+            Image Selected
+          </p>
+        )}
         <p className="mb-2 text-sm text-black">
-          <span className="font-semibold">Click to upload</span> or drag and
-          drop
+          <span className="font-semibold">Click to upload</span>
+          or drag and drop
         </p>
         <p className="text-xs text-black">PNG or JPG</p>
+        {hasError && (
+          <p className="mt-2 text-sm text-red-600">
+            Something went wrong. Please try again.
+          </p>
+        )}
       </div>
       <input
         id="dropzone-file"
