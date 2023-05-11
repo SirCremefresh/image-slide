@@ -5,6 +5,7 @@ import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
 
 export function ImageUploadInput(props: {
   onFileSelected: (image: File) => void;
+  isImageDirty: boolean;
 }) {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
   const [hasError, setHasError] = useState(false);
@@ -49,6 +50,11 @@ export function ImageUploadInput(props: {
         {hasError && (
           <p className="mt-2 text-sm text-red-600">
             Something went wrong. Please try again.
+          </p>
+        )}
+        {props.isImageDirty && previewUrl == undefined && (
+          <p className="mt-2 text-sm text-red-600">
+            You have to select an Image.
           </p>
         )}
       </div>

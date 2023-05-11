@@ -4,6 +4,7 @@ import type { Image } from "@common/models/collection.ts";
 import { uploadImage } from "../api-client/images.ts";
 import { ImageUploadInput } from "./ImageUploadInput.tsx";
 import { classNames } from "../util/class-names.ts";
+import { isNullOrUndefined } from "@common/util/assert-util.ts";
 
 function TitleInput(props: {
   text: string;
@@ -30,7 +31,7 @@ function TitleInput(props: {
             isInvalid &&
               "border-red-300 text-red-900 outline-red-300 ring-red-300 placeholder:text-red-300 focus:ring-red-500"
           )}
-          placeholder="Title"
+          placeholder="Matterhorn"
           aria-invalid="true"
           aria-describedby="email-error"
           value={props.text}
@@ -65,10 +66,15 @@ export function ImageUploadModal({
 }) {
   const [title, setTitle] = useState("");
   const [isTitleDirty, setIsTitleDirty] = useState(false);
+  const [isImageDirty, setIsImageDirty] = useState(false);
   const [file, setFile] = useState<undefined | File>(undefined);
 
   const uploadFileWithAxios = async () => {
-    if (!file) return;
+    setIsTitleDirty(true);
+    setIsImageDirty(true);
+    if (isNullOrUndefined(file)) return;
+    if (title.length === 0) return;
+
     try {
       const imageId = await uploadImage(collectionId, file, secret);
       onFileUploaded({
@@ -96,7 +102,10 @@ export function ImageUploadModal({
                 Upload Image
               </h4>
               <div className="flex w-full items-center justify-center">
-                <ImageUploadInput onFileSelected={(file) => setFile(file)} />
+                <ImageUploadInput
+                  onFileSelected={(file) => setFile(file)}
+                  isImageDirty={isImageDirty}
+                />
               </div>
               <TitleInput
                 setText={setTitle}
@@ -106,13 +115,13 @@ export function ImageUploadModal({
               />
               <div className="mt-3 items-center gap-2 sm:flex">
                 <button
-                  className="mt-2 w-full flex-1 rounded-md bg-blue-600 p-2.5 text-white outline-none ring-red-600 ring-offset-2 focus:ring-2"
+                  className="mt-2 w-full flex-1 rounded-md bg-blue-600 p-2.5 text-white outline-none ring-blue-500  ring-offset-2 focus:ring-2"
                   onClick={uploadFileWithAxios}
                 >
                   Upload
                 </button>
                 <button
-                  className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 outline-none ring-indigo-600 ring-offset-2 focus:ring-2"
+                  className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 outline-none ring-blue-500 ring-offset-2 focus:ring-2"
                   onClick={() => setOpenModal(false)}
                 >
                   Cancel
