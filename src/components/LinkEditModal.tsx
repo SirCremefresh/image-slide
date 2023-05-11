@@ -2,7 +2,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import { Image } from "@common/models/collection.ts";
 import { Combobox } from "@headlessui/react";
-import { classNames } from "../util/classNames.ts";
+import { classNames } from "../util/class-names.ts";
 import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
 
 function ImageAutocomplete(props: {
