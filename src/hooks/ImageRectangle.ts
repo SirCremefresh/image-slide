@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ViewportRectangle } from "@common/models/rectangles.ts";
 
 export function useImageRectangle(): [
   ViewportRectangle,
+  HTMLImageElement | null,
   (node: HTMLImageElement) => void
 ] {
   const [imageSize, setImageSize] = useState<ViewportRectangle>({
@@ -12,14 +13,10 @@ export function useImageRectangle(): [
     viewportX: 0,
     viewportY: 0,
   });
-  const [node, setNode] = useState<HTMLImageElement | null>(null);
-
-  const refCallback = useCallback((node: HTMLImageElement) => {
-    setNode(node);
-  }, []);
+  const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
 
   useEffect(() => {
-    if (!node) {
+    if (!imageRef) {
       return;
     }
     const resizeObserver = new ResizeObserver(([image]) => {
@@ -31,9 +28,9 @@ export function useImageRectangle(): [
         viewportY: rect.y,
       });
     });
-    resizeObserver.observe(node);
+    resizeObserver.observe(imageRef);
     return () => resizeObserver.disconnect();
-  }, [node]);
+  }, [imageRef]);
 
-  return [imageSize, refCallback];
+  return [imageSize, imageRef, setImageRef];
 }

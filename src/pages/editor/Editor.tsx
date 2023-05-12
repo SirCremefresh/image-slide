@@ -1,6 +1,6 @@
-import { MouseEvent, useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./Editor.css";
-import { initialPaintingState, PaintingState } from "./painting-state.ts";
+import { PaintingState } from "./painting-state.ts";
 import { useImageRectangle } from "../../hooks/ImageRectangle.ts";
 import { PercentageBoxButton } from "../../components/BoxButton.tsx";
 import { FloatingToolbar } from "../../components/FloatingToolbar.tsx";
@@ -9,11 +9,16 @@ import { useCollection } from "../../api-client/collections.ts";
 import { Collection, Image, Link } from "@common/models/collection.ts";
 import LinkEditModal from "../../components/LinkEditModal.tsx";
 import { ImageUploadModal } from "../../components/ImageUploadModal.tsx";
-import { toRelativePoint } from "@common/models/points.ts";
 import {
-  buildRelativeRectangle,
-  toPercentRectangle,
+  PercentagePoint,
+  toPercentPoint,
+  toRelativePoint,
+} from "@common/models/points.ts";
+import {
+  buildPercentageRectangle,
+  PercentageRectangle,
   toRelativeRectangle,
+  ViewportRectangle,
 } from "@common/models/rectangles.ts";
 import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
 
@@ -37,6 +42,118 @@ function imageUrl(collectionId: string, imageId: string) {
   return "/api/collections/" + collectionId + "/images/" + imageId;
 }
 
+function CreateLinkRectangle({
+  imageRef,
+  image,
+  start,
+  onFinish,
+}: {
+  imageRef: HTMLImageElement | null;
+  image: ViewportRectangle;
+  start: PercentagePoint;
+  onFinish: (rectangle: PercentageRectangle) => void;
+}) {
+  const [painting, setPainting] = useState<PercentageRectangle>({
+    percentageX: start.percentageX,
+    percentageY: start.percentageY,
+    percentageWidth: 0,
+    percentageHeight: 0,
+  });
+  const [mouseState, setMouseState] = useState<{
+    point: PercentagePoint;
+    onImage: boolean;
+    mouseDown: boolean;
+  }>({
+    point: start,
+    onImage: true,
+    mouseDown: true,
+  });
+
+  useEffect(() => {
+    if (!imageRef) return;
+
+    const onMouseMove = (e: MouseEvent) => {
+      const currentMousePosition = toRelativePoint(image, {
+        viewportX: e.pageX,
+        viewportY: e.pageY,
+      });
+      const percentageMousePosition = toPercentPoint(
+        image,
+        currentMousePosition
+      );
+      setMouseState((mouseState) => ({
+        ...mouseState,
+        point: percentageMousePosition,
+      }));
+    };
+
+    const onMouseUp = (e: MouseEvent) => {
+      const currentMousePosition = toRelativePoint(image, {
+        viewportX: e.pageX,
+        viewportY: e.pageY,
+      });
+      const percentageMousePosition = toPercentPoint(
+        image,
+        currentMousePosition
+      );
+      setMouseState((mouseState) => ({
+        ...mouseState,
+        point: percentageMousePosition,
+        mouseDown: false,
+      }));
+    };
+
+    const onMouseLeave = (e: MouseEvent) => {
+      const currentMousePosition = toRelativePoint(image, {
+        viewportX: e.pageX,
+        viewportY: e.pageY,
+      });
+
+      const percentageMousePosition = toPercentPoint(
+        image,
+        currentMousePosition
+      );
+      setMouseState((mouseState) => ({
+        ...mouseState,
+        point: percentageMousePosition,
+        onImage: false,
+      }));
+    };
+
+    imageRef.addEventListener("mousemove", onMouseMove);
+    imageRef.addEventListener("mouseup", onMouseUp);
+    imageRef.addEventListener("mouseleave", onMouseLeave);
+
+    return () => {
+      if (!imageRef) return;
+      imageRef.removeEventListener("mousemove", onMouseMove);
+      imageRef.removeEventListener("mouseup", onMouseUp);
+      imageRef.removeEventListener("mouseleave", onMouseLeave);
+    };
+  }, [image, imageRef]);
+
+  useEffect(() => {
+    const percentageRectangle = buildPercentageRectangle(
+      start,
+      mouseState.point
+    );
+
+    if (!mouseState.mouseDown || !mouseState.onImage) {
+      console.log("onFinish");
+      onFinish(percentageRectangle);
+      return;
+    }
+    setPainting(percentageRectangle);
+  }, [image, mouseState, onFinish, start]);
+
+  return (
+    <PercentageBoxButton
+      rectangle={painting}
+      clickable={false}
+    ></PercentageBoxButton>
+  );
+}
+
 function EditorLoaded(props: { collection: Collection; secret: string }) {
   const [collection, setCollection] = useState<Collection>(props.collection);
   const [imageId, setImageId] = useState<string | undefined>(
@@ -47,7 +164,10 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   const [painting, setPainting] = useState<PaintingState | undefined>(
     undefined
   );
-  const [imageRectangle, imageRef] = useImageRectangle();
+  const [createRectangleState, setCreateRectangleState] = useState<
+    { start: PercentagePoint } | undefined
+  >(undefined);
+  const [imageRectangle, imageRef, setImageRef] = useImageRectangle();
 
   const safeCollection = useCallback(
     async (newCollection: Collection) => {
@@ -74,41 +194,20 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     return image;
   }, [collection, imageId]);
 
-  const createRectangle = (e: MouseEvent) => {
+  const createRectangle = (e: React.MouseEvent) => {
     if (painting) return;
     const relativePoint = toRelativePoint(imageRectangle, {
       viewportX: e.pageX,
       viewportY: e.pageY,
     });
-    setPainting(initialPaintingState(relativePoint));
-  };
-
-  const updateRectangle = (e: MouseEvent) => {
-    if (!painting) return;
-    const currentMousePosition = toRelativePoint(imageRectangle, {
-      viewportX: e.pageX,
-      viewportY: e.pageY,
-    });
-    const relativeRectangle = buildRelativeRectangle(
-      painting.start,
-      currentMousePosition
-    );
-    const percentageRectangle = toPercentRectangle(
-      imageRectangle,
-      relativeRectangle
-    );
-
-    console.log("updateRectangle percentageRectangle", percentageRectangle);
-
-    setPainting({
-      ...painting,
-      rectangle: percentageRectangle,
-    });
+    const percentagePoint = toPercentPoint(imageRectangle, relativePoint);
+    setCreateRectangleState({ start: percentagePoint });
   };
 
   const finishRectangle = () => {
-    if (!painting) return;
-    setLinkEditModalOpen(true);
+    if (!createRectangleState) return;
+    setCreateRectangleState(undefined);
+    // setLinkEditModalOpen(true);
   };
 
   const handleEditTitle = (newTitle: string) => {
@@ -213,28 +312,28 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             draggable={false}
           >
             <img
-              ref={imageRef}
+              ref={setImageRef}
               className="block max-h-[100%] max-w-[100%] rounded"
               src={imageUrl(collection.collectionId, image.imageId)}
               alt={image.title}
               draggable={false}
               onMouseDown={createRectangle}
-              onMouseMove={updateRectangle}
-              onMouseUp={finishRectangle}
-              onMouseLeave={finishRectangle}
             />
             {image.links.map((link, index) => (
               <PercentageBoxButton
                 onClick={() => editRectangle(link)}
-                clickable={painting === undefined}
+                clickable={createRectangleState === undefined}
                 key={index}
                 rectangle={link.rectangle}
               ></PercentageBoxButton>
             ))}
-            {painting && (
-              <PercentageBoxButton
-                rectangle={painting.rectangle}
-              ></PercentageBoxButton>
+            {createRectangleState && (
+              <CreateLinkRectangle
+                onFinish={finishRectangle}
+                start={createRectangleState.start}
+                imageRef={imageRef}
+                image={imageRectangle}
+              ></CreateLinkRectangle>
             )}
           </div>
         </div>

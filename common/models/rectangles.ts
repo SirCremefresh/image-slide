@@ -78,3 +78,24 @@ export function buildRelativeRectangle(
         : point1.relativeY,
   };
 }
+
+export function buildPercentageRectangle(
+  point1: PercentagePoint,
+  point2: PercentagePoint
+): PercentageRectangle {
+  const width = Math.abs(point2.percentageX - point1.percentageX);
+  const height = Math.abs(point2.percentageY - point1.percentageY);
+
+  return {
+    percentageWidth: width,
+    percentageHeight: height,
+    percentageX:
+      point2.percentageX < point1.percentageX
+        ? point1.percentageX - width
+        : point1.percentageX,
+    percentageY:
+      point2.percentageY < point1.percentageY
+        ? point1.percentageY - height
+        : point1.percentageY,
+  };
+}
