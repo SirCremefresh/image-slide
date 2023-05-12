@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useCallback, useMemo, useState } from "react";
 import "./Editor.css";
 import { PaintingState } from "./painting-state.ts";
 import { useImageRectangle } from "../../hooks/ImageRectangle.ts";
@@ -7,21 +7,14 @@ import { FloatingToolbar } from "../../components/FloatingToolbar.tsx";
 import { useParams } from "react-router-dom";
 import { useCollection } from "../../api-client/collections.ts";
 import { Collection, Image, Link } from "@common/models/collection.ts";
-import LinkEditModal from "../../components/LinkEditModal.tsx";
 import { ImageUploadModal } from "../../components/ImageUploadModal.tsx";
 import {
+  buildPercentPointFromMouseEvent,
   PercentagePoint,
-  toPercentPoint,
-  toRelativePoint,
 } from "@common/models/points.ts";
-import {
-  buildPercentageRectangle,
-  PercentageRectangle,
-  toRelativeRectangle,
-  ViewportRectangle,
-} from "@common/models/rectangles.ts";
+import { toRelativeRectangle } from "@common/models/rectangles.ts";
 import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
-import { useMouseState } from "./use-mouse-state.ts";
+import { CreateLinkRectangle } from "./CreateLinkRectangle.tsx";
 
 function Editor() {
   const { collectionId, secret } = useParams<{
@@ -43,45 +36,11 @@ function imageUrl(collectionId: string, imageId: string) {
   return "/api/collections/" + collectionId + "/images/" + imageId;
 }
 
-function CreateLinkRectangle({
-  imageRef,
-  image,
-  start,
-  onFinish,
-}: {
-  imageRef: HTMLImageElement | null;
-  image: ViewportRectangle;
-  start: PercentagePoint;
-  onFinish: (rectangle: PercentageRectangle) => void;
-  images: Image[];
-}) {
-  const mouseState = useMouseState(start, imageRef, image);
-  const percentageRectangle = useMemo(() => {
-    return buildPercentageRectangle(start, mouseState.point);
-  }, [start, mouseState]);
-
-  useEffect(() => {
-    if (!mouseState.mouseDown || !mouseState.onImage) {
-      console.log("onFinish");
-      onFinish(percentageRectangle);
-      return;
-    }
-  }, [percentageRectangle, mouseState, onFinish]);
-
-  return (
-    <PercentageBoxButton
-      rectangle={percentageRectangle}
-      clickable={false}
-    ></PercentageBoxButton>
-  );
-}
-
 function EditorLoaded(props: { collection: Collection; secret: string }) {
   const [collection, setCollection] = useState<Collection>(props.collection);
   const [imageId, setImageId] = useState<string | undefined>(
     collection.images.at(0)?.imageId
   );
-  const [linkEditModalOpen, setLinkEditModalOpen] = useState(false);
   const [fileUploadModalOpen, setFileUploadModalOpen] = useState(false);
   const [painting, setPainting] = useState<PaintingState | undefined>(
     undefined
@@ -116,20 +75,30 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     return image;
   }, [collection, imageId]);
 
-  const createRectangle = (e: React.MouseEvent) => {
+  const createRectangle = (e: MouseEvent) => {
     if (painting) return;
-    const relativePoint = toRelativePoint(imageRectangle, {
-      viewportX: e.pageX,
-      viewportY: e.pageY,
+    setCreateRectangleState({
+      start: buildPercentPointFromMouseEvent(imageRectangle, e),
     });
-    const percentagePoint = toPercentPoint(imageRectangle, relativePoint);
-    setCreateRectangleState({ start: percentagePoint });
   };
 
-  const finishRectangle = () => {
+  const finishRectangle = (link: Link) => {
     if (!createRectangleState) return;
+
+    const newCollection: Collection = {
+      ...collection,
+      images: collection.images.map((image): Image => {
+        if (image.imageId !== imageId) return image;
+        return {
+          ...image,
+          links: [...image.links, link],
+        };
+      }),
+    };
+
+    setCollection(newCollection);
+    safeCollection(newCollection).then(() => console.log("saved"));
     setCreateRectangleState(undefined);
-    // setLinkEditModalOpen(true);
   };
 
   const handleEditTitle = (newTitle: string) => {
@@ -151,33 +120,6 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
 
   const handleUpload = () => {
     setFileUploadModalOpen(true);
-  };
-
-  const onLinkCreate = (targetImage: Image) => {
-    if (!painting) return;
-    console.log("onLinkCreate", targetImage);
-    console.log("painting", painting.rectangle);
-
-    const newCollection: Collection = {
-      ...collection,
-      images: collection.images.map((image): Image => {
-        if (image.imageId !== imageId) return image;
-        return {
-          ...image,
-          links: [
-            ...image.links,
-            {
-              imageId: targetImage.imageId,
-              rectangle: painting.rectangle,
-            },
-          ],
-        };
-      }),
-    };
-
-    setCollection(newCollection);
-    safeCollection(newCollection).then(() => console.log("saved"));
-    setPainting(undefined);
   };
 
   const onFileUploaded = (newImage: Image) => {
@@ -213,9 +155,6 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     });
   };
 
-  const onLinkEditCanceled = () => {
-    setPainting(undefined);
-  };
   return (
     <div className={"min-h-screen bg-gray-300 px-2"}>
       <div className={"grid grid-cols-[1fr_300px] grid-rows-[120px_1fr]"}>
@@ -251,7 +190,8 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             ))}
             {createRectangleState && (
               <CreateLinkRectangle
-                onFinish={finishRectangle}
+                onCreate={finishRectangle}
+                onCancel={() => setCreateRectangleState(undefined)}
                 start={createRectangleState.start}
                 imageRef={imageRef}
                 image={imageRectangle}
@@ -289,14 +229,14 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
         </div>
       </div>
 
-      {linkEditModalOpen && (
-        <LinkEditModal
-          onLinkCreated={onLinkCreate}
-          images={collection.images}
-          setOpenModal={setLinkEditModalOpen}
-          onCanceled={onLinkEditCanceled}
-        />
-      )}
+      {/*{linkEditModalOpen && (*/}
+      {/*    <LinkEditModal*/}
+      {/*        onLinkCreated={onLinkCreate}*/}
+      {/*        images={collection.images}*/}
+      {/*        setOpenModal={setLinkEditModalOpen}*/}
+      {/*        onCanceled={onLinkEditCanceled}*/}
+      {/*    />*/}
+      {/*)}*/}
       {fileUploadModalOpen && (
         <ImageUploadModal
           secret={props.secret}

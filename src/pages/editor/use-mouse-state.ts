@@ -9,7 +9,8 @@ import { useEffect, useState } from "react";
 export function useMouseState(
   start: PercentagePoint,
   imageRef: HTMLImageElement | null,
-  image: ViewportRectangle
+  image: ViewportRectangle,
+  trackMousePosition: boolean
 ) {
   const [mouseState, setMouseState] = useState<{
     point: PercentagePoint;
@@ -22,7 +23,7 @@ export function useMouseState(
   });
 
   useEffect(() => {
-    if (!imageRef) return;
+    if (!imageRef || !trackMousePosition) return;
 
     const onMouseMove = (e: MouseEvent) => {
       const currentMousePosition = toRelativePoint(image, {
@@ -82,6 +83,6 @@ export function useMouseState(
       imageRef.removeEventListener("mouseup", onMouseUp);
       imageRef.removeEventListener("mouseleave", onMouseLeave);
     };
-  }, [image, imageRef]);
+  }, [image, imageRef, trackMousePosition]);
   return mouseState;
 }

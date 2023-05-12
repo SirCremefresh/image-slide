@@ -108,12 +108,10 @@ function ImageAutocomplete(props: {
 }
 
 export default function LinkEditModal({
-  setOpenModal,
   images,
   onLinkCreated,
   onCanceled,
 }: {
-  setOpenModal: (open: boolean) => void;
   images: Image[];
   onLinkCreated: (image: Image) => void;
   onCanceled: () => void;
@@ -126,7 +124,6 @@ export default function LinkEditModal({
         <div
           className="fixed inset-0 h-full w-full bg-black opacity-40"
           onClick={() => {
-            setOpenModal(false);
             onCanceled();
           }}
         ></div>
@@ -146,7 +143,6 @@ export default function LinkEditModal({
                   className="mt-2 w-full flex-1 rounded-md bg-blue-600 p-2.5 text-white outline-none ring-indigo-600 ring-offset-2 focus:ring-2"
                   disabled={selectedImage === null}
                   onClick={() => {
-                    setOpenModal(false);
                     onLinkCreated(assertNotNullOrUndefined(selectedImage));
                   }}
                 >
@@ -155,7 +151,6 @@ export default function LinkEditModal({
                 <button
                   className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 outline-none ring-indigo-600 ring-offset-2 focus:ring-2"
                   onClick={() => {
-                    setOpenModal(false);
                     onCanceled();
                   }}
                 >

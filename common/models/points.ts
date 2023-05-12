@@ -2,6 +2,7 @@ import z from "zod";
 import { assertType, TypeEqualityGuard } from "@common/util/type-check.ts";
 import { Size } from "@common/models/sizes.ts";
 import { toPercentage } from "@common/util/percentage-util.ts";
+import { ViewportRectangle } from "@common/models/rectangles.ts";
 
 export const ZRelativePoint = z.object({
   relativeX: z.number(),
@@ -53,4 +54,15 @@ export function toPercentPoint(
     percentageX: toPercentage(full.width, rectangle.relativeX),
     percentageY: toPercentage(full.height, rectangle.relativeY),
   };
+}
+
+export function buildPercentPointFromMouseEvent(
+  base: ViewportRectangle,
+  event: { pageX: number; pageY: number }
+): PercentagePoint {
+  const relativePoint = toRelativePoint(base, {
+    viewportX: event.pageX,
+    viewportY: event.pageY,
+  });
+  return toPercentPoint(base, relativePoint);
 }
