@@ -1,21 +1,19 @@
 import { MouseEvent, useCallback, useMemo, useState } from "react";
 import "./Editor.css";
-import {
-  initialPaintingState,
-  PaintingState,
-} from "@common/models/painting-state.ts";
-import { useImageRectangle } from "../hooks/ImageRectangle.ts";
-import { PercentageBoxButton } from "../components/BoxButton.tsx";
-import { FloatingToolbar } from "../components/FloatingToolbar.tsx";
+import { initialPaintingState, PaintingState } from "./painting-state.ts";
+import { useImageRectangle } from "../../hooks/ImageRectangle.ts";
+import { PercentageBoxButton } from "../../components/BoxButton.tsx";
+import { FloatingToolbar } from "../../components/FloatingToolbar.tsx";
 import { useParams } from "react-router-dom";
-import { useCollection } from "../api-client/collections.ts";
-import { Collection, Image } from "@common/models/collection.ts";
-import LinkEditModal from "../components/LinkEditModal.tsx";
-import { ImageUploadModal } from "../components/ImageUploadModal.tsx";
+import { useCollection } from "../../api-client/collections.ts";
+import { Collection, Image, Link } from "@common/models/collection.ts";
+import LinkEditModal from "../../components/LinkEditModal.tsx";
+import { ImageUploadModal } from "../../components/ImageUploadModal.tsx";
 import { toRelativePoint } from "@common/models/points.ts";
 import {
   buildRelativeRectangle,
   toPercentRectangle,
+  toRelativeRectangle,
 } from "@common/models/rectangles.ts";
 import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
 
@@ -77,6 +75,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   }, [collection, imageId]);
 
   const createRectangle = (e: MouseEvent) => {
+    if (painting) return;
     const relativePoint = toRelativePoint(imageRectangle, {
       viewportX: e.pageX,
       viewportY: e.pageY,
@@ -86,13 +85,12 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
 
   const updateRectangle = (e: MouseEvent) => {
     if (!painting) return;
-    const start = painting.start;
     const currentMousePosition = toRelativePoint(imageRectangle, {
       viewportX: e.pageX,
       viewportY: e.pageY,
     });
     const relativeRectangle = buildRelativeRectangle(
-      start,
+      painting.start,
       currentMousePosition
     );
     const percentageRectangle = toPercentRectangle(
@@ -100,8 +98,10 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
       relativeRectangle
     );
 
+    console.log("updateRectangle percentageRectangle", percentageRectangle);
+
     setPainting({
-      start: start,
+      ...painting,
       rectangle: percentageRectangle,
     });
   };
@@ -134,6 +134,8 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
 
   const onLinkCreate = (targetImage: Image) => {
     if (!painting) return;
+    console.log("onLinkCreate", targetImage);
+    console.log("painting", painting.rectangle);
 
     const newCollection: Collection = {
       ...collection,
@@ -166,6 +168,27 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
       safeCollection(newCollection).then(() => console.log("saved"));
       console.log("onFileUploaded", newImage);
       return newCollection;
+    });
+  };
+
+  const editRectangle = (link: Link) => {
+    setPainting({
+      mode: "update",
+      start: toRelativeRectangle(imageRectangle, link.rectangle),
+      rectangle: link.rectangle,
+      link: link,
+    });
+    setCollection((collection) => {
+      return {
+        ...collection,
+        images: collection.images.map((image): Image => {
+          if (image.imageId !== imageId) return image;
+          return {
+            ...image,
+            links: image.links.filter((l) => l !== link),
+          };
+        }),
+      };
     });
   };
 
@@ -202,7 +225,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             />
             {image.links.map((link, index) => (
               <PercentageBoxButton
-                onClick={() => setImageId(link.imageId)}
+                onClick={() => editRectangle(link)}
                 clickable={painting === undefined}
                 key={index}
                 rectangle={link.rectangle}

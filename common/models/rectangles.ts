@@ -14,7 +14,7 @@ import {
 } from "@common/models/sizes.ts";
 import z from "zod";
 import { assertType, TypeEqualityGuard } from "@common/util/type-check.ts";
-import { toPercentage } from "@common/util/percentage-util.ts";
+import { fromPercentage, toPercentage } from "@common/util/percentage-util.ts";
 
 export const ZRelativeRectangle = ZRelativePoint.merge(ZSize);
 export type RelativeRectangle = RelativePoint & Size;
@@ -43,6 +43,18 @@ export function toPercentRectangle(
     percentageHeight: toPercentage(full.height, rectangle.height),
     percentageX: toPercentage(full.width, rectangle.relativeX),
     percentageY: toPercentage(full.height, rectangle.relativeY),
+  };
+}
+
+export function toRelativeRectangle(
+  full: Size,
+  rectangle: PercentageRectangle
+): RelativeRectangle {
+  return {
+    width: fromPercentage(full.width, rectangle.percentageWidth),
+    height: fromPercentage(full.height, rectangle.percentageHeight),
+    relativeX: fromPercentage(full.width, rectangle.percentageX),
+    relativeY: fromPercentage(full.height, rectangle.percentageY),
   };
 }
 

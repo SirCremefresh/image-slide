@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
-import Editor from "./pages/Editor.tsx";
+import Editor from "./pages/editor/Editor.tsx";
 import Viewer from "./pages/Viewer.tsx";
 import { Home } from "./pages/Home.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
