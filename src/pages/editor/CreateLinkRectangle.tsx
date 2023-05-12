@@ -56,6 +56,7 @@ export function CreateLinkRectangle({
       <PercentageBoxButton
         rectangle={percentageRectangle}
         clickable={false}
+        showCorners={true}
       ></PercentageBoxButton>
       {state == "link-target" && (
         <LinkEditModal

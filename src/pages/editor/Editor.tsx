@@ -212,14 +212,6 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
         </div>
       </div>
 
-      {/*{linkEditModalOpen && (*/}
-      {/*    <LinkEditModal*/}
-      {/*        onLinkCreated={onLinkCreate}*/}
-      {/*        images={collection.images}*/}
-      {/*        setOpenModal={setLinkEditModalOpen}*/}
-      {/*        onCanceled={onLinkEditCanceled}*/}
-      {/*    />*/}
-      {/*)}*/}
       {fileUploadModalOpen && (
         <ImageUploadModal
           secret={props.secret}
