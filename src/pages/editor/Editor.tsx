@@ -6,7 +6,15 @@ import { PercentageBoxButton } from "../../components/BoxButton.tsx";
 import { FloatingToolbar } from "../../components/FloatingToolbar.tsx";
 import { useParams } from "react-router-dom";
 import { useCollection } from "../../api-client/collections.ts";
-import { Collection, Image, Link } from "@common/models/collection.ts";
+import {
+  Collection,
+  collectionDeleteLink,
+  collectionUpsertImage,
+  collectionUpsertLink,
+  collectionUpsertTitle,
+  Image,
+  Link,
+} from "@common/models/collection.ts";
 import { ImageUploadModal } from "../../components/ImageUploadModal.tsx";
 import {
   buildPercentPointFromMouseEvent,
@@ -85,27 +93,14 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   const finishRectangle = (link: Link) => {
     if (!createRectangleState) return;
 
-    const newCollection: Collection = {
-      ...collection,
-      images: collection.images.map((image): Image => {
-        if (image.imageId !== imageId) return image;
-        return {
-          ...image,
-          links: [...image.links, link],
-        };
-      }),
-    };
-
+    const newCollection = collectionUpsertLink(collection, image, link);
     setCollection(newCollection);
     safeCollection(newCollection).then(() => console.log("saved"));
     setCreateRectangleState(undefined);
   };
 
   const handleEditTitle = (newTitle: string) => {
-    const newCollection = {
-      ...collection,
-      title: newTitle,
-    };
+    const newCollection = collectionUpsertTitle(collection, newTitle);
     setCollection(newCollection);
     safeCollection(newCollection).then(() => console.log("saved"));
   };
@@ -124,10 +119,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
 
   const onFileUploaded = (newImage: Image) => {
     setCollection((collection) => {
-      const newCollection = {
-        ...collection,
-        images: [...collection.images, newImage],
-      };
+      const newCollection = collectionUpsertImage(collection, newImage);
       safeCollection(newCollection).then(() => console.log("saved"));
       console.log("onFileUploaded", newImage);
       return newCollection;
@@ -141,18 +133,9 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
       rectangle: link.rectangle,
       link: link,
     });
-    setCollection((collection) => {
-      return {
-        ...collection,
-        images: collection.images.map((image): Image => {
-          if (image.imageId !== imageId) return image;
-          return {
-            ...image,
-            links: image.links.filter((l) => l !== link),
-          };
-        }),
-      };
-    });
+    setCollection((collection) =>
+      collectionDeleteLink(collection, image, link)
+    );
   };
 
   return (

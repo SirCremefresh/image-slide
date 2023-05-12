@@ -60,3 +60,91 @@ export type CollectionMetadata = {
 assertType<
   TypeEqualityGuard<CollectionMetadata, z.infer<typeof ZCollectionMetadata>>
 >();
+
+const findImageIndex = (images: Image[], imageId: string): number =>
+  images.findIndex((existingImage) => existingImage.imageId === imageId);
+
+const updateArray = <T>(arr: T[], index: number, newItem: T): T[] => [
+  ...arr.slice(0, index),
+  newItem,
+  ...arr.slice(index + 1),
+];
+
+const upsertArray = <T>(
+  arr: T[],
+  newItem: T,
+  findIndex: (item: T) => boolean
+): T[] => {
+  const index = arr.findIndex(findIndex);
+  return index === -1 ? [...arr, newItem] : updateArray(arr, index, newItem);
+};
+
+const deleteArrayItem = <T>(arr: T[], index: number): T[] => [
+  ...arr.slice(0, index),
+  ...arr.slice(index + 1),
+];
+
+export function collectionUpsertImage(
+  collection: Collection,
+  image: Image
+): Collection {
+  const images = upsertArray(
+    collection.images,
+    image,
+    (existingImage) => existingImage.imageId === image.imageId
+  );
+  return { ...collection, images };
+}
+
+export function collectionUpsertLink(
+  collection: Collection,
+  image: Image,
+  link: Link
+): Collection {
+  const imageIndex = findImageIndex(collection.images, image.imageId);
+  if (imageIndex === -1) {
+    return collection;
+  }
+  const existingImage = collection.images[imageIndex];
+  const links = upsertArray(
+    existingImage.links,
+    link,
+    (existingLink) => existingLink.linkId === link.linkId
+  );
+  const images = updateArray(collection.images, imageIndex, {
+    ...existingImage,
+    links,
+  });
+  return { ...collection, images };
+}
+
+export function collectionDeleteLink(
+  collection: Collection,
+  image: Image,
+  link: Link
+): Collection {
+  const imageIndex = findImageIndex(collection.images, image.imageId);
+  if (imageIndex === -1) {
+    return collection;
+  }
+  const existingImage = collection.images[imageIndex];
+  const linkIndex = existingImage.links.findIndex(
+    (existingLink) => existingLink.linkId === link.linkId
+  );
+  if (linkIndex === -1) {
+    return collection;
+  }
+  const links = deleteArrayItem(existingImage.links, linkIndex);
+  const images = updateArray(collection.images, imageIndex, {
+    ...existingImage,
+    links,
+  });
+  return { ...collection, images };
+}
+
+export function collectionUpsertTitle(
+  collection: Collection,
+  title: string
+): Collection {
+  return { ...collection, title };
+}
