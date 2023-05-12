@@ -203,6 +203,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             {image.links.map((link, index) => (
               <PercentageBoxButton
                 onClick={() => setImageId(link.imageId)}
+                clickable={painting === undefined}
                 key={index}
                 rectangle={link.rectangle}
               ></PercentageBoxButton>
