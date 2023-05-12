@@ -45,7 +45,8 @@ export function CreateLinkRectangle({
 
   const onCreate = (targetImage: Image) => {
     propOnCreate({
-      imageId: targetImage.imageId,
+      linkId: crypto.randomUUID(),
+      targetImageId: targetImage.imageId,
       rectangle: percentageRectangle,
     });
   };

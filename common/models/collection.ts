@@ -11,11 +11,13 @@ import {
 } from "@common/models/collection-refinements.ts";
 
 export const ZLink = z.object({
-  imageId: z.string(),
+  linkId: ZuUID,
+  targetImageId: z.string(),
   rectangle: ZPercentageRectangle,
 });
 export type Link = {
-  imageId: string;
+  linkId: string;
+  targetImageId: string;
   rectangle: PercentageRectangle;
 };
 assertType<TypeEqualityGuard<Link, z.infer<typeof ZLink>>>();

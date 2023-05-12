@@ -6,7 +6,8 @@ const sampleImages: Image[] = [
     title: "Obwaldner Taal",
     links: [
       {
-        imageId: "80e7eaea-30bf-41e2-ac2a-a60dd92a11d6",
+        linkId: "9bcbb778-1d0c-4da9-906f-7a42873b04a0",
+        targetImageId: "80e7eaea-30bf-41e2-ac2a-a60dd92a11d6",
         rectangle: {
           percentageHeight: 9.4370717321537,
           percentageWidth: 10.352098437364607,
@@ -21,7 +22,8 @@ const sampleImages: Image[] = [
     title: "Giswilerstock",
     links: [
       {
-        imageId: "6b324990-7b9f-4bc3-80bd-ebc9278ef0de",
+        linkId: "1d97da82-643c-4acd-8a12-437a9f387843",
+        targetImageId: "6b324990-7b9f-4bc3-80bd-ebc9278ef0de",
         rectangle: {
           percentageWidth: 8.061002178649238,
           percentageHeight: 11.154684095860567,

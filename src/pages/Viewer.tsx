@@ -30,7 +30,7 @@ function ViewerLoaded(props: { collection: Collection }) {
     const links = image.links.map((link, index) => {
       return (
         <PercentageBoxButton
-          onClick={() => setImageId(link.imageId)}
+          onClick={() => setImageId(link.targetImageId)}
           clickable={true}
           key={index}
           rectangle={link.rectangle}
