@@ -21,6 +21,7 @@ import {
   ViewportRectangle,
 } from "@common/models/rectangles.ts";
 import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
+import { useMouseState } from "./use-mouse-state.ts";
 
 function Editor() {
   const { collectionId, secret } = useParams<{
@@ -52,103 +53,24 @@ function CreateLinkRectangle({
   image: ViewportRectangle;
   start: PercentagePoint;
   onFinish: (rectangle: PercentageRectangle) => void;
+  images: Image[];
 }) {
-  const [painting, setPainting] = useState<PercentageRectangle>({
-    percentageX: start.percentageX,
-    percentageY: start.percentageY,
-    percentageWidth: 0,
-    percentageHeight: 0,
-  });
-  const [mouseState, setMouseState] = useState<{
-    point: PercentagePoint;
-    onImage: boolean;
-    mouseDown: boolean;
-  }>({
-    point: start,
-    onImage: true,
-    mouseDown: true,
-  });
+  const mouseState = useMouseState(start, imageRef, image);
+  const percentageRectangle = useMemo(() => {
+    return buildPercentageRectangle(start, mouseState.point);
+  }, [start, mouseState]);
 
   useEffect(() => {
-    if (!imageRef) return;
-
-    const onMouseMove = (e: MouseEvent) => {
-      const currentMousePosition = toRelativePoint(image, {
-        viewportX: e.pageX,
-        viewportY: e.pageY,
-      });
-      const percentageMousePosition = toPercentPoint(
-        image,
-        currentMousePosition
-      );
-      setMouseState((mouseState) => ({
-        ...mouseState,
-        point: percentageMousePosition,
-      }));
-    };
-
-    const onMouseUp = (e: MouseEvent) => {
-      const currentMousePosition = toRelativePoint(image, {
-        viewportX: e.pageX,
-        viewportY: e.pageY,
-      });
-      const percentageMousePosition = toPercentPoint(
-        image,
-        currentMousePosition
-      );
-      setMouseState((mouseState) => ({
-        ...mouseState,
-        point: percentageMousePosition,
-        mouseDown: false,
-      }));
-    };
-
-    const onMouseLeave = (e: MouseEvent) => {
-      const currentMousePosition = toRelativePoint(image, {
-        viewportX: e.pageX,
-        viewportY: e.pageY,
-      });
-
-      const percentageMousePosition = toPercentPoint(
-        image,
-        currentMousePosition
-      );
-      setMouseState((mouseState) => ({
-        ...mouseState,
-        point: percentageMousePosition,
-        onImage: false,
-      }));
-    };
-
-    imageRef.addEventListener("mousemove", onMouseMove);
-    imageRef.addEventListener("mouseup", onMouseUp);
-    imageRef.addEventListener("mouseleave", onMouseLeave);
-
-    return () => {
-      if (!imageRef) return;
-      imageRef.removeEventListener("mousemove", onMouseMove);
-      imageRef.removeEventListener("mouseup", onMouseUp);
-      imageRef.removeEventListener("mouseleave", onMouseLeave);
-    };
-  }, [image, imageRef]);
-
-  useEffect(() => {
-    const percentageRectangle = buildPercentageRectangle(
-      start,
-      mouseState.point
-    );
-
     if (!mouseState.mouseDown || !mouseState.onImage) {
       console.log("onFinish");
       onFinish(percentageRectangle);
       return;
     }
-    setPainting(percentageRectangle);
-  }, [image, mouseState, onFinish, start]);
+  }, [percentageRectangle, mouseState, onFinish]);
 
   return (
     <PercentageBoxButton
-      rectangle={painting}
+      rectangle={percentageRectangle}
       clickable={false}
     ></PercentageBoxButton>
   );
@@ -333,6 +255,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
                 start={createRectangleState.start}
                 imageRef={imageRef}
                 image={imageRectangle}
+                images={collection.images}
               ></CreateLinkRectangle>
             )}
           </div>
