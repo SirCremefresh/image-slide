@@ -1,6 +1,5 @@
 import { MouseEvent, useCallback, useMemo, useState } from "react";
 import "./Editor.css";
-import { PaintingState } from "./painting-state.ts";
 import { useImageRectangle } from "../../hooks/ImageRectangle.ts";
 import { PercentageBoxButton } from "../../components/BoxButton.tsx";
 import { FloatingToolbar } from "../../components/FloatingToolbar.tsx";
@@ -16,13 +15,12 @@ import {
   Link,
 } from "@common/models/collection.ts";
 import { ImageUploadModal } from "../../components/ImageUploadModal.tsx";
-import {
-  buildPercentPointFromMouseEvent,
-  PercentagePoint,
-} from "@common/models/points.ts";
-import { toRelativeRectangle } from "@common/models/rectangles.ts";
+import { buildPercentPointFromMouseEvent } from "@common/models/points.ts";
 import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
-import { CreateLinkRectangle } from "./CreateLinkRectangle.tsx";
+import {
+  ActiveLinkRectangle,
+  ActiveRectangleState,
+} from "./ActiveLinkRectangle.tsx";
 
 function Editor() {
   const { collectionId, secret } = useParams<{
@@ -50,11 +48,8 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     collection.images.at(0)?.imageId
   );
   const [fileUploadModalOpen, setFileUploadModalOpen] = useState(false);
-  const [painting, setPainting] = useState<PaintingState | undefined>(
-    undefined
-  );
-  const [createRectangleState, setCreateRectangleState] = useState<
-    { start: PercentagePoint } | undefined
+  const [activeRectangleState, setActiveRectangleState] = useState<
+    ActiveRectangleState | undefined
   >(undefined);
   const [imageRectangle, imageRef, setImageRef] = useImageRectangle();
 
@@ -84,19 +79,20 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   }, [collection, imageId]);
 
   const createRectangle = (e: MouseEvent) => {
-    if (painting) return;
-    setCreateRectangleState({
+    if (activeRectangleState) return; // TODO: cancel active rectangle
+    setActiveRectangleState({
+      mode: "create",
       start: buildPercentPointFromMouseEvent(imageRectangle, e),
     });
   };
 
   const finishRectangle = (link: Link) => {
-    if (!createRectangleState) return;
+    if (!activeRectangleState) return;
 
     const newCollection = collectionUpsertLink(collection, image, link);
     setCollection(newCollection);
     safeCollection(newCollection).then(() => console.log("saved"));
-    setCreateRectangleState(undefined);
+    setActiveRectangleState(undefined);
   };
 
   const handleEditTitle = (newTitle: string) => {
@@ -127,11 +123,9 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   };
 
   const editRectangle = (link: Link) => {
-    setPainting({
-      mode: "update",
-      start: toRelativeRectangle(imageRectangle, link.rectangle),
-      rectangle: link.rectangle,
-      link: link,
+    setActiveRectangleState({
+      mode: "edit",
+      link,
     });
     setCollection((collection) =>
       collectionDeleteLink(collection, image, link)
@@ -166,20 +160,20 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             {image.links.map((link, index) => (
               <PercentageBoxButton
                 onClick={() => editRectangle(link)}
-                clickable={createRectangleState === undefined}
+                clickable={activeRectangleState === undefined}
                 key={index}
                 rectangle={link.rectangle}
               ></PercentageBoxButton>
             ))}
-            {createRectangleState && (
-              <CreateLinkRectangle
+            {activeRectangleState && (
+              <ActiveLinkRectangle
                 onCreate={finishRectangle}
-                onCancel={() => setCreateRectangleState(undefined)}
-                start={createRectangleState.start}
+                onCancel={() => setActiveRectangleState(undefined)}
+                state={activeRectangleState}
                 imageRef={imageRef}
                 image={imageRectangle}
                 images={collection.images}
-              ></CreateLinkRectangle>
+              ></ActiveLinkRectangle>
             )}
           </div>
         </div>

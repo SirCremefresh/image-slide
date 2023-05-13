@@ -1,14 +1,11 @@
 import { MouseEvent } from "react";
 import { classNames } from "../util/class-names.ts";
-import { PercentageRectangle } from "@common/models/rectangles.ts";
+import { Corner, PercentageRectangle } from "@common/models/rectangles.ts";
 
 export function PercentageBoxButton(props: {
   rectangle: PercentageRectangle;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
-  onCornerClick?: (
-    event: MouseEvent<HTMLDivElement>,
-    corner: "top-left" | "top-right" | "bottom-left" | "bottom-right"
-  ) => void;
+  onCornerMouseDown?: (corner: Corner) => void;
   clickable?: boolean;
   showCorners?: boolean;
 }) {
@@ -33,19 +30,19 @@ export function PercentageBoxButton(props: {
       {props.showCorners === true && (
         <>
           <div
-            onClick={(e) => props.onCornerClick?.(e, "top-left")}
+            onMouseDown={(e) => props.onCornerMouseDown?.("top-left")}
             className="absolute left-0 top-0 -ml-1.5 -mt-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
           <div
-            onClick={(e) => props.onCornerClick?.(e, "top-right")}
+            onMouseDown={(e) => props.onCornerMouseDown?.("top-right")}
             className="absolute right-0 top-0 -mr-1.5 -mt-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
           <div
-            onClick={(e) => props.onCornerClick?.(e, "bottom-left")}
+            onMouseDown={(e) => props.onCornerMouseDown?.("bottom-left")}
             className="absolute bottom-0 left-0 -mb-1.5 -ml-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
           <div
-            onClick={(e) => props.onCornerClick?.(e, "bottom-right")}
+            onMouseDown={(e) => props.onCornerMouseDown?.("bottom-right")}
             className="absolute bottom-0 right-0 -mb-1.5 -mr-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
         </>

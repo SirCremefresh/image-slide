@@ -99,3 +99,46 @@ export function buildPercentageRectangle(
         : point1.percentageY,
   };
 }
+
+export type Corner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
+
+export function getPercentagePointOfCorner(
+  rectangle: PercentageRectangle,
+  corner: Corner
+): PercentagePoint {
+  switch (corner) {
+    case "top-left":
+      return {
+        percentageX: rectangle.percentageX,
+        percentageY: rectangle.percentageY,
+      };
+    case "top-right":
+      return {
+        percentageX: rectangle.percentageX + rectangle.percentageWidth,
+        percentageY: rectangle.percentageY,
+      };
+    case "bottom-left":
+      return {
+        percentageX: rectangle.percentageX,
+        percentageY: rectangle.percentageY + rectangle.percentageHeight,
+      };
+    case "bottom-right":
+      return {
+        percentageX: rectangle.percentageX + rectangle.percentageWidth,
+        percentageY: rectangle.percentageY + rectangle.percentageHeight,
+      };
+  }
+}
+
+export function getOppositeCorner(corner: Corner): Corner {
+  switch (corner) {
+    case "top-left":
+      return "bottom-right";
+    case "top-right":
+      return "bottom-left";
+    case "bottom-left":
+      return "top-right";
+    case "bottom-right":
+      return "top-left";
+  }
+}
