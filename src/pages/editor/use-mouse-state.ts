@@ -6,22 +6,24 @@ import {
 import { ViewportRectangle } from "@common/models/rectangles.ts";
 import { useEffect, useState } from "react";
 
-type MouseState = {
+export type MouseState = {
   point: PercentagePoint;
-  onImage: boolean;
+  onElement: boolean;
   mouseDown: boolean;
+  active: boolean;
 };
 
 export function useMouseState(
   start: PercentagePoint,
-  imageRef: HTMLImageElement | null,
+  imageRef: HTMLElement | null,
   image: ViewportRectangle,
   trackMousePosition: boolean
 ) {
   const [mouseState, setMouseState] = useState<MouseState>({
     point: start,
-    onImage: true,
+    onElement: true,
     mouseDown: true,
+    active: true,
   });
 
   useEffect(() => {
@@ -46,25 +48,29 @@ export function useMouseState(
       setMouseState((mouseState) => ({
         ...mouseState,
         mouseDown: false,
+        active: false,
       }));
     };
     const onMouseDown = () => {
       setMouseState((mouseState) => ({
         ...mouseState,
         mouseDown: true,
+        active: mouseState.onElement,
       }));
     };
 
     const onMouseLeave = () => {
       setMouseState((mouseState) => ({
         ...mouseState,
-        onImage: false,
+        onElement: false,
+        active: false,
       }));
     };
     const onMouseEnter = () => {
       setMouseState((mouseState) => ({
         ...mouseState,
-        onImage: true,
+        onElement: true,
+        active: mouseState.mouseDown,
       }));
     };
 

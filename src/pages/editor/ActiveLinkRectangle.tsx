@@ -15,6 +15,27 @@ export type ActiveRectangleState =
   | { mode: "create"; start: PercentagePoint }
   | { mode: "edit"; link: Link };
 
+type Step =
+  | { name: "viewing" | "link-target" }
+  | {
+      name: "painting";
+      fixedCorner: PercentagePoint;
+    };
+
+function getInitialStep(state: ActiveRectangleState): Step {
+  if (state.mode === "create")
+    return { name: "painting", fixedCorner: state.start };
+  return { name: "viewing" };
+}
+
+function getInitialRectangle(
+  state: ActiveRectangleState
+): PercentageRectangleCorners {
+  if (state.mode === "create")
+    return { point1: state.start, point2: state.start };
+  return buildPercentageRectangleCorners(state.link.rectangle);
+}
+
 export function ActiveLinkRectangle({
   imageRef,
   image,
@@ -30,86 +51,60 @@ export function ActiveLinkRectangle({
   onCancel: () => void;
   images: Image[];
 }) {
-  const [step, setStep] = useState<
-    | { name: "painting" | "viewing" | "link-target" }
-    | {
-        name: "painting-from";
-        fixedCorner: PercentagePoint;
-      }
-  >({ name: state.mode === "create" ? "painting" : "viewing" });
-  const [currentPercentageRectangle, setCurrentPercentageRectangle] =
-    useState<PercentageRectangleCorners>(
-      state.mode === "create"
-        ? {
-            point1: state.start,
-            point2: state.start,
-          }
-        : buildPercentageRectangleCorners(state.link.rectangle)
-    );
+  const [step, setStep] = useState<Step>(getInitialStep(state));
+  const [currentRectangle, setCurrentRectangle] =
+    useState<PercentageRectangleCorners>(getInitialRectangle(state));
   const mouseState = useMouseState(
-    state.mode === "create" ? state.start : state.link.rectangle,
+    currentRectangle.point1,
     imageRef,
     image,
     true
   );
 
   useEffect(() => {
-    if (
-      step.name === "painting" &&
-      (!mouseState.mouseDown || !mouseState.onImage)
-    ) {
-      setStep({ name: "link-target" });
-      return;
-    }
-
-    if (state.mode === "create" && step.name === "painting") {
-      setCurrentPercentageRectangle({
-        point1: state.start,
-        point2: mouseState.point,
-      });
-      return;
-    }
-    if (state.mode === "edit" && step.name === "painting-from") {
-      setCurrentPercentageRectangle({
+    if (step.name === "painting") {
+      setCurrentRectangle({
         point1: step.fixedCorner,
         point2: mouseState.point,
       });
       return;
     }
-  }, [mouseState, state, step]);
+  }, [mouseState, step]);
+
   useEffect(() => {
-    if (
-      state.mode === "edit" &&
-      step.name === "painting-from" &&
-      (!mouseState.mouseDown || !mouseState.onImage)
-    ) {
-      console.log("to link-target", mouseState);
+    if (mouseState.active) return;
+
+    if (state.mode === "create" && step.name === "painting") {
+      setStep({ name: "link-target" });
+      return;
+    }
+    if (state.mode === "edit" && step.name === "painting") {
       setStep({ name: "viewing" });
       propOnCreate({
         ...state.link,
-        rectangle: buildPercentageRectangle(currentPercentageRectangle),
+        rectangle: buildPercentageRectangle(currentRectangle),
       });
       return;
     }
-  }, [currentPercentageRectangle, mouseState, propOnCreate, state, step.name]);
+  }, [currentRectangle, mouseState.active, propOnCreate, state, step.name]);
 
   const onCreate = (targetImage: Image) => {
     propOnCreate({
       linkId: crypto.randomUUID(),
       targetImageId: targetImage.imageId,
-      rectangle: buildPercentageRectangle(currentPercentageRectangle),
+      rectangle: buildPercentageRectangle(currentRectangle),
     });
   };
 
   return (
     <>
       <PercentageBoxCornerButton
-        rectangle={currentPercentageRectangle}
+        rectangle={currentRectangle}
         onCornerMouseDown={(corner) => {
-          setStep({ name: "painting-from", fixedCorner: corner });
+          setStep({ name: "painting", fixedCorner: corner });
         }}
         clickable={step.name === "viewing"}
-        showCorners={step.name === "viewing" || step.name === "painting-from"}
+        showCorners={step.name === "viewing" || step.name === "painting"}
       ></PercentageBoxCornerButton>
       {step.name === "link-target" && (
         <LinkEditModal
