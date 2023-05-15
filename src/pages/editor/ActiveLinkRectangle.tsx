@@ -49,13 +49,25 @@ function fitPercentageRectangleCorners(
   const rectangle = buildPercentageRectangle(corners);
   const topLeft = getPercentagePointOfCorner(rectangle, "top-left");
   const bottomRight = getPercentagePointOfCorner(rectangle, "bottom-right");
+
+  // Calculate offsets when corners are out of bounds
+  let offsetX = 0;
+  let offsetY = 0;
+
+  if (topLeft.percentageX < 0) offsetX = -topLeft.percentageX;
+  if (topLeft.percentageY < 0) offsetY = -topLeft.percentageY;
+
+  if (bottomRight.percentageX > 100) offsetX = 100 - bottomRight.percentageX;
+  if (bottomRight.percentageY > 100) offsetY = 100 - bottomRight.percentageY;
+
+  // Apply offsets to corners
   const newTopLeft = {
-    percentageX: Math.max(0, Math.min(100, topLeft.percentageX)),
-    percentageY: Math.max(0, Math.min(100, topLeft.percentageY)),
+    percentageX: topLeft.percentageX + offsetX,
+    percentageY: topLeft.percentageY + offsetY,
   };
   const newBottomRight = {
-    percentageX: Math.max(0, Math.min(100, bottomRight.percentageX)),
-    percentageY: Math.max(0, Math.min(100, bottomRight.percentageY)),
+    percentageX: bottomRight.percentageX + offsetX,
+    percentageY: bottomRight.percentageY + offsetY,
   };
 
   return {
@@ -121,10 +133,10 @@ export function ActiveLinkRectangle({
           topLeftCornerChange,
           currentBottomRightCorner
         );
-        return {
+        return fitPercentageRectangleCorners({
           point1: newTopLeftCorner,
           point2: bottomRightCorner,
-        };
+        });
       });
       return;
     }
