@@ -36,7 +36,6 @@ export function ActiveLinkRectangle({
     | { name: "painting" | "viewing" | "link-target" }
     | {
         name: "painting-from";
-        change: number;
         corner: Corner;
       }
   >({ name: state.mode === "create" ? "painting" : "viewing" });
@@ -86,19 +85,21 @@ export function ActiveLinkRectangle({
     }
   }, [mouseState, state, step]);
   useEffect(() => {
-    // if (step.name === "painting-from" && step.change + 1000 > Date.now()) {
-    //     console.log("ignore", step.change, Date.now(), mouseState);
-    //     return;
-    // }
     if (
+      state.mode === "edit" &&
       step.name === "painting-from" &&
       (!mouseState.mouseDown || !mouseState.onImage)
     ) {
       console.log("to link-target", mouseState);
       setStep({ name: "viewing" });
+      // propOnCreate({
+      //         ...state.link,
+      //         rectangle: currentPercentageRectangle,
+      //     }
+      // )
       return;
     }
-  }, [mouseState, step]);
+  }, [mouseState, state, step]);
 
   const onCreate = (targetImage: Image) => {
     propOnCreate({
@@ -111,11 +112,10 @@ export function ActiveLinkRectangle({
   return (
     <>
       <PercentageBoxButton
-        difRef={setBoxRef}
         rectangle={currentPercentageRectangle}
         onCornerMouseDown={(corner) => {
           console.log("to painting-from", mouseState);
-          setStep({ name: "painting-from", corner, change: Date.now() });
+          setStep({ name: "painting-from", corner });
         }}
         clickable={step.name === "viewing"}
         showCorners={step.name === "viewing" || step.name === "painting-from"}

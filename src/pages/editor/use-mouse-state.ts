@@ -55,6 +55,21 @@ export function useMouseState(
         mouseDown: false,
       }));
     };
+    const onMouseDown = (e: MouseEvent) => {
+      const currentMousePosition = toRelativePoint(image, {
+        viewportX: e.pageX,
+        viewportY: e.pageY,
+      });
+      const percentageMousePosition = toPercentPoint(
+        image,
+        currentMousePosition
+      );
+      setMouseState((mouseState) => ({
+        ...mouseState,
+        point: percentageMousePosition,
+        mouseDown: true,
+      }));
+    };
 
     const onMouseLeave = (e: MouseEvent) => {
       const currentMousePosition = toRelativePoint(image, {
@@ -72,16 +87,36 @@ export function useMouseState(
         onImage: false,
       }));
     };
+    const onMouseEnter = (e: MouseEvent) => {
+      const currentMousePosition = toRelativePoint(image, {
+        viewportX: e.pageX,
+        viewportY: e.pageY,
+      });
+
+      const percentageMousePosition = toPercentPoint(
+        image,
+        currentMousePosition
+      );
+      setMouseState((mouseState) => ({
+        ...mouseState,
+        point: percentageMousePosition,
+        onImage: true,
+      }));
+    };
 
     imageRef.addEventListener("mousemove", onMouseMove);
     imageRef.addEventListener("mouseup", onMouseUp);
     imageRef.addEventListener("mouseleave", onMouseLeave);
+    imageRef.addEventListener("mousedown", onMouseDown);
+    imageRef.addEventListener("mouseenter", onMouseEnter);
 
     return () => {
       if (!imageRef) return;
       imageRef.removeEventListener("mousemove", onMouseMove);
       imageRef.removeEventListener("mouseup", onMouseUp);
       imageRef.removeEventListener("mouseleave", onMouseLeave);
+      imageRef.removeEventListener("mousedown", onMouseDown);
+      imageRef.removeEventListener("mouseenter", onMouseEnter);
     };
   }, [image, imageRef, trackMousePosition]);
   return mouseState;

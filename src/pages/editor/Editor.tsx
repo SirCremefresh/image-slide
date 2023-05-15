@@ -89,10 +89,18 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   const finishRectangle = (link: Link) => {
     if (!activeRectangleState) return;
 
-    const newCollection = collectionUpsertLink(collection, image, link);
-    setCollection(newCollection);
-    safeCollection(newCollection).then(() => console.log("saved"));
-    setActiveRectangleState(undefined);
+    if (activeRectangleState.mode === "create") {
+      const newCollection = collectionUpsertLink(collection, image, link);
+      setCollection(newCollection);
+      safeCollection(newCollection).then(() => console.log("saved"));
+      setActiveRectangleState(undefined);
+    }
+    if (activeRectangleState.mode === "edit") {
+      setActiveRectangleState({
+        mode: "edit",
+        link,
+      });
+    }
   };
 
   const handleEditTitle = (newTitle: string) => {
