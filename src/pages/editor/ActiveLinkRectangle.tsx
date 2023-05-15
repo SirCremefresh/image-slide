@@ -72,12 +72,9 @@ export function ActiveLinkRectangle({
       return;
     }
     if (state.mode === "edit" && step.name === "painting-from") {
-      setCurrentPercentageRectangle(
+      setCurrentPercentageRectangle((rectangle) =>
         buildPercentageRectangle(
-          getPercentagePointOfCorner(
-            state.link.rectangle,
-            getOppositeCorner(step.corner)
-          ),
+          getPercentagePointOfCorner(rectangle, getOppositeCorner(step.corner)),
           mouseState.point
         )
       );

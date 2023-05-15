@@ -28,6 +28,11 @@ assertType<
   TypeEqualityGuard<PercentageRectangle, z.infer<typeof ZPercentageRectangle>>
 >();
 
+export type PercentageRectangleCorners = {
+  point1: PercentagePoint;
+  point2: PercentagePoint;
+};
+
 export const ZViewportRectangle = ZViewportPoint.merge(ZSize);
 export type ViewportRectangle = ViewportPoint & Size;
 assertType<

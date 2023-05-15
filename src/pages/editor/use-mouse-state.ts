@@ -6,17 +6,19 @@ import {
 import { ViewportRectangle } from "@common/models/rectangles.ts";
 import { useEffect, useState } from "react";
 
+type MouseState = {
+  point: PercentagePoint;
+  onImage: boolean;
+  mouseDown: boolean;
+};
+
 export function useMouseState(
   start: PercentagePoint,
   imageRef: HTMLImageElement | null,
   image: ViewportRectangle,
   trackMousePosition: boolean
 ) {
-  const [mouseState, setMouseState] = useState<{
-    point: PercentagePoint;
-    onImage: boolean;
-    mouseDown: boolean;
-  }>({
+  const [mouseState, setMouseState] = useState<MouseState>({
     point: start,
     onImage: true,
     mouseDown: true,
@@ -40,66 +42,28 @@ export function useMouseState(
       }));
     };
 
-    const onMouseUp = (e: MouseEvent) => {
-      const currentMousePosition = toRelativePoint(image, {
-        viewportX: e.pageX,
-        viewportY: e.pageY,
-      });
-      const percentageMousePosition = toPercentPoint(
-        image,
-        currentMousePosition
-      );
+    const onMouseUp = () => {
       setMouseState((mouseState) => ({
         ...mouseState,
-        point: percentageMousePosition,
         mouseDown: false,
       }));
     };
-    const onMouseDown = (e: MouseEvent) => {
-      const currentMousePosition = toRelativePoint(image, {
-        viewportX: e.pageX,
-        viewportY: e.pageY,
-      });
-      const percentageMousePosition = toPercentPoint(
-        image,
-        currentMousePosition
-      );
+    const onMouseDown = () => {
       setMouseState((mouseState) => ({
         ...mouseState,
-        point: percentageMousePosition,
         mouseDown: true,
       }));
     };
 
-    const onMouseLeave = (e: MouseEvent) => {
-      const currentMousePosition = toRelativePoint(image, {
-        viewportX: e.pageX,
-        viewportY: e.pageY,
-      });
-
-      const percentageMousePosition = toPercentPoint(
-        image,
-        currentMousePosition
-      );
+    const onMouseLeave = () => {
       setMouseState((mouseState) => ({
         ...mouseState,
-        point: percentageMousePosition,
         onImage: false,
       }));
     };
-    const onMouseEnter = (e: MouseEvent) => {
-      const currentMousePosition = toRelativePoint(image, {
-        viewportX: e.pageX,
-        viewportY: e.pageY,
-      });
-
-      const percentageMousePosition = toPercentPoint(
-        image,
-        currentMousePosition
-      );
+    const onMouseEnter = () => {
       setMouseState((mouseState) => ({
         ...mouseState,
-        point: percentageMousePosition,
         onImage: true,
       }));
     };
