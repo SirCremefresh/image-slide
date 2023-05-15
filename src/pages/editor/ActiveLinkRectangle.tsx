@@ -98,10 +98,7 @@ export function ActiveLinkRectangle({
     propOnCreate({
       linkId: crypto.randomUUID(),
       targetImageId: targetImage.imageId,
-      rectangle: buildPercentageRectangle(
-        currentPercentageRectangle.point1,
-        currentPercentageRectangle.point2
-      ),
+      rectangle: buildPercentageRectangle(currentPercentageRectangle),
     });
   };
 
@@ -110,7 +107,6 @@ export function ActiveLinkRectangle({
       <PercentageBoxCornerButton
         rectangle={currentPercentageRectangle}
         onCornerMouseDown={(corner) => {
-          console.log("to painting-from", mouseState);
           setStep({ name: "painting-from", fixedCorner: corner });
         }}
         clickable={step.name === "viewing"}

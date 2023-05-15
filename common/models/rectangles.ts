@@ -85,9 +85,10 @@ export function buildRelativeRectangle(
 }
 
 export function buildPercentageRectangle(
-  point1: PercentagePoint,
-  point2: PercentagePoint
+  corners: PercentageRectangleCorners
 ): PercentageRectangle {
+  const point1 = corners.point1;
+  const point2 = corners.point2;
   const width = Math.abs(point2.percentageX - point1.percentageX);
   const height = Math.abs(point2.percentageY - point1.percentageY);
 
@@ -120,7 +121,6 @@ export function buildPercentageRectangleCorners(
 }
 
 export type Corner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
-
 export function getPercentagePointOfCorner(
   rectangle: PercentageRectangle,
   corner: Corner
