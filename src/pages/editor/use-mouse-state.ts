@@ -86,3 +86,39 @@ export function useMouseState(
   }, [image, imageRef, trackMousePosition]);
   return mouseState;
 }
+
+export function useMouseOnState(
+  initial: boolean,
+  elementRef: HTMLElement | null
+) {
+  const [mouseState, setMouseState] = useState<{
+    onElement: boolean;
+  }>({
+    onElement: initial,
+  });
+
+  useEffect(() => {
+    if (!elementRef) return;
+
+    const onMouseEnter = () => {
+      setMouseState({
+        onElement: true,
+      });
+    };
+    const onMouseLeave = () => {
+      setMouseState({
+        onElement: false,
+      });
+    };
+
+    elementRef.addEventListener("mouseleave", onMouseLeave);
+    elementRef.addEventListener("mouseenter", onMouseEnter);
+
+    return () => {
+      if (!elementRef) return;
+      elementRef.addEventListener("mouseleave", onMouseLeave);
+      elementRef.addEventListener("mouseenter", onMouseEnter);
+    };
+  }, [elementRef]);
+  return mouseState;
+}

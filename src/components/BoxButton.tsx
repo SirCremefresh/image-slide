@@ -8,11 +8,13 @@ export function PercentageBoxButton(props: {
   onCornerMouseDown?: (corner: Corner) => void;
   clickable?: boolean;
   showCorners?: boolean;
+  difRef?: (ref: HTMLDivElement) => void;
 }) {
   const clickable = props.clickable ?? false;
 
   return (
     <div
+      ref={props.difRef}
       className={classNames(
         "absolute box-border rounded-md border-2 border-dashed border-indigo-500 bg-sky-500/50 shadow-sm transition-shadow hover:shadow-xl",
         clickable ? "pointer-events-auto" : "pointer-events-none"
@@ -43,6 +45,7 @@ export function PercentageBoxButton(props: {
           ></div>
           <div
             onMouseDown={(e) => props.onCornerMouseDown?.("bottom-right")}
+            onMouseUp={(e) => console.log("mouse up")}
             className="absolute bottom-0 right-0 -mb-1.5 -mr-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
         </>

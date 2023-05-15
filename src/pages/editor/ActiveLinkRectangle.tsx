@@ -36,6 +36,7 @@ export function ActiveLinkRectangle({
     | { name: "painting" | "viewing" | "link-target" }
     | {
         name: "painting-from";
+        change: number;
         corner: Corner;
       }
   >({ name: state.mode === "create" ? "painting" : "viewing" });
@@ -64,14 +65,7 @@ export function ActiveLinkRectangle({
       setStep({ name: "link-target" });
       return;
     }
-    if (
-      step.name === "painting-from" &&
-      (!mouseState.mouseDown || !mouseState.onImage)
-    ) {
-      console.log("painting-from -> viewing");
-      setStep({ name: "viewing" });
-      return;
-    }
+
     if (state.mode === "create" && step.name === "painting") {
       setCurrentPercentageRectangle(
         buildPercentageRectangle(state.start, mouseState.point)
@@ -79,7 +73,6 @@ export function ActiveLinkRectangle({
       return;
     }
     if (state.mode === "edit" && step.name === "painting-from") {
-      console.log("painting-from");
       setCurrentPercentageRectangle(
         buildPercentageRectangle(
           getPercentagePointOfCorner(
@@ -91,7 +84,21 @@ export function ActiveLinkRectangle({
       );
       return;
     }
-  }, [setStep, state, step, mouseState]);
+  }, [mouseState, state, step]);
+  useEffect(() => {
+    // if (step.name === "painting-from" && step.change + 1000 > Date.now()) {
+    //     console.log("ignore", step.change, Date.now(), mouseState);
+    //     return;
+    // }
+    if (
+      step.name === "painting-from" &&
+      (!mouseState.mouseDown || !mouseState.onImage)
+    ) {
+      console.log("to link-target", mouseState);
+      setStep({ name: "viewing" });
+      return;
+    }
+  }, [mouseState, step]);
 
   const onCreate = (targetImage: Image) => {
     propOnCreate({
@@ -104,10 +111,11 @@ export function ActiveLinkRectangle({
   return (
     <>
       <PercentageBoxButton
+        difRef={setBoxRef}
         rectangle={currentPercentageRectangle}
         onCornerMouseDown={(corner) => {
           console.log("to painting-from", mouseState);
-          setStep({ name: "painting-from", corner });
+          setStep({ name: "painting-from", corner, change: Date.now() });
         }}
         clickable={step.name === "viewing"}
         showCorners={step.name === "viewing" || step.name === "painting-from"}

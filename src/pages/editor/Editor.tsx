@@ -146,11 +146,11 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
         </div>
         <div className={""}>
           <div
+            ref={setImageRef}
             className="relative inline-block flex-1 select-none"
             draggable={false}
           >
             <img
-              ref={setImageRef}
               className="block max-h-[100%] max-w-[100%] rounded"
               src={imageUrl(collection.collectionId, image.imageId)}
               alt={image.title}
