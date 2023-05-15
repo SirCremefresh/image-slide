@@ -3,6 +3,8 @@ import { classNames } from "../util/class-names.ts";
 import {
   buildPercentageRectangle,
   Corner,
+  getOppositeCorner,
+  getPercentagePointOfCorner,
   PercentageRectangle,
   PercentageRectangleCorners,
 } from "@common/models/rectangles.ts";
@@ -62,7 +64,7 @@ export function PercentageBoxButton(props: {
 export function PercentageBoxCornerButton(props: {
   rectangle: PercentageRectangleCorners;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
-  onCornerMouseDown?: (corner: Corner) => void;
+  onCornerMouseDown?: (corner: PercentagePoint) => void;
   clickable?: boolean;
   showCorners?: boolean;
   difRef?: (ref: HTMLDivElement) => void;
@@ -94,19 +96,47 @@ export function PercentageBoxCornerButton(props: {
       {props.showCorners === true && (
         <>
           <div
-            onMouseDown={() => props.onCornerMouseDown?.("top-left")}
+            onMouseDown={() =>
+              props.onCornerMouseDown?.(
+                getPercentagePointOfCorner(
+                  rectangle,
+                  getOppositeCorner("top-left")
+                )
+              )
+            }
             className="absolute left-0 top-0 -ml-1.5 -mt-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
           <div
-            onMouseDown={() => props.onCornerMouseDown?.("top-right")}
+            onMouseDown={() =>
+              props.onCornerMouseDown?.(
+                getPercentagePointOfCorner(
+                  rectangle,
+                  getOppositeCorner("top-right")
+                )
+              )
+            }
             className="absolute right-0 top-0 -mr-1.5 -mt-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
           <div
-            onMouseDown={() => props.onCornerMouseDown?.("bottom-left")}
+            onMouseDown={() =>
+              props.onCornerMouseDown?.(
+                getPercentagePointOfCorner(
+                  rectangle,
+                  getOppositeCorner("bottom-left")
+                )
+              )
+            }
             className="absolute bottom-0 left-0 -mb-1.5 -ml-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
           <div
-            onMouseDown={() => props.onCornerMouseDown?.("bottom-right")}
+            onMouseDown={() =>
+              props.onCornerMouseDown?.(
+                getPercentagePointOfCorner(
+                  rectangle,
+                  getOppositeCorner("bottom-right")
+                )
+              )
+            }
             className="absolute bottom-0 right-0 -mb-1.5 -mr-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
         </>

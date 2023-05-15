@@ -105,6 +105,20 @@ export function buildPercentageRectangle(
   };
 }
 
+export function buildPercentageRectangleCorners(
+  rectangle: PercentageRectangle
+): PercentageRectangleCorners {
+  const point1: PercentagePoint = {
+    percentageX: rectangle.percentageX,
+    percentageY: rectangle.percentageY,
+  };
+  const point2: PercentagePoint = {
+    percentageX: rectangle.percentageX + rectangle.percentageWidth,
+    percentageY: rectangle.percentageY + rectangle.percentageHeight,
+  };
+  return { point1, point2 };
+}
+
 export type Corner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
 export function getPercentagePointOfCorner(
