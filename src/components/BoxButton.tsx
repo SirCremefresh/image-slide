@@ -9,6 +9,7 @@ import {
   PercentageRectangleCorners,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
+import { isNullOrUndefined } from "@common/util/assert-util.ts";
 
 export function PercentageBoxButton(props: {
   rectangle: PercentageRectangle;
@@ -48,8 +49,10 @@ export function PercentageBoxCornerButton(props: {
 
   const rectangle = buildPercentageRectangle(props.rectangle);
 
-  const onCornerMouseDown = (corner: Corner) => {
-    props.onCornerMouseDown?.(
+  const onCornerMouseDown = (event: MouseEvent, corner: Corner) => {
+    if (isNullOrUndefined(props.onCornerMouseDown)) return;
+    event.stopPropagation();
+    props.onCornerMouseDown(
       getPercentagePointOfCorner(rectangle, getOppositeCorner(corner))
     );
   };
@@ -72,19 +75,19 @@ export function PercentageBoxCornerButton(props: {
       {props.showCorners === true && (
         <>
           <div
-            onMouseDown={() => onCornerMouseDown("top-left")}
+            onMouseDown={(e) => onCornerMouseDown(e, "top-left")}
             className="absolute left-0 top-0 -ml-1.5 -mt-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
           <div
-            onMouseDown={() => onCornerMouseDown("top-right")}
+            onMouseDown={(e) => onCornerMouseDown(e, "top-right")}
             className="absolute right-0 top-0 -mr-1.5 -mt-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
           <div
-            onMouseDown={() => onCornerMouseDown("bottom-left")}
+            onMouseDown={(e) => onCornerMouseDown(e, "bottom-left")}
             className="absolute bottom-0 left-0 -mb-1.5 -ml-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
           <div
-            onMouseDown={() => onCornerMouseDown("bottom-right")}
+            onMouseDown={(e) => onCornerMouseDown(e, "bottom-right")}
             className="absolute bottom-0 right-0 -mb-1.5 -mr-1.5 h-3 w-3 rounded-full bg-blue-500"
           ></div>
         </>

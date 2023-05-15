@@ -43,6 +43,27 @@ function getInitialRectangle(
   return buildPercentageRectangleCorners(state.link.rectangle);
 }
 
+function fitPercentageRectangleCorners(
+  corners: PercentageRectangleCorners
+): PercentageRectangleCorners {
+  const rectangle = buildPercentageRectangle(corners);
+  const topLeft = getPercentagePointOfCorner(rectangle, "top-left");
+  const bottomRight = getPercentagePointOfCorner(rectangle, "bottom-right");
+  const newTopLeft = {
+    percentageX: Math.max(0, Math.min(100, topLeft.percentageX)),
+    percentageY: Math.max(0, Math.min(100, topLeft.percentageY)),
+  };
+  const newBottomRight = {
+    percentageX: Math.max(0, Math.min(100, bottomRight.percentageX)),
+    percentageY: Math.max(0, Math.min(100, bottomRight.percentageY)),
+  };
+
+  return {
+    point1: newTopLeft,
+    point2: newBottomRight,
+  };
+}
+
 export function ActiveLinkRectangle({
   imageRef,
   image,
@@ -70,10 +91,12 @@ export function ActiveLinkRectangle({
 
   useEffect(() => {
     if (step.name === "painting") {
-      setCurrentRectangle({
-        point1: step.fixedCorner,
-        point2: mouseState.point,
-      });
+      setCurrentRectangle(
+        fitPercentageRectangleCorners({
+          point1: step.fixedCorner,
+          point2: mouseState.point,
+        })
+      );
       return;
     }
     if (step.name === "moving") {
@@ -114,19 +137,13 @@ export function ActiveLinkRectangle({
       setStep({ name: "link-target" });
       return;
     }
-    if (state.mode === "edit" && step.name === "painting") {
+    if (state.mode === "edit" && ["painting", "moving"].includes(step.name)) {
       setStep({ name: "viewing" });
+      const fitted = fitPercentageRectangleCorners(currentRectangle);
+      setCurrentRectangle(fitted);
       propOnCreate({
         ...state.link,
-        rectangle: buildPercentageRectangle(currentRectangle),
-      });
-      return;
-    }
-    if (state.mode === "edit" && step.name === "moving") {
-      setStep({ name: "viewing" });
-      propOnCreate({
-        ...state.link,
-        rectangle: buildPercentageRectangle(currentRectangle),
+        rectangle: buildPercentageRectangle(fitted),
       });
       return;
     }
@@ -136,7 +153,9 @@ export function ActiveLinkRectangle({
     propOnCreate({
       linkId: crypto.randomUUID(),
       targetImageId: targetImage.imageId,
-      rectangle: buildPercentageRectangle(currentRectangle),
+      rectangle: buildPercentageRectangle(
+        fitPercentageRectangleCorners(currentRectangle)
+      ),
     });
   };
 
