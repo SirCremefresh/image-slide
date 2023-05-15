@@ -1,7 +1,10 @@
 import {
+  addPercentagePoints,
   buildPercentageRectangle,
   buildPercentageRectangleCorners,
+  getPercentagePointOfCorner,
   PercentageRectangleCorners,
+  subtractPercentagePoints,
   ViewportRectangle,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
@@ -17,6 +20,10 @@ export type ActiveRectangleState =
 
 type Step =
   | { name: "viewing" | "link-target" }
+  | {
+      name: "moving";
+      topLeftOffset: PercentagePoint;
+    }
   | {
       name: "painting";
       fixedCorner: PercentagePoint;
@@ -69,6 +76,35 @@ export function ActiveLinkRectangle({
       });
       return;
     }
+    if (step.name === "moving") {
+      setCurrentRectangle((rectangle) => {
+        const currentTopLeftCorner = getPercentagePointOfCorner(
+          buildPercentageRectangle(rectangle),
+          "top-left"
+        );
+        const currentBottomRightCorner = getPercentagePointOfCorner(
+          buildPercentageRectangle(rectangle),
+          "bottom-right"
+        );
+        const newTopLeftCorner = subtractPercentagePoints(
+          mouseState.point,
+          step.topLeftOffset
+        );
+        const topLeftCornerChange = subtractPercentagePoints(
+          newTopLeftCorner,
+          currentTopLeftCorner
+        );
+        const bottomRightCorner = addPercentagePoints(
+          topLeftCornerChange,
+          currentBottomRightCorner
+        );
+        return {
+          point1: newTopLeftCorner,
+          point2: bottomRightCorner,
+        };
+      });
+      return;
+    }
   }, [mouseState, step]);
 
   useEffect(() => {
@@ -79,6 +115,14 @@ export function ActiveLinkRectangle({
       return;
     }
     if (state.mode === "edit" && step.name === "painting") {
+      setStep({ name: "viewing" });
+      propOnCreate({
+        ...state.link,
+        rectangle: buildPercentageRectangle(currentRectangle),
+      });
+      return;
+    }
+    if (state.mode === "edit" && step.name === "moving") {
       setStep({ name: "viewing" });
       propOnCreate({
         ...state.link,
@@ -100,11 +144,23 @@ export function ActiveLinkRectangle({
     <>
       <PercentageBoxCornerButton
         rectangle={currentRectangle}
-        onCornerMouseDown={(corner) => {
-          setStep({ name: "painting", fixedCorner: corner });
+        onCornerMouseDown={(oppositeCorner) => {
+          setStep({ name: "painting", fixedCorner: oppositeCorner });
+        }}
+        onMouseDown={() => {
+          const topLeftCorner = getPercentagePointOfCorner(
+            buildPercentageRectangle(currentRectangle),
+            "top-left"
+          );
+          const topLeftOffset = subtractPercentagePoints(
+            mouseState.point,
+            topLeftCorner
+          );
+          console.log("to moving");
+          setStep({ name: "moving", topLeftOffset: topLeftOffset });
         }}
         clickable={step.name === "viewing"}
-        showCorners={step.name === "viewing" || step.name === "painting"}
+        showCorners={true}
       ></PercentageBoxCornerButton>
       {step.name === "link-target" && (
         <LinkEditModal

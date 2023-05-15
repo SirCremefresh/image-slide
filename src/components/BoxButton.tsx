@@ -40,6 +40,7 @@ export function PercentageBoxCornerButton(props: {
   rectangle: PercentageRectangleCorners;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onCornerMouseDown?: (corner: PercentagePoint) => void;
+  onMouseDown?: () => void;
   clickable?: boolean;
   showCorners?: boolean;
 }) {
@@ -59,9 +60,8 @@ export function PercentageBoxCornerButton(props: {
         "absolute box-border rounded-md border-2 border-dashed border-indigo-500 bg-sky-500/50 shadow-sm transition-shadow hover:shadow-xl",
         clickable ? "pointer-events-auto" : "pointer-events-none"
       )}
-      onClick={(e) => {
-        props.onClick?.(e);
-      }}
+      onClick={props.onClick}
+      onMouseDown={props.onMouseDown}
       style={{
         top: rectangle.percentageY + "%",
         left: rectangle.percentageX + "%",
