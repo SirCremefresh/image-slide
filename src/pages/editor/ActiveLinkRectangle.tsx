@@ -50,7 +50,6 @@ function fitPercentageRectangleCorners(
   const topLeft = getPercentagePointOfCorner(rectangle, "top-left");
   const bottomRight = getPercentagePointOfCorner(rectangle, "bottom-right");
 
-  // Calculate offsets when corners are out of bounds
   let offsetX = 0;
   let offsetY = 0;
 
@@ -60,19 +59,10 @@ function fitPercentageRectangleCorners(
   if (bottomRight.percentageX > 100) offsetX = 100 - bottomRight.percentageX;
   if (bottomRight.percentageY > 100) offsetY = 100 - bottomRight.percentageY;
 
-  // Apply offsets to corners
-  const newTopLeft = {
-    percentageX: topLeft.percentageX + offsetX,
-    percentageY: topLeft.percentageY + offsetY,
-  };
-  const newBottomRight = {
-    percentageX: bottomRight.percentageX + offsetX,
-    percentageY: bottomRight.percentageY + offsetY,
-  };
-
+  const offset = { percentageX: offsetX, percentageY: offsetY };
   return {
-    point1: newTopLeft,
-    point2: newBottomRight,
+    point1: addPercentagePoints(topLeft, offset),
+    point2: addPercentagePoints(bottomRight, offset),
   };
 }
 
