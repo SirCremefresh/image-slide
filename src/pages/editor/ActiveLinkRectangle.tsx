@@ -85,14 +85,13 @@ export function ActiveLinkRectangle({
     ) {
       console.log("to link-target", mouseState);
       setStep({ name: "viewing" });
-      // propOnCreate({
-      //         ...state.link,
-      //         rectangle: currentPercentageRectangle,
-      //     }
-      // )
+      propOnCreate({
+        ...state.link,
+        rectangle: buildPercentageRectangle(currentPercentageRectangle),
+      });
       return;
     }
-  }, [mouseState, state, step]);
+  }, [currentPercentageRectangle, mouseState, propOnCreate, state, step.name]);
 
   const onCreate = (targetImage: Image) => {
     propOnCreate({

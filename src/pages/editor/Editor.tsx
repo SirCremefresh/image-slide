@@ -79,7 +79,17 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   }, [collection, imageId]);
 
   const createRectangle = (e: MouseEvent) => {
-    if (activeRectangleState) return; // TODO: cancel active rectangle
+    if (activeRectangleState?.mode === "edit") {
+      const newCollection = collectionUpsertLink(
+        collection,
+        image,
+        activeRectangleState.link
+      );
+      setCollection(newCollection);
+      safeCollection(newCollection).then(() => console.log("saved"));
+      setActiveRectangleState(undefined);
+      return;
+    }
     setActiveRectangleState({
       mode: "create",
       start: buildPercentPointFromMouseEvent(imageRectangle, e),
@@ -89,13 +99,14 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   const finishRectangle = (link: Link) => {
     if (!activeRectangleState) return;
 
+    const newCollection = collectionUpsertLink(collection, image, link);
     if (activeRectangleState.mode === "create") {
-      const newCollection = collectionUpsertLink(collection, image, link);
       setCollection(newCollection);
       safeCollection(newCollection).then(() => console.log("saved"));
       setActiveRectangleState(undefined);
     }
     if (activeRectangleState.mode === "edit") {
+      safeCollection(newCollection).then(() => console.log("saved"));
       setActiveRectangleState({
         mode: "edit",
         link,
