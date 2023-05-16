@@ -2,6 +2,20 @@ import { Env } from "@function/util/env.js";
 import { hashString } from "@function/util/hash.js";
 import { getSampleCollection } from "@function/sample-data.js";
 
+function padTo2Digits(num: number) {
+  return num.toString().padStart(2, "0");
+}
+
+function getHistoryDateTime(): string {
+  const date = new Date();
+  return [
+    date.getFullYear(),
+    padTo2Digits(date.getMonth() + 1),
+    padTo2Digits(date.getDate()),
+    padTo2Digits(date.getHours()),
+  ].join("-");
+}
+
 // noinspection JSUnusedGlobalSymbols
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const collectionId = crypto.randomUUID();
@@ -17,6 +31,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       metadata: {
         hashedSecret: hashedSecret,
       },
+    }
+  );
+  await context.env.MAIN.put(
+    "COLLECTIONS_HISTORY:" + collectionId + ":" + getHistoryDateTime(),
+    JSON.stringify(collection),
+    {
+      metadata: {
+        hashedSecret: hashedSecret,
+      },
+      expirationTtl: 60 * 60 * 24 * 30,
     }
   );
   return new Response(
