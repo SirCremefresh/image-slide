@@ -25,25 +25,28 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const hashedSecret = await hashString(secret);
 
-  await context.env.MAIN.put(
-    "COLLECTIONS:" + collectionId,
-    JSON.stringify(collection),
-    {
-      metadata: {
-        hashedSecret: hashedSecret,
-      },
-    }
-  );
-  await context.env.MAIN.put(
-    "COLLECTIONS_HISTORY:" + collectionId + ":" + getHistoryDateTime(),
-    JSON.stringify(collection),
-    {
-      metadata: {
-        hashedSecret: hashedSecret,
-      },
-      expirationTtl: 60 * 60 * 24 * 30,
-    }
-  );
+  await Promise.all([
+    context.env.MAIN.put(
+      "COLLECTIONS:" + collectionId,
+      JSON.stringify(collection),
+      {
+        metadata: {
+          hashedSecret: hashedSecret,
+        },
+      }
+    ),
+    context.env.MAIN.put(
+      "COLLECTIONS_HISTORY:" + collectionId + ":" + getHistoryDateTime(),
+      JSON.stringify(collection),
+      {
+        metadata: {
+          hashedSecret: hashedSecret,
+        },
+        expirationTtl: 60 * 60 * 24 * 30,
+      }
+    ),
+  ]);
+
   return new Response(
     JSON.stringify({
       collectionId: collectionId,
