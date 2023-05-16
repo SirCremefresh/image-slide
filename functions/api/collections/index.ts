@@ -1,21 +1,7 @@
 import { Env } from "@function/util/env.js";
 import { hashString } from "@function/util/hash.js";
 import { getSampleCollection } from "@function/sample-data.js";
-
-function padTo2Digits(num: number) {
-  return num.toString().padStart(2, "0");
-}
-
-function getHistoryDateTime(): string {
-  const dateString = new Date().toLocaleString("en-US", { timeZone: "UTC" });
-  const date = new Date(dateString);
-  return [
-    date.getFullYear(),
-    padTo2Digits(date.getMonth() + 1),
-    padTo2Digits(date.getDate()),
-    padTo2Digits(date.getHours()),
-  ].join("-");
-}
+import { getUtcDateTimeString } from "@function/util/utc-date.js";
 
 // noinspection JSUnusedGlobalSymbols
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -36,7 +22,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       }
     ),
     context.env.MAIN.put(
-      "COLLECTIONS_HISTORY:" + collectionId + ":" + getHistoryDateTime(),
+      "COLLECTIONS_HISTORY:" + collectionId + ":" + getUtcDateTimeString(),
       JSON.stringify(collection),
       {
         metadata: {

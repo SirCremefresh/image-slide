@@ -8,6 +8,7 @@ import {
 import { hashString } from "@function/util/hash.js";
 import { parseOrThrow } from "@function/type-check.js";
 import { ZuUID } from "@common/models/uuid.js";
+import { getUtcDateTimeString } from "@function/util/utc-date.js";
 
 // noinspection JSUnusedGlobalSymbols
 export const onRequestGet: PagesFunction<Env> = async (context) => {
@@ -54,13 +55,26 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  await context.env.MAIN.put(
-    "COLLECTIONS:" + collection.collectionId,
-    JSON.stringify(collection),
-    {
-      metadata: metadata,
-    }
-  );
+  await Promise.all([
+    context.env.MAIN.put(
+      "COLLECTIONS:" + collection.collectionId,
+      JSON.stringify(collection),
+      {
+        metadata,
+      }
+    ),
+    context.env.MAIN.put(
+      "COLLECTIONS_HISTORY:" +
+        collection.collectionId +
+        ":" +
+        getUtcDateTimeString(),
+      JSON.stringify(collection),
+      {
+        metadata,
+        expirationTtl: 60 * 60 * 24 * 30,
+      }
+    ),
+  ]);
 
   return new Response(JSON.stringify(collection));
 };
