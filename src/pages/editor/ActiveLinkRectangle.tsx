@@ -71,6 +71,7 @@ export function ActiveLinkRectangle({
   image,
   state,
   onCreate: propOnCreate,
+  onDelete: propOnDelete,
   onCancel,
   images,
 }: {
@@ -79,6 +80,7 @@ export function ActiveLinkRectangle({
   state: ActiveRectangleState;
   onCreate: (link: Link) => void;
   onCancel: () => void;
+  onDelete: (link: Link) => void;
   images: Image[];
 }) {
   const [step, setStep] = useState<Step>(getInitialStep(state));
@@ -161,6 +163,13 @@ export function ActiveLinkRectangle({
     });
   };
 
+  const onDelete = () => {
+    if (state.mode === "edit") {
+      console.log("deleting");
+      propOnDelete(state.link);
+    }
+  };
+
   return (
     <>
       <PercentageBoxCornerButton
@@ -180,7 +189,9 @@ export function ActiveLinkRectangle({
           console.log("to moving");
           setStep({ name: "moving", topLeftOffset: topLeftOffset });
         }}
+        onDeleteClick={onDelete}
         clickable={step.name === "viewing"}
+        showToolbar={step.name === "viewing"}
         showCorners={true}
       ></PercentageBoxCornerButton>
       {step.name === "link-target" && (

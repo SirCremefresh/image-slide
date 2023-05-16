@@ -151,6 +151,14 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     );
   };
 
+  const onDeleteRectangle = (link: Link) => {
+    const newCollection = collectionDeleteLink(collection, image, link);
+
+    setCollection(newCollection);
+    setActiveRectangleState(undefined);
+    safeCollection(newCollection).then(() => console.log("saved"));
+  };
+
   return (
     <div className={"min-h-screen bg-gray-300 px-2"}>
       <div className={"grid grid-cols-[1fr_300px] grid-rows-[120px_1fr]"}>
@@ -188,6 +196,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
               <ActiveLinkRectangle
                 onCreate={finishRectangle}
                 onCancel={() => setActiveRectangleState(undefined)}
+                onDelete={onDeleteRectangle}
                 state={activeRectangleState}
                 imageRef={imageRef}
                 image={imageRectangle}

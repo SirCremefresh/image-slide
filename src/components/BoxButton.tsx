@@ -10,6 +10,7 @@ import {
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
 import { isNullOrUndefined } from "@common/util/assert-util.ts";
+import { TrashIcon } from "@heroicons/react/20/solid";
 
 export function PercentageBoxButton(props: {
   rectangle: PercentageRectangle;
@@ -41,9 +42,11 @@ export function PercentageBoxCornerButton(props: {
   rectangle: PercentageRectangleCorners;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onCornerMouseDown?: (corner: PercentagePoint) => void;
+  onDeleteClick?: () => void;
   onMouseDown?: () => void;
   clickable?: boolean;
   showCorners?: boolean;
+  showToolbar?: boolean;
 }) {
   const clickable = props.clickable ?? false;
 
@@ -72,6 +75,23 @@ export function PercentageBoxCornerButton(props: {
         height: rectangle.percentageHeight + "%",
       }}
     >
+      {props.showToolbar === true && (
+        <div
+          className="absolute -top-12 left-1 -ml-1.5"
+          onMouseDown={(e) => e.stopPropagation()}
+        >
+          <div
+            className={
+              "mt-2 flex h-8 flex-row items-center space-x-4 rounded-lg border border-gray-300 bg-white p-2 text-gray-700 shadow-md"
+            }
+          >
+            <TrashIcon
+              onClick={props.onDeleteClick}
+              className="h-4 w-4 cursor-pointer text-gray-700 transition-colors hover:text-black"
+            ></TrashIcon>
+          </div>
+        </div>
+      )}
       {props.showCorners === true && (
         <>
           <div
