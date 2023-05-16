@@ -212,10 +212,11 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             <div
               onClick={() => setImageId(image.imageId)}
               key={index}
+              style={{ backgroundColor: collection.backgroundColor }}
               className={"relative"}
             >
               <img
-                className={"w-[100%] rounded object-cover"}
+                className={"aspect-video w-[100%] rounded object-contain"}
                 src={imageUrl(collection.collectionId, image.imageId)}
                 alt={image.title}
                 loading={"lazy"}
