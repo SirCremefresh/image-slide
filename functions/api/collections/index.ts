@@ -7,7 +7,8 @@ function padTo2Digits(num: number) {
 }
 
 function getHistoryDateTime(): string {
-  const date = new Date();
+  const dateString = new Date().toLocaleString("en-US", { timeZone: "UTC" });
+  const date = new Date(dateString);
   return [
     date.getFullYear(),
     padTo2Digits(date.getMonth() + 1),
