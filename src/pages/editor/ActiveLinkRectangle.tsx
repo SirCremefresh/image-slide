@@ -1,7 +1,6 @@
 import {
   addPercentagePoints,
   buildPercentageRectangle,
-  buildPercentageRectangleCorners,
   fitPercentageRectangleCorners,
   getPercentagePointOfCorner,
   PercentageRectangleCorners,
@@ -15,9 +14,7 @@ import { useMouseState } from "./use-mouse-state.ts";
 import { PercentageBoxCornerButton } from "../../components/BoxButton.tsx";
 import LinkEditModal from "../../components/LinkEditModal.tsx";
 
-export type ActiveRectangleState =
-  | { mode: "create"; start: PercentagePoint }
-  | { mode: "edit"; link: Link };
+export type ActiveRectangleState = { mode: "create"; start: PercentagePoint };
 
 type Step =
   | { name: "viewing" | "link-target" }
@@ -39,9 +36,7 @@ function getInitialStep(state: ActiveRectangleState): Step {
 function getInitialRectangle(
   state: ActiveRectangleState
 ): PercentageRectangleCorners {
-  if (state.mode === "create")
-    return { point1: state.start, point2: state.start };
-  return buildPercentageRectangleCorners(state.link.rectangle);
+  return { point1: state.start, point2: state.start };
 }
 
 export function ActiveLinkRectangle({
@@ -49,7 +44,6 @@ export function ActiveLinkRectangle({
   image,
   state,
   onCreate: propOnCreate,
-  onDelete: propOnDelete,
   onCancel,
   images,
 }: {
@@ -119,16 +113,6 @@ export function ActiveLinkRectangle({
       setStep({ name: "link-target" });
       return;
     }
-    if (state.mode === "edit" && ["painting", "moving"].includes(step.name)) {
-      setStep({ name: "viewing" });
-      const fitted = fitPercentageRectangleCorners(currentRectangle);
-      setCurrentRectangle(fitted);
-      propOnCreate({
-        ...state.link,
-        rectangle: buildPercentageRectangle(fitted),
-      });
-      return;
-    }
   }, [currentRectangle, mouseState.active, propOnCreate, state, step.name]);
 
   const onCreate = (targetImage: Image) => {
@@ -139,13 +123,6 @@ export function ActiveLinkRectangle({
         fitPercentageRectangleCorners(currentRectangle)
       ),
     });
-  };
-
-  const onDelete = () => {
-    if (state.mode === "edit") {
-      console.log("deleting");
-      propOnDelete(state.link);
-    }
   };
 
   return (
@@ -167,7 +144,6 @@ export function ActiveLinkRectangle({
           console.log("to moving");
           setStep({ name: "moving", topLeftOffset: topLeftOffset });
         }}
-        onDeleteClick={onDelete}
         clickable={step.name === "viewing"}
         showToolbar={step.name === "viewing"}
         showCorners={true}

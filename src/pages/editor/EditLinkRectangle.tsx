@@ -1,6 +1,6 @@
 import { MouseState } from "./use-mouse-state.ts";
 import { Link } from "@common/models/collection.ts";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
 import {
   buildPercentageRectangle,
   buildPercentageRectangleCorners,
@@ -26,6 +26,35 @@ type Step =
       fixedCorner: PercentagePoint;
     };
 
+type CurrentRectangleReducerAction =
+  | {
+      type: "view";
+    }
+  | {
+      type: "start-painting";
+      fixedCorner: PercentagePoint;
+    }
+  | {
+      type: "start-moving";
+      mouseStatePosition: PercentagePoint;
+    }
+  | {
+      type: "update";
+      mouseStatePosition: PercentagePoint;
+    };
+
+type State = {
+  step: Step;
+  currentRectangle: PercentageRectangleCorners;
+};
+
+function getInitialState(link: Link): State {
+  return {
+    step: { name: "viewing" },
+    currentRectangle: buildPercentageRectangleCorners(link.rectangle),
+  };
+}
+
 export function EditLinkRectangle({
   mouseState,
   link,
@@ -37,68 +66,111 @@ export function EditLinkRectangle({
   onUpdate: (link: Link) => void;
   onDelete: (link: Link) => void;
 }) {
-  const [step, setStep] = useState<Step>({ name: "viewing" });
-  const [currentRectangle, setCurrentRectangle] =
-    useState<PercentageRectangleCorners>(
-      buildPercentageRectangleCorners(link.rectangle)
-    );
+  const reducer = (
+    rectangle: State,
+    action: CurrentRectangleReducerAction
+  ): State => {
+    switch (action.type) {
+      case "view":
+        return {
+          step: { name: "viewing" },
+          currentRectangle: rectangle.currentRectangle,
+        };
+      case "start-painting":
+        return {
+          step: {
+            name: "painting",
+            fixedCorner: action.fixedCorner,
+          },
+          currentRectangle: rectangle.currentRectangle,
+        };
+      case "start-moving":
+        return {
+          step: {
+            name: "moving",
+            topLeftOffset: subtractPercentagePoints(
+              action.mouseStatePosition,
+              getPercentagePointOfCorner(
+                buildPercentageRectangle(rectangle.currentRectangle),
+                "top-left"
+              )
+            ),
+          },
+          currentRectangle: rectangle.currentRectangle,
+        };
+      case "update":
+        if (rectangle.step.name === "painting") {
+          return {
+            step: rectangle.step,
+            currentRectangle: fitPercentageRectangleCorners({
+              point1: action.mouseStatePosition,
+              point2: rectangle.step.fixedCorner,
+            }),
+          };
+        }
+        if (rectangle.step.name === "moving") {
+          return {
+            step: rectangle.step,
+            currentRectangle: fitPercentageRectangleCorners(
+              moveRectanglePercentageRectangle(
+                rectangle.currentRectangle,
+                rectangle.step.topLeftOffset,
+                action.mouseStatePosition
+              )
+            ),
+          };
+        }
+        return rectangle;
+      default:
+        return rectangle;
+    }
+  };
+  const [state, dispatch] = useReducer(reducer, getInitialState(link));
 
   useEffect(() => {
-    if (step.name === "painting") {
-      setCurrentRectangle({
-        point1: step.fixedCorner,
-        point2: mouseState.point,
-      });
-      return;
-    }
-    if (step.name === "moving") {
-      setCurrentRectangle((rectangle) => {
-        const movedRectangle = moveRectanglePercentageRectangle(
-          rectangle,
-          step.topLeftOffset,
-          mouseState.point
-        );
-        return fitPercentageRectangleCorners(movedRectangle);
-      });
-      return;
-    }
-  }, [mouseState, step]);
+    dispatch({
+      type: "update",
+      mouseStatePosition: mouseState.point,
+    });
+  }, [mouseState.point]);
 
   useEffect(() => {
     if (mouseState.active) return;
 
-    if (["painting", "moving"].includes(step.name)) {
-      setStep({ name: "viewing" });
-      const fitted = fitPercentageRectangleCorners(currentRectangle);
-      setCurrentRectangle(fitted);
+    if (["painting", "moving"].includes(state.step.name)) {
+      dispatch({ type: "view" });
       onUpdate({
         ...link,
-        rectangle: buildPercentageRectangle(fitted),
+        rectangle: buildPercentageRectangle(state.currentRectangle),
       });
     }
-  }, [currentRectangle, link, mouseState.active, onUpdate, step.name]);
+  }, [
+    state.currentRectangle,
+    link,
+    mouseState.active,
+    onUpdate,
+    state.step.name,
+  ]);
 
   return (
     <>
       <PercentageBoxCornerButton
-        rectangle={currentRectangle}
+        rectangle={state.currentRectangle}
         onCornerMouseDown={(oppositeCorner) => {
-          setStep({ name: "painting", fixedCorner: oppositeCorner });
+          dispatch({
+            type: "start-painting",
+            fixedCorner: oppositeCorner,
+          });
         }}
         onMouseDown={() => {
-          const topLeftCorner = getPercentagePointOfCorner(
-            buildPercentageRectangle(currentRectangle),
-            "top-left"
-          );
-          const topLeftOffset = subtractPercentagePoints(
-            mouseState.point,
-            topLeftCorner
-          );
-          setStep({ name: "moving", topLeftOffset: topLeftOffset });
+          dispatch({
+            type: "start-moving",
+            mouseStatePosition: mouseState.point,
+          });
         }}
         onDeleteClick={() => onDelete(link)}
-        clickable={step.name === "viewing"}
-        showToolbar={step.name === "viewing"}
+        clickable={state.step.name === "viewing"}
+        showToolbar={state.step.name === "viewing"}
         showCorners={true}
       ></PercentageBoxCornerButton>
     </>
