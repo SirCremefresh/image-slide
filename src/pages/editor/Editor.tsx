@@ -27,7 +27,7 @@ import {
 } from "./ActiveLinkRectangle.tsx";
 import { classNames } from "../../util/class-names.ts";
 import { TrashIcon } from "@heroicons/react/20/solid";
-import { EditLinkRectangle } from "./EditLinkRectangle.tsx";
+import { EditLinkRectangle } from "./edit-link-rectangle/EditLinkRectangle.tsx";
 import { useMouseState } from "./use-mouse-state.ts";
 
 function Editor() {
