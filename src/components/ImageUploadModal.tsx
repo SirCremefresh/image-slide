@@ -55,12 +55,12 @@ function TitleInput(props: {
 }
 
 export function ImageUploadModal({
-  setOpenModal,
+  closeModal,
   collectionId,
   onFileUploaded,
   secret,
 }: {
-  setOpenModal: (open: boolean) => void;
+  closeModal: () => void;
   onFileUploaded: (image: Image) => unknown;
   collectionId: string;
   secret: string;
@@ -88,7 +88,7 @@ export function ImageUploadModal({
         title: title,
         links: [],
       });
-      setOpenModal(false);
+      closeModal();
     } catch (err) {
       console.error("Error uploading image", err);
       setHasUploadError(true);
@@ -99,7 +99,7 @@ export function ImageUploadModal({
     <div className="fixed inset-0 z-10 overflow-y-auto">
       <div
         className="fixed inset-0 h-full w-full bg-black opacity-40"
-        onClick={() => setOpenModal(false)}
+        onClick={() => closeModal()}
       ></div>
       <div className="flex min-h-screen items-center px-4 py-8">
         <div className="relative mx-auto w-full max-w-lg rounded-md bg-white p-4 shadow-lg">
@@ -131,7 +131,7 @@ export function ImageUploadModal({
               </button>
               <button
                 className="mt-2 w-full flex-1 rounded-md border p-2.5 text-gray-800 outline-none ring-blue-500 ring-offset-2 focus:ring-2"
-                onClick={() => setOpenModal(false)}
+                onClick={() => closeModal()}
               >
                 Cancel
               </button>

@@ -14,20 +14,18 @@ export type MouseState = {
 };
 
 export function useMouseState(
-  start: PercentagePoint,
   imageRef: HTMLElement | null,
-  image: ViewportRectangle,
-  trackMousePosition: boolean
+  image: ViewportRectangle
 ) {
   const [mouseState, setMouseState] = useState<MouseState>({
-    point: start,
+    point: { percentageX: 0, percentageY: 0 },
     onElement: true,
     mouseDown: true,
     active: true,
   });
 
   useEffect(() => {
-    if (!imageRef || !trackMousePosition) return;
+    if (!imageRef) return;
 
     const onMouseMove = (e: MouseEvent) => {
       const currentMousePosition = toRelativePoint(image, {
@@ -88,42 +86,6 @@ export function useMouseState(
       imageRef.removeEventListener("mousedown", onMouseDown);
       imageRef.removeEventListener("mouseenter", onMouseEnter);
     };
-  }, [image, imageRef, trackMousePosition]);
-  return mouseState;
-}
-
-export function useMouseOnState(
-  initial: boolean,
-  elementRef: HTMLElement | null
-) {
-  const [mouseState, setMouseState] = useState<{
-    onElement: boolean;
-  }>({
-    onElement: initial,
-  });
-
-  useEffect(() => {
-    if (!elementRef) return;
-
-    const onMouseEnter = () => {
-      setMouseState({
-        onElement: true,
-      });
-    };
-    const onMouseLeave = () => {
-      setMouseState({
-        onElement: false,
-      });
-    };
-
-    elementRef.addEventListener("mouseleave", onMouseLeave);
-    elementRef.addEventListener("mouseenter", onMouseEnter);
-
-    return () => {
-      if (!elementRef) return;
-      elementRef.addEventListener("mouseleave", onMouseLeave);
-      elementRef.addEventListener("mouseenter", onMouseEnter);
-    };
-  }, [elementRef]);
+  }, [image, imageRef]);
   return mouseState;
 }

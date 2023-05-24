@@ -16,15 +16,12 @@ import {
   Link,
 } from "@common/models/collection.ts";
 import { ImageUploadModal } from "../../components/ImageUploadModal.tsx";
-import { buildPercentPointFromMouseEvent } from "@common/models/points.ts";
 import {
-  assertNotNullOrUndefined,
-  isNullOrUndefined,
-} from "@common/util/assert-util.ts";
-import {
-  ActiveLinkRectangle,
-  ActiveRectangleState,
-} from "./ActiveLinkRectangle.tsx";
+  buildPercentPointFromMouseEvent,
+  PercentagePoint,
+} from "@common/models/points.ts";
+import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
+import { CreateActiveLinkRectangle } from "./CreateActiveLinkRectangle.tsx";
 import { classNames } from "../../util/class-names.ts";
 import { TrashIcon } from "@heroicons/react/20/solid";
 import { EditLinkRectangle } from "./edit-link-rectangle/EditLinkRectangle.tsx";
@@ -50,22 +47,22 @@ function imageUrl(collectionId: string, imageId: string) {
   return "/api/collections/" + collectionId + "/images/" + imageId;
 }
 
+type Action =
+  | { name: "none" }
+  | { name: "create-link"; start: PercentagePoint }
+  | { name: "edit-link"; link: Link }
+  | { name: "image-upload" };
+
+const NONE_ACTION: Action = { name: "none" };
+
 function EditorLoaded(props: { collection: Collection; secret: string }) {
   const [collection, setCollection] = useState<Collection>(props.collection);
   const [imageId, setImageId] = useState<string | undefined>(
     collection.images.at(0)?.imageId
   );
-  const [fileUploadModalOpen, setFileUploadModalOpen] = useState(false);
-  const [activeRectangleState, setActiveRectangleState] = useState<
-    ActiveRectangleState | undefined
-  >(undefined);
   const [imageRectangle, imageRef, setImageRef] = useImageRectangle();
-  const mouseState = useMouseState(
-    { percentageX: 0, percentageY: 0 },
-    imageRef,
-    imageRectangle,
-    true
-  );
+  const mouseState = useMouseState(imageRef, imageRectangle);
+  const [action, setAction] = useState<Action>(NONE_ACTION);
 
   const safeCollection = useCallback(
     async (newCollection: Collection) => {
@@ -87,19 +84,17 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   );
 
   const cancelActiveRectangle = (): Collection => {
-    if (
-      isNullOrUndefined(activeRectangleState) ||
-      activeRectangleState.mode !== "edit"
-    )
-      return collection;
-    const newCollection = collectionUpsertLink(
-      collection,
-      image,
-      activeRectangleState.link
-    );
-    setCollection(newCollection);
-    setActiveRectangleState(undefined);
-    return newCollection;
+    if (action.name === "edit-link") {
+      const newCollection = collectionUpsertLink(
+        collection,
+        image,
+        action.link
+      );
+      setCollection(newCollection);
+      return newCollection;
+    }
+    setAction(NONE_ACTION);
+    return collection;
   };
 
   const image = useMemo(() => {
@@ -109,36 +104,36 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   }, [collection, imageId]);
 
   const createRectangle = (e: MouseEvent) => {
-    if (activeRectangleState?.mode === "edit") {
+    if (action.name === "edit-link") {
       const newCollection = collectionUpsertLink(
         collection,
         image,
-        activeRectangleState.link
+        action.link
       );
       setCollection(newCollection);
       safeCollection(newCollection).then(() => console.log("saved"));
-      setActiveRectangleState(undefined);
+      setAction(NONE_ACTION);
       return;
     }
-    setActiveRectangleState({
-      mode: "create",
+    setAction({
+      name: "create-link",
       start: buildPercentPointFromMouseEvent(imageRectangle, e),
     });
   };
 
   const finishRectangle = (link: Link) => {
-    if (!activeRectangleState) return;
+    if (action.name === "none") return;
 
     const newCollection = collectionUpsertLink(collection, image, link);
-    if (activeRectangleState.mode === "create") {
+    if (action.name === "create-link") {
       setCollection(newCollection);
       safeCollection(newCollection).then(() => console.log("saved"));
-      setActiveRectangleState(undefined);
+      setAction(NONE_ACTION);
     }
-    if (activeRectangleState.mode === "edit") {
+    if (action.name === "edit-link") {
       safeCollection(newCollection).then(() => console.log("saved"));
-      setActiveRectangleState({
-        mode: "edit",
+      setAction({
+        name: "edit-link",
         link,
       });
     }
@@ -150,17 +145,9 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     safeCollection(newCollection).then(() => console.log("saved"));
   };
 
-  const handleCreate = () => {
-    console.log("Create");
-  };
-
-  const handleEditMode = () => {
-    console.log("Edit mode");
-  };
-
   const handleUpload = () => {
     cancelActiveRectangle();
-    setFileUploadModalOpen(true);
+    setAction({ name: "image-upload" });
   };
 
   const onFileUploaded = (newImage: Image) => {
@@ -173,8 +160,8 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   };
 
   const editRectangle = (link: Link) => {
-    setActiveRectangleState({
-      mode: "edit",
+    setAction({
+      name: "edit-link",
       link,
     });
     setCollection((collection) =>
@@ -186,7 +173,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     const newCollection = collectionDeleteLink(collection, image, link);
 
     setCollection(newCollection);
-    setActiveRectangleState(undefined);
+    setAction(NONE_ACTION);
     safeCollection(newCollection).then(() => console.log("saved"));
   };
 
@@ -208,12 +195,10 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
           <FloatingToolbar
             initialTitle={collection.title}
             onTitleChange={handleEditTitle}
-            onCreate={handleCreate}
-            onEditMode={handleEditMode}
             onUpload={handleUpload}
           />
         </div>
-        <div className={""}>
+        <div>
           <div
             ref={setImageRef}
             className="relative inline-block flex-1 select-none"
@@ -229,34 +214,35 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             {image.links.map((link, index) => (
               <PercentageBoxButton
                 onClick={() => editRectangle(link)}
-                clickable={activeRectangleState === undefined}
+                clickable={action.name === "none"}
                 key={index}
                 rectangle={link.rectangle}
               ></PercentageBoxButton>
             ))}
-            {activeRectangleState && activeRectangleState.mode == "create" && (
-              <ActiveLinkRectangle
+            {action.name == "create-link" && (
+              <CreateActiveLinkRectangle
                 onCreate={finishRectangle}
-                onCancel={() => setActiveRectangleState(undefined)}
+                onCancel={cancelActiveRectangle}
                 onDelete={onDeleteRectangle}
-                state={activeRectangleState}
-                imageRef={imageRef}
-                image={imageRectangle}
+                start={action.start}
+                mouseState={mouseState}
                 images={collection.images}
-              ></ActiveLinkRectangle>
+              ></CreateActiveLinkRectangle>
             )}
-            {activeRectangleState && activeRectangleState.mode == "edit" && (
+            {action.name == "edit-link" && (
               <EditLinkRectangle
                 onUpdate={finishRectangle}
                 onDelete={onDeleteRectangle}
-                link={activeRectangleState.link}
+                link={action.link}
                 mouseState={mouseState}
               ></EditLinkRectangle>
             )}
           </div>
         </div>
         <div
-          className={"rounded-lg border border-gray-300 bg-white p-2 shadow-md"}
+          className={
+            "flex flex-col gap-1 rounded-lg border border-gray-300 bg-white p-2 shadow-md"
+          }
         >
           {collection.images.map((image, index) => (
             <div
@@ -267,7 +253,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
               key={index}
               style={{ backgroundColor: collection.backgroundColor }}
               className={classNames(
-                "relative",
+                "flex w-[100%] flex-col",
                 image.imageId === imageId && "border-2 border-blue-500"
               )}
             >
@@ -277,33 +263,28 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
                 alt={image.title}
                 loading={"lazy"}
               />
-              <div
-                className={
-                  "absolute bottom-0 left-0 w-[100%] rounded-b-lg bg-black/50"
-                }
-              >
-                <div className="flex flex-row items-center justify-between p-2">
-                  <span className={"text-sm font-semibold text-white"}>
-                    {image.title}
-                  </span>
-                  <TrashIcon
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteImage(image);
-                    }}
-                    className="h-4 w-4 cursor-pointer text-white transition-colors hover:text-gray-400"
-                  ></TrashIcon>
-                </div>
+
+              <div className="flex flex-row items-center justify-between p-2">
+                <span className={"text-sm font-semibold text-white"}>
+                  {image.title}
+                </span>
+                <TrashIcon
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteImage(image);
+                  }}
+                  className="h-4 w-4 cursor-pointer text-white transition-colors hover:text-gray-400"
+                ></TrashIcon>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {fileUploadModalOpen && (
+      {action.name === "image-upload" && (
         <ImageUploadModal
           secret={props.secret}
-          setOpenModal={setFileUploadModalOpen}
+          closeModal={() => setAction(NONE_ACTION)}
           onFileUploaded={onFileUploaded}
           collectionId={collection.collectionId}
         />

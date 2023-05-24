@@ -3,7 +3,6 @@ import {
   CheckIcon,
   CloudArrowUpIcon,
   PencilIcon,
-  PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { Popover, Transition } from "@headlessui/react";
@@ -55,15 +54,12 @@ function BackgroundColorSelector() {
 interface FloatingToolbarProps {
   initialTitle: string;
   onTitleChange: (newTitle: string) => void;
-  onCreate: () => void;
-  onEditMode: () => void;
   onUpload: () => void;
 }
 
 export function FloatingToolbar({
   initialTitle,
   onTitleChange,
-  onCreate,
   onUpload,
 }: FloatingToolbarProps) {
   const [title, setTitle] = useState(initialTitle);
@@ -136,10 +132,6 @@ export function FloatingToolbar({
           />
         )}
       </div>
-      <PlusIcon
-        className="h-5 w-5 cursor-pointer text-gray-700 transition-colors hover:text-black"
-        onClick={onCreate}
-      />
       <BackgroundColorSelector></BackgroundColorSelector>
 
       <CloudArrowUpIcon
