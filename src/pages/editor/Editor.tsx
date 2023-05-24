@@ -21,7 +21,7 @@ import {
   PercentagePoint,
 } from "@common/models/points.ts";
 import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
-import { CreateActiveLinkRectangle } from "./CreateActiveLinkRectangle.tsx";
+import { CreateLinkRectangle } from "./CreateLinkRectangle.tsx";
 import { classNames } from "../../util/class-names.ts";
 import { TrashIcon } from "@heroicons/react/20/solid";
 import { EditLinkRectangle } from "./edit-link-rectangle/EditLinkRectangle.tsx";
@@ -220,13 +220,13 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
               ></PercentageBoxButton>
             ))}
             {action.name == "create-link" && (
-              <CreateActiveLinkRectangle
+              <CreateLinkRectangle
                 onCreate={finishRectangle}
                 onCancel={cancelActiveRectangle}
                 start={action.start}
                 mouseState={mouseState}
                 images={collection.images}
-              ></CreateActiveLinkRectangle>
+              ></CreateLinkRectangle>
             )}
             {action.name == "edit-link" && (
               <EditLinkRectangle

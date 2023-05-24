@@ -17,13 +17,7 @@ type Step =
       fixedCorner: PercentagePoint;
     };
 
-function getInitialRectangle(
-  start: PercentagePoint
-): PercentageRectangleCorners {
-  return { point1: start, point2: start };
-}
-
-export function CreateActiveLinkRectangle({
+export function CreateLinkRectangle({
   mouseState,
   start,
   onCreate: propOnCreate,
@@ -41,7 +35,7 @@ export function CreateActiveLinkRectangle({
     fixedCorner: start,
   });
   const [currentRectangle, setCurrentRectangle] =
-    useState<PercentageRectangleCorners>(getInitialRectangle(start));
+    useState<PercentageRectangleCorners>({ point1: start, point2: start });
 
   useEffect(() => {
     if (step.name === "painting") {
