@@ -2,17 +2,14 @@ import {
   addPercentagePoints,
   buildPercentageRectangle,
   buildPercentageRectangleCorners,
+  fitPercentageRectangleCorners,
   getPercentagePointOfCorner,
   PercentageRectangleCorners,
   subtractPercentagePoints,
   ViewportRectangle,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
-import {
-  fitPercentageRectangleCorners,
-  Image,
-  Link,
-} from "@common/models/collection.ts";
+import { Image, Link } from "@common/models/collection.ts";
 import { useEffect, useState } from "react";
 import { useMouseState } from "./use-mouse-state.ts";
 import { PercentageBoxCornerButton } from "../../components/BoxButton.tsx";

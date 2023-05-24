@@ -182,3 +182,58 @@ export function getOppositeCorner(corner: Corner): Corner {
       return "top-left";
   }
 }
+
+export function moveRectanglePercentageRectangle(
+  rectangle: PercentageRectangleCorners,
+  pointOffsetTopLeft: PercentagePoint,
+  newPoint: PercentagePoint
+) {
+  const currentTopLeftCorner = getPercentagePointOfCorner(
+    buildPercentageRectangle(rectangle),
+    "top-left"
+  );
+  const currentBottomRightCorner = getPercentagePointOfCorner(
+    buildPercentageRectangle(rectangle),
+    "bottom-right"
+  );
+  const newTopLeftCorner = subtractPercentagePoints(
+    newPoint,
+    pointOffsetTopLeft
+  );
+  const topLeftCornerChange = subtractPercentagePoints(
+    newTopLeftCorner,
+    currentTopLeftCorner
+  );
+  const bottomRightCorner = addPercentagePoints(
+    topLeftCornerChange,
+    currentBottomRightCorner
+  );
+  const corners: PercentageRectangleCorners = {
+    point1: newTopLeftCorner,
+    point2: bottomRightCorner,
+  };
+  return corners;
+}
+
+export function fitPercentageRectangleCorners(
+  corners: PercentageRectangleCorners
+): PercentageRectangleCorners {
+  const rectangle = buildPercentageRectangle(corners);
+  const topLeft = getPercentagePointOfCorner(rectangle, "top-left");
+  const bottomRight = getPercentagePointOfCorner(rectangle, "bottom-right");
+
+  let offsetX = 0;
+  let offsetY = 0;
+
+  if (topLeft.percentageX < 0) offsetX = -topLeft.percentageX;
+  if (topLeft.percentageY < 0) offsetY = -topLeft.percentageY;
+
+  if (bottomRight.percentageX > 100) offsetX = 100 - bottomRight.percentageX;
+  if (bottomRight.percentageY > 100) offsetY = 100 - bottomRight.percentageY;
+
+  const offset = { percentageX: offsetX, percentageY: offsetY };
+  return {
+    point1: addPercentagePoints(topLeft, offset),
+    point2: addPercentagePoints(bottomRight, offset),
+  };
+}

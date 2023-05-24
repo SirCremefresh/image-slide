@@ -1,14 +1,12 @@
 import { MouseState } from "./use-mouse-state.ts";
-import {
-  fitPercentageRectangleCorners,
-  Link,
-} from "@common/models/collection.ts";
+import { Link } from "@common/models/collection.ts";
 import { useEffect, useState } from "react";
 import {
-  addPercentagePoints,
   buildPercentageRectangle,
   buildPercentageRectangleCorners,
+  fitPercentageRectangleCorners,
   getPercentagePointOfCorner,
+  moveRectanglePercentageRectangle,
   PercentageRectangleCorners,
   subtractPercentagePoints,
 } from "@common/models/rectangles.ts";
@@ -27,41 +25,6 @@ type Step =
       name: "painting";
       fixedCorner: PercentagePoint;
     };
-
-function moveRectangle(
-  rectangle: PercentageRectangleCorners,
-  mouseState: MouseState,
-  step: {
-    name: "moving";
-    topLeftOffset: PercentagePoint;
-  }
-) {
-  const currentTopLeftCorner = getPercentagePointOfCorner(
-    buildPercentageRectangle(rectangle),
-    "top-left"
-  );
-  const currentBottomRightCorner = getPercentagePointOfCorner(
-    buildPercentageRectangle(rectangle),
-    "bottom-right"
-  );
-  const newTopLeftCorner = subtractPercentagePoints(
-    mouseState.point,
-    step.topLeftOffset
-  );
-  const topLeftCornerChange = subtractPercentagePoints(
-    newTopLeftCorner,
-    currentTopLeftCorner
-  );
-  const bottomRightCorner = addPercentagePoints(
-    topLeftCornerChange,
-    currentBottomRightCorner
-  );
-  const corners: PercentageRectangleCorners = {
-    point1: newTopLeftCorner,
-    point2: bottomRightCorner,
-  };
-  return corners;
-}
 
 export function EditLinkRectangle({
   mouseState,
@@ -90,8 +53,12 @@ export function EditLinkRectangle({
     }
     if (step.name === "moving") {
       setCurrentRectangle((rectangle) => {
-        const corners = moveRectangle(rectangle, mouseState, step);
-        return fitPercentageRectangleCorners(corners);
+        const movedRectangle = moveRectanglePercentageRectangle(
+          rectangle,
+          step.topLeftOffset,
+          mouseState.point
+        );
+        return fitPercentageRectangleCorners(movedRectangle);
       });
       return;
     }
