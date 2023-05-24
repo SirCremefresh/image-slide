@@ -223,7 +223,6 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
               <CreateActiveLinkRectangle
                 onCreate={finishRectangle}
                 onCancel={cancelActiveRectangle}
-                onDelete={onDeleteRectangle}
                 start={action.start}
                 mouseState={mouseState}
                 images={collection.images}

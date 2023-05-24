@@ -34,7 +34,6 @@ export function CreateActiveLinkRectangle({
   start: PercentagePoint;
   onCreate: (link: Link) => void;
   onCancel: () => void;
-  onDelete: (link: Link) => void;
   images: Image[];
 }) {
   const [step, setStep] = useState<Step>({
@@ -63,7 +62,7 @@ export function CreateActiveLinkRectangle({
       setStep({ name: "link-target" });
       return;
     }
-  }, [currentRectangle, mouseState.active, propOnCreate, step.name]);
+  }, [mouseState.active, step.name]);
 
   const onCreate = (targetImage: Image) => {
     propOnCreate({
