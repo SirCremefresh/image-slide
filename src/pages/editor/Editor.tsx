@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { useCollection } from "../../api-client/collections.ts";
 import {
   Collection,
+  collectionDeleteImageAndRemoveDependents,
   collectionDeleteLink,
   collectionUpsertImage,
   collectionUpsertLink,
@@ -21,6 +22,8 @@ import {
   ActiveLinkRectangle,
   ActiveRectangleState,
 } from "./ActiveLinkRectangle.tsx";
+import { classNames } from "../../util/class-names.ts";
+import { TrashIcon } from "@heroicons/react/20/solid";
 
 function Editor() {
   const { collectionId, secret } = useParams<{
@@ -159,6 +162,17 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     safeCollection(newCollection).then(() => console.log("saved"));
   };
 
+  const deleteImage = (image: Image) => {
+    const newCollection = collectionDeleteImageAndRemoveDependents(
+      collection,
+      image
+    );
+    const newImageId = newCollection.images.at(0)?.imageId;
+    setImageId(newImageId);
+    setCollection(newCollection);
+    safeCollection(newCollection).then(() => console.log("saved"));
+  };
+
   return (
     <div className={"min-h-screen bg-gray-300 px-2"}>
       <div className={"grid grid-cols-[1fr_300px] grid-rows-[120px_1fr]"}>
@@ -213,7 +227,10 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
               onClick={() => setImageId(image.imageId)}
               key={index}
               style={{ backgroundColor: collection.backgroundColor }}
-              className={"relative"}
+              className={classNames(
+                "relative",
+                image.imageId === imageId && "border-2 border-blue-500"
+              )}
             >
               <img
                 className={"aspect-video w-[100%] rounded object-contain"}
@@ -226,9 +243,18 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
                   "absolute bottom-0 left-0 w-[100%] rounded-b-lg bg-black/50"
                 }
               >
-                <span className={"text-sm font-semibold text-white"}>
-                  {image.title}
-                </span>
+                <div className="flex flex-row items-center justify-between p-2">
+                  <span className={"text-sm font-semibold text-white"}>
+                    {image.title}
+                  </span>
+                  <TrashIcon
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteImage(image);
+                    }}
+                    className="h-4 w-4 cursor-pointer text-white transition-colors hover:text-gray-400"
+                  ></TrashIcon>
+                </div>
               </div>
             </div>
           ))}

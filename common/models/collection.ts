@@ -148,3 +148,21 @@ export function collectionUpsertTitle(
 ): Collection {
   return { ...collection, title };
 }
+
+export function collectionDeleteImageAndRemoveDependents(
+  collection: Collection,
+  imageToDelete: Image
+): Collection {
+  const imageIndex = findImageIndex(collection.images, imageToDelete.imageId);
+  if (imageIndex === -1) {
+    return collection;
+  }
+  const images = deleteArrayItem(collection.images, imageIndex);
+  const imagesWithoutLinks = images.map((image) => ({
+    ...image,
+    links: image.links.filter(
+      (link) => link.targetImageId !== imageToDelete.imageId
+    ),
+  }));
+  return { ...collection, images: imagesWithoutLinks };
+}

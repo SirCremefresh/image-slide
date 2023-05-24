@@ -11,7 +11,7 @@ export const UNIQUE_IMAGE_ID_REFINEMENT: Refinement<Image[]> = [
 ];
 
 export const EXISTING_LINK_REFERENCES_REFINEMENT: Refinement<Image[]> = [
-  (images: Image[]) => {
+  (images: Image[]): boolean => {
     const imageIds = new Set(images.map((image) => image.imageId));
     const linkIds = new Set(
       images.flatMap((image) => image.links.map((link) => link.targetImageId))
