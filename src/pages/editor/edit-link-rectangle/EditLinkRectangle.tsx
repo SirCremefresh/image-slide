@@ -45,26 +45,24 @@ export function EditLinkRectangle({
   ]);
 
   return (
-    <>
-      <PercentageBoxCornerButton
-        rectangle={state.rectangle}
-        onCornerMouseDown={(oppositeCorner) => {
-          dispatch({
-            type: "start-painting",
-            fixedCorner: oppositeCorner,
-          });
-        }}
-        onMouseDown={() => {
-          dispatch({
-            type: "start-moving",
-            mouseStatePosition: mouseState.point,
-          });
-        }}
-        onDeleteClick={() => onDelete(link)}
-        clickable={state.step.name === "viewing"}
-        showToolbar={state.step.name === "viewing"}
-        showCorners={true}
-      ></PercentageBoxCornerButton>
-    </>
+    <PercentageBoxCornerButton
+      rectangle={state.rectangle}
+      onCornerMouseDown={(oppositeCorner) => {
+        dispatch({
+          type: "start-painting",
+          fixedCorner: oppositeCorner,
+        });
+      }}
+      onMouseDown={() => {
+        dispatch({
+          type: "start-moving",
+          mouseStatePosition: mouseState.point,
+        });
+      }}
+      onDeleteClick={() => onDelete(link)}
+      clickable={state.step.name === "viewing"}
+      showToolbar={state.step.name === "viewing"}
+      showCorners={true}
+    ></PercentageBoxCornerButton>
   );
 }

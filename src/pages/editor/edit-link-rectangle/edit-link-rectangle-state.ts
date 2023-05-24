@@ -49,7 +49,7 @@ type State = {
 function calcTopLeftOffset(
   rectangle: PercentageRectangleCorners,
   point: PercentagePoint
-) {
+): PercentagePoint {
   return subtractPercentagePoints(
     point,
     getPercentagePointOfCorner(buildPercentageRectangle(rectangle), "top-left")
@@ -107,10 +107,8 @@ function reducer(
           ),
         };
       }
-      return rectangle;
-    default:
-      return rectangle;
   }
+  return rectangle;
 }
 
 function getInitialState(link: Link): State {
