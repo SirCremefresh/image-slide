@@ -11,7 +11,8 @@
       "@function/*": ["./*"],
       "@common/*": ["../common/*"]
     },
-    "strict": true
+    "strict": true,
+    "noImplicitAny": true
   },
   "include": [".", "../common"],
   "exclude": ["../src/**/*"]

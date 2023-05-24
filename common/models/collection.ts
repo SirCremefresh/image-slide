@@ -1,6 +1,10 @@
 import z from "zod";
 import {
+  addPercentagePoints,
+  buildPercentageRectangle,
+  getPercentagePointOfCorner,
   PercentageRectangle,
+  PercentageRectangleCorners,
   ZPercentageRectangle,
 } from "@common/models/rectangles.ts";
 import { assertType, TypeEqualityGuard } from "@common/util/type-check.ts";
@@ -165,4 +169,27 @@ export function collectionDeleteImageAndRemoveDependents(
     ),
   }));
   return { ...collection, images: imagesWithoutLinks };
+}
+
+export function fitPercentageRectangleCorners(
+  corners: PercentageRectangleCorners
+): PercentageRectangleCorners {
+  const rectangle = buildPercentageRectangle(corners);
+  const topLeft = getPercentagePointOfCorner(rectangle, "top-left");
+  const bottomRight = getPercentagePointOfCorner(rectangle, "bottom-right");
+
+  let offsetX = 0;
+  let offsetY = 0;
+
+  if (topLeft.percentageX < 0) offsetX = -topLeft.percentageX;
+  if (topLeft.percentageY < 0) offsetY = -topLeft.percentageY;
+
+  if (bottomRight.percentageX > 100) offsetX = 100 - bottomRight.percentageX;
+  if (bottomRight.percentageY > 100) offsetY = 100 - bottomRight.percentageY;
+
+  const offset = { percentageX: offsetX, percentageY: offsetY };
+  return {
+    point1: addPercentagePoints(topLeft, offset),
+    point2: addPercentagePoints(bottomRight, offset),
+  };
 }

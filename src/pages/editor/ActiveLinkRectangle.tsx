@@ -8,7 +8,11 @@ import {
   ViewportRectangle,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
-import { Image, Link } from "@common/models/collection.ts";
+import {
+  fitPercentageRectangleCorners,
+  Image,
+  Link,
+} from "@common/models/collection.ts";
 import { useEffect, useState } from "react";
 import { useMouseState } from "./use-mouse-state.ts";
 import { PercentageBoxCornerButton } from "../../components/BoxButton.tsx";
@@ -41,29 +45,6 @@ function getInitialRectangle(
   if (state.mode === "create")
     return { point1: state.start, point2: state.start };
   return buildPercentageRectangleCorners(state.link.rectangle);
-}
-
-function fitPercentageRectangleCorners(
-  corners: PercentageRectangleCorners
-): PercentageRectangleCorners {
-  const rectangle = buildPercentageRectangle(corners);
-  const topLeft = getPercentagePointOfCorner(rectangle, "top-left");
-  const bottomRight = getPercentagePointOfCorner(rectangle, "bottom-right");
-
-  let offsetX = 0;
-  let offsetY = 0;
-
-  if (topLeft.percentageX < 0) offsetX = -topLeft.percentageX;
-  if (topLeft.percentageY < 0) offsetY = -topLeft.percentageY;
-
-  if (bottomRight.percentageX > 100) offsetX = 100 - bottomRight.percentageX;
-  if (bottomRight.percentageY > 100) offsetY = 100 - bottomRight.percentageY;
-
-  const offset = { percentageX: offsetX, percentageY: offsetY };
-  return {
-    point1: addPercentagePoints(topLeft, offset),
-    point2: addPercentagePoints(bottomRight, offset),
-  };
 }
 
 export function ActiveLinkRectangle({

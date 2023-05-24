@@ -17,13 +17,18 @@ import {
 } from "@common/models/collection.ts";
 import { ImageUploadModal } from "../../components/ImageUploadModal.tsx";
 import { buildPercentPointFromMouseEvent } from "@common/models/points.ts";
-import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
+import {
+  assertNotNullOrUndefined,
+  isNullOrUndefined,
+} from "@common/util/assert-util.ts";
 import {
   ActiveLinkRectangle,
   ActiveRectangleState,
 } from "./ActiveLinkRectangle.tsx";
 import { classNames } from "../../util/class-names.ts";
 import { TrashIcon } from "@heroicons/react/20/solid";
+import { EditLinkRectangle } from "./EditLinkRectangle.tsx";
+import { useMouseState } from "./use-mouse-state.ts";
 
 function Editor() {
   const { collectionId, secret } = useParams<{
@@ -55,6 +60,12 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     ActiveRectangleState | undefined
   >(undefined);
   const [imageRectangle, imageRef, setImageRef] = useImageRectangle();
+  const mouseState = useMouseState(
+    { percentageX: 0, percentageY: 0 },
+    imageRef,
+    imageRectangle,
+    true
+  );
 
   const safeCollection = useCallback(
     async (newCollection: Collection) => {
@@ -74,6 +85,22 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     },
     [props.secret]
   );
+
+  const cancelActiveRectangle = (): Collection => {
+    if (
+      isNullOrUndefined(activeRectangleState) ||
+      activeRectangleState.mode !== "edit"
+    )
+      return collection;
+    const newCollection = collectionUpsertLink(
+      collection,
+      image,
+      activeRectangleState.link
+    );
+    setCollection(newCollection);
+    setActiveRectangleState(undefined);
+    return newCollection;
+  };
 
   const image = useMemo(() => {
     const image = collection.images.find((image) => image.imageId === imageId);
@@ -132,6 +159,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   };
 
   const handleUpload = () => {
+    cancelActiveRectangle();
     setFileUploadModalOpen(true);
   };
 
@@ -164,7 +192,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
 
   const deleteImage = (image: Image) => {
     const newCollection = collectionDeleteImageAndRemoveDependents(
-      collection,
+      cancelActiveRectangle(),
       image
     );
     const newImageId = newCollection.images.at(0)?.imageId;
@@ -206,7 +234,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
                 rectangle={link.rectangle}
               ></PercentageBoxButton>
             ))}
-            {activeRectangleState && (
+            {activeRectangleState && activeRectangleState.mode == "create" && (
               <ActiveLinkRectangle
                 onCreate={finishRectangle}
                 onCancel={() => setActiveRectangleState(undefined)}
@@ -217,6 +245,14 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
                 images={collection.images}
               ></ActiveLinkRectangle>
             )}
+            {activeRectangleState && activeRectangleState.mode == "edit" && (
+              <EditLinkRectangle
+                onUpdate={finishRectangle}
+                onDelete={onDeleteRectangle}
+                link={activeRectangleState.link}
+                mouseState={mouseState}
+              ></EditLinkRectangle>
+            )}
           </div>
         </div>
         <div
@@ -224,7 +260,10 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
         >
           {collection.images.map((image, index) => (
             <div
-              onClick={() => setImageId(image.imageId)}
+              onClick={() => {
+                cancelActiveRectangle();
+                setImageId(image.imageId);
+              }}
               key={index}
               style={{ backgroundColor: collection.backgroundColor }}
               className={classNames(
