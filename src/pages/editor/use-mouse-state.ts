@@ -9,15 +9,15 @@ import { ViewportRectangle } from "@common/models/rectangles.ts";
 import { useEffect, useState } from "react";
 
 export type MouseState = {
-  point: PercentagePoint;
-  onElement: boolean;
-  mouseDown: boolean;
-  active: boolean;
+  readonly point: PercentagePoint;
+  readonly onElement: boolean;
+  readonly mouseDown: boolean;
+  readonly active: boolean;
 };
 
 type MouseStateInternal = MouseState & {
-  containerRelativeMousePoint: RelativePoint;
-  containerScroll: RelativePoint;
+  readonly containerRelativeMousePoint: RelativePoint;
+  readonly containerScroll: RelativePoint;
 };
 
 export function useMouseState(
@@ -117,7 +117,7 @@ export function useMouseState(
     imageRef.addEventListener("mousedown", onMouseDown);
     imageRef.addEventListener("mouseenter", onMouseEnter);
     container.addEventListener("scroll", onScroll);
-
+    onScroll();
     return () => {
       if (container) {
         container.removeEventListener("scroll", onScroll);

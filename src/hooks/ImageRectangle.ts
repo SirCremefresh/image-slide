@@ -19,16 +19,26 @@ export function useImageRectangle(): [
     if (!imageRef) {
       return;
     }
+
     const resizeObserver = new ResizeObserver(([image]) => {
-      const rect = image.target.getBoundingClientRect();
-      setImageSize({
+      const newVar = {
         width: image.contentRect.width,
         height: image.contentRect.height,
-        viewportX: rect.x,
-        viewportY: rect.y,
-      });
+        viewportX: imageRef.offsetLeft,
+        viewportY: imageRef.offsetTop,
+      };
+      console.log({ newVar });
+      setImageSize(newVar);
     });
     resizeObserver.observe(imageRef);
+
+    const newVar = {
+      width: imageRef.naturalWidth,
+      height: imageRef.naturalHeight,
+      viewportX: imageRef.offsetLeft,
+      viewportY: imageRef.offsetTop,
+    };
+    setImageSize(newVar);
     return () => resizeObserver.disconnect();
   }, [imageRef]);
 
