@@ -14,9 +14,10 @@ export type MouseState = {
 };
 
 export function useMouseState(
+  container: HTMLElement | null,
   imageRef: HTMLElement | null,
   image: ViewportRectangle
-) {
+): MouseState {
   const [mouseState, setMouseState] = useState<MouseState>({
     point: { percentageX: 0, percentageY: 0 },
     onElement: true,
@@ -25,17 +26,20 @@ export function useMouseState(
   });
 
   useEffect(() => {
-    if (!imageRef) return;
+    if (!imageRef || !container) return;
 
     const onMouseMove = (e: MouseEvent) => {
       const currentMousePosition = toRelativePoint(image, {
         viewportX: e.pageX,
         viewportY: e.pageY,
       });
+      currentMousePosition.relativeY += container.scrollTop;
+      currentMousePosition.relativeX += container.scrollLeft;
       const percentageMousePosition = toPercentPoint(
         image,
         currentMousePosition
       );
+      console.log("scroll", container.scrollTop, container.scrollLeft);
       setMouseState((mouseState) => ({
         ...mouseState,
         point: percentageMousePosition,
@@ -86,6 +90,6 @@ export function useMouseState(
       imageRef.removeEventListener("mousedown", onMouseDown);
       imageRef.removeEventListener("mouseenter", onMouseEnter);
     };
-  }, [image, imageRef]);
+  }, [container, image, imageRef]);
   return mouseState;
 }

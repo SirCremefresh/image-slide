@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import "./Editor.css";
 import { useImageRectangle } from "../../hooks/ImageRectangle.ts";
 import { PercentageBoxButton } from "../../components/BoxButton.tsx";
@@ -16,10 +16,7 @@ import {
   Link,
 } from "@common/models/collection.ts";
 import { ImageUploadModal } from "../../components/ImageUploadModal.tsx";
-import {
-  buildPercentPointFromMouseEvent,
-  PercentagePoint,
-} from "@common/models/points.ts";
+import { PercentagePoint } from "@common/models/points.ts";
 import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
 import { CreateLinkRectangle } from "./CreateLinkRectangle.tsx";
 import { classNames } from "../../util/class-names.ts";
@@ -60,8 +57,9 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   const [imageId, setImageId] = useState<string | undefined>(
     collection.images.at(0)?.imageId
   );
+  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
   const [imageRectangle, imageRef, setImageRef] = useImageRectangle();
-  const mouseState = useMouseState(imageRef, imageRectangle);
+  const mouseState = useMouseState(containerRef, imageRef, imageRectangle);
   const [action, setAction] = useState<Action>(NONE_ACTION);
 
   const safeCollection = useCallback(
@@ -104,7 +102,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     return image;
   }, [collection, imageId]);
 
-  const createRectangle = (e: MouseEvent) => {
+  const createRectangle = () => {
     if (action.name === "edit-link") {
       const newCollection = collectionUpsertLink(
         collection,
@@ -118,7 +116,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
     }
     setAction({
       name: "create-link",
-      start: buildPercentPointFromMouseEvent(imageRectangle, e),
+      start: mouseState.point,
     });
   };
 
@@ -161,6 +159,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
   };
 
   const editRectangle = (link: Link) => {
+    console.log("on click");
     setAction({
       name: "edit-link",
       link,
@@ -191,7 +190,9 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
 
   return (
     <div className={"min-h-screen bg-gray-300 px-2"}>
-      <div className={"grid grid-cols-[1fr_300px] grid-rows-[120px_1fr]"}>
+      <div
+        className={"grid h-[100vh] grid-cols-[1fr_300px] grid-rows-[120px_1fr]"}
+      >
         <div className={"col-span-2"}>
           <FloatingToolbar
             initialTitle={collection.title}
@@ -199,7 +200,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             onUpload={handleUpload}
           />
         </div>
-        <div>
+        <div className={"overflow-scroll"} ref={setContainerRef}>
           <div
             ref={setImageRef}
             className="relative inline-block flex-1 select-none"
@@ -208,9 +209,9 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
             <img
               className="block max-h-[100%] max-w-[100%] rounded"
               src={imageUrl(collection.collectionId, image.imageId)}
+              onMouseDown={createRectangle}
               alt={image.title}
               draggable={false}
-              onMouseDown={createRectangle}
             />
             {image.links.map((link, index) => (
               <PercentageBoxButton
@@ -241,7 +242,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
         </div>
         <div
           className={
-            "flex flex-col gap-1 rounded-lg border border-gray-300 bg-white p-2 shadow-md"
+            "flex flex-col gap-1 overflow-scroll rounded-lg border border-gray-300 bg-white p-2 shadow-md"
           }
         >
           {collection.images.map((image, index) => (
