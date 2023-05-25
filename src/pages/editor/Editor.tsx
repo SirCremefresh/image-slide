@@ -91,6 +91,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
         action.link
       );
       setCollection(newCollection);
+      setAction(NONE_ACTION);
       return newCollection;
     }
     setAction(NONE_ACTION);

@@ -6,6 +6,7 @@ import { ImageUploadInput } from "./ImageUploadInput.tsx";
 import { classNames } from "../util/class-names.ts";
 import { isNullOrUndefined } from "@common/util/assert-util.ts";
 import { LoadingSpinner } from "./LoadingSpinner.tsx";
+import { Size } from "@common/models/sizes.ts";
 
 function TitleInput(props: {
   text: string;
@@ -68,7 +69,9 @@ export function ImageUploadModal({
   const [title, setTitle] = useState("");
   const [isTitleDirty, setIsTitleDirty] = useState(false);
   const [isImageDirty, setIsImageDirty] = useState(false);
-  const [file, setFile] = useState<undefined | File>(undefined);
+  const [file, setFile] = useState<undefined | { image: File; size: Size }>(
+    undefined
+  );
   const [hasUploadError, setHasUploadError] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -81,12 +84,13 @@ export function ImageUploadModal({
 
     try {
       setIsUploading(true);
-      const imageId = await uploadImage(collectionId, file, secret);
+      const imageId = await uploadImage(collectionId, file.image, secret);
       setIsUploading(false);
       onFileUploaded({
         imageId,
         title: title,
         links: [],
+        size: file.size,
       });
       closeModal();
     } catch (err) {

@@ -9,6 +9,7 @@ import {
   EXISTING_LINK_REFERENCES_REFINEMENT,
   UNIQUE_IMAGE_ID_REFINEMENT,
 } from "@common/models/collection-refinements.ts";
+import { Size, ZSize } from "@common/models/sizes.ts";
 
 export const ZLink = z.object({
   linkId: ZuUID,
@@ -25,11 +26,13 @@ assertType<TypeEqualityGuard<Link, z.infer<typeof ZLink>>>();
 export const ZImage = z.object({
   imageId: ZuUID,
   title: z.string(),
+  size: ZSize,
   links: z.array(ZLink),
 });
 export type Image = {
   imageId: string;
   title: string;
+  size: Size;
   links: Link[];
 };
 assertType<TypeEqualityGuard<Image, z.infer<typeof ZImage>>>();

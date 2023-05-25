@@ -5,7 +5,7 @@ export async function uploadImage(
   image: File,
   secret: string,
   setUploadProgress?: (value: number) => void
-) {
+): Promise<string> {
   const formData = new FormData();
   formData.append("file", image);
 

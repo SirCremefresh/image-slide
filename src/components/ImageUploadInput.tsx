@@ -2,9 +2,10 @@ import { ChangeEvent, useState } from "react";
 import { compressImage } from "../util/compression.ts";
 import imageCompression from "browser-image-compression";
 import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
+import { Size } from "@common/models/sizes.ts";
 
 export function ImageUploadInput(props: {
-  onFileSelected: (image: File) => void;
+  onFileSelected: (image: { image: File; size: Size }) => void;
   isImageDirty: boolean;
 }) {
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
@@ -17,8 +18,16 @@ export function ImageUploadInput(props: {
 
     try {
       const compressedFile = await compressImage(file);
-      setPreviewUrl(await imageCompression.getDataUrlFromFile(compressedFile));
-      props.onFileSelected(compressedFile);
+      const dataUrl = await imageCompression.getDataUrlFromFile(compressedFile);
+      setPreviewUrl(dataUrl);
+      const image = new Image();
+      image.src = dataUrl;
+      await image.decode();
+      const size: Size = {
+        width: image.naturalWidth,
+        height: image.naturalHeight,
+      };
+      props.onFileSelected({ size, image: compressedFile });
     } catch (error) {
       console.error("Could not convert image", error);
       setPreviewUrl(undefined);
