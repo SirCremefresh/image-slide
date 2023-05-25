@@ -56,6 +56,13 @@ export function toPercentPoint(
   };
 }
 
+export function moveRelativePoint(base: RelativePoint, delta: RelativePoint) {
+  return {
+    relativeX: base.relativeX + delta.relativeX,
+    relativeY: base.relativeY + delta.relativeY,
+  };
+}
+
 export function buildPercentPointFromMouseEvent(
   base: ViewportRectangle,
   event: { pageX: number; pageY: number }

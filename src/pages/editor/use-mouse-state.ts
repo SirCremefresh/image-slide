@@ -1,5 +1,7 @@
 import {
+  moveRelativePoint,
   PercentagePoint,
+  RelativePoint,
   toPercentPoint,
   toRelativePoint,
 } from "@common/models/points.ts";
@@ -8,6 +10,8 @@ import { useEffect, useState } from "react";
 
 export type MouseState = {
   point: PercentagePoint;
+  containerRelativeMousePoint: RelativePoint;
+  containerScroll: RelativePoint;
   onElement: boolean;
   mouseDown: boolean;
   active: boolean;
@@ -20,6 +24,8 @@ export function useMouseState(
 ): MouseState {
   const [mouseState, setMouseState] = useState<MouseState>({
     point: { percentageX: 0, percentageY: 0 },
+    containerRelativeMousePoint: { relativeX: 0, relativeY: 0 },
+    containerScroll: { relativeX: 0, relativeY: 0 },
     onElement: true,
     mouseDown: true,
     active: true,
@@ -29,21 +35,47 @@ export function useMouseState(
     if (!imageRef || !container) return;
 
     const onMouseMove = (e: MouseEvent) => {
-      const currentMousePosition = toRelativePoint(image, {
-        viewportX: e.pageX,
-        viewportY: e.pageY,
+      setMouseState((mouseState) => {
+        const containerRelativeMousePoint = toRelativePoint(image, {
+          viewportX: e.pageX,
+          viewportY: e.pageY,
+        });
+        const offsetMousePosition = moveRelativePoint(
+          containerRelativeMousePoint,
+          mouseState.containerScroll
+        );
+        const percentageMousePosition = toPercentPoint(
+          image,
+          offsetMousePosition
+        );
+        return {
+          ...mouseState,
+          containerRelativeMousePoint,
+          point: percentageMousePosition,
+        };
       });
-      currentMousePosition.relativeY += container.scrollTop;
-      currentMousePosition.relativeX += container.scrollLeft;
-      const percentageMousePosition = toPercentPoint(
-        image,
-        currentMousePosition
-      );
-      console.log("scroll", container.scrollTop, container.scrollLeft);
-      setMouseState((mouseState) => ({
-        ...mouseState,
-        point: percentageMousePosition,
-      }));
+    };
+
+    const onScroll = () => {
+      setMouseState((mouseState) => {
+        const containerScroll: RelativePoint = {
+          relativeX: container.scrollLeft,
+          relativeY: container.scrollTop,
+        };
+        const offsetMousePosition = moveRelativePoint(
+          mouseState.containerRelativeMousePoint,
+          containerScroll
+        );
+        const percentageMousePosition = toPercentPoint(
+          image,
+          offsetMousePosition
+        );
+        return {
+          ...mouseState,
+          containerScroll,
+          point: percentageMousePosition,
+        };
+      });
     };
 
     const onMouseUp = () => {
@@ -81,8 +113,12 @@ export function useMouseState(
     imageRef.addEventListener("mouseleave", onMouseLeave);
     imageRef.addEventListener("mousedown", onMouseDown);
     imageRef.addEventListener("mouseenter", onMouseEnter);
+    container.addEventListener("scroll", onScroll);
 
     return () => {
+      if (container) {
+        container.removeEventListener("scroll", onScroll);
+      }
       if (!imageRef) return;
       imageRef.removeEventListener("mousemove", onMouseMove);
       imageRef.removeEventListener("mouseup", onMouseUp);
