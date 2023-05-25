@@ -10,11 +10,14 @@ import { useEffect, useState } from "react";
 
 export type MouseState = {
   point: PercentagePoint;
-  containerRelativeMousePoint: RelativePoint;
-  containerScroll: RelativePoint;
   onElement: boolean;
   mouseDown: boolean;
   active: boolean;
+};
+
+type MouseStateInternal = MouseState & {
+  containerRelativeMousePoint: RelativePoint;
+  containerScroll: RelativePoint;
 };
 
 export function useMouseState(
@@ -22,7 +25,7 @@ export function useMouseState(
   imageRef: HTMLElement | null,
   image: ViewportRectangle
 ): MouseState {
-  const [mouseState, setMouseState] = useState<MouseState>({
+  const [mouseState, setMouseState] = useState<MouseStateInternal>({
     point: { percentageX: 0, percentageY: 0 },
     containerRelativeMousePoint: { relativeX: 0, relativeY: 0 },
     containerScroll: { relativeX: 0, relativeY: 0 },
