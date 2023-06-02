@@ -156,6 +156,7 @@ function EditorLoaded(props: { collection: Collection; secret: string }) {
       console.log("onFileUploaded", newImage);
       return newCollection;
     });
+    setImageId(newImage.imageId);
   };
 
   const editRectangle = (link: Link) => {
