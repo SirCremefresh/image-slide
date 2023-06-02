@@ -29,7 +29,7 @@ export async function getMetadataOrThrow<Z extends z.ZodType>(
   key: string,
   z: Z
 ): Promise<z.infer<Z>> {
-  const object = await kv.getWithMetadata(key);
+  const object = await kv.getWithMetadata(key, "stream");
   return parseOrThrow(z, object.metadata, "server");
 }
 

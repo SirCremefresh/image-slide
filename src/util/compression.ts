@@ -2,7 +2,7 @@ import imageCompression, { Options } from "browser-image-compression";
 
 const options: Options = {
   maxSizeMB: 1,
-  maxWidthOrHeight: 1920,
+  maxWidthOrHeight: 4096,
   useWebWorker: true,
   fileType: "image/jpeg",
 };
