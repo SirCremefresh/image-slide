@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { Collection } from "@common/models/collection.ts";
+import { useQuery } from "@tanstack/react-query";
 
 export function useCollection(collectionId: string) {
   return useQuery<Collection>({

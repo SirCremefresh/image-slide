@@ -1,13 +1,13 @@
-import { MouseEvent } from "react";
 import { classNames } from "../util/class-names.ts";
 import {
   Corner,
+  PercentageRectangle,
   getOppositeCorner,
   getPercentagePointOfCorner,
-  PercentageRectangle,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
 import { isNullOrUndefined } from "@common/util/assert-util.ts";
+import { MouseEvent } from "react";
 import { TrashIcon } from "@heroicons/react/20/solid";
 
 export function PercentageBoxButton(props: {

@@ -13,7 +13,13 @@ module.exports = {
     plugins: ['react-refresh', 'import'],
     rules: {
         'react-refresh/only-export-components': 'warn',
-        "import/no-unused-modules": [1, {"unusedExports": true}]
+        "import/no-unused-modules": [1, {"unusedExports": true}],
+        "sort-imports": ["error", {
+            "ignoreCase": false,
+            "ignoreDeclarationSort": true,
+            "ignoreMemberSort": false,
+            "memberSyntaxSortOrder": ["none", "all", "single", "multiple"]
+        }],
     },
     settings: {
         "import/resolver": {

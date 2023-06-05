@@ -1,12 +1,12 @@
+import { ImageUploadInput } from "./ImageUploadInput.tsx";
+import { LoadingSpinner } from "./LoadingSpinner.tsx";
+import { uploadImage } from "../api-client/images.ts";
+import { classNames } from "../util/class-names.ts";
+import { isNullOrUndefined } from "@common/util/assert-util.ts";
+import { Size } from "@common/models/sizes.ts";
 import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import type { Image } from "@common/models/collection.ts";
-import { uploadImage } from "../api-client/images.ts";
-import { ImageUploadInput } from "./ImageUploadInput.tsx";
-import { classNames } from "../util/class-names.ts";
-import { isNullOrUndefined } from "@common/util/assert-util.ts";
-import { LoadingSpinner } from "./LoadingSpinner.tsx";
-import { Size } from "@common/models/sizes.ts";
 
 function TitleInput(props: {
   text: string;

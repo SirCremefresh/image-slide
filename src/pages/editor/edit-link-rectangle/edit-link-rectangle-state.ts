@@ -1,9 +1,9 @@
 import {
+  PercentageRectangle,
   buildPercentageRectangle,
   fitPercentageRectangle,
   getPercentagePointOfCorner,
   movePercentageRectangle,
-  PercentageRectangle,
   subtractPercentagePoints,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";

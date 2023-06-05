@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
 import "./Viewer.css";
 import { useCollection } from "../api-client/collections.ts";
-import { Collection } from "@common/models/collection.ts";
 import { PercentageBoxButton } from "../components/BoxButton.tsx";
-import { useParams } from "react-router-dom";
+import { Collection } from "@common/models/collection.ts";
 import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
+import { useParams } from "react-router-dom";
 
 function Viewer() {
   const { collectionId } = useParams<{ collectionId: string }>();

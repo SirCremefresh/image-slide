@@ -1,8 +1,8 @@
-import { ChangeEvent, useState } from "react";
 import { compressImage } from "../util/compression.ts";
+import { Size } from "@common/models/sizes.ts";
+import { ChangeEvent, useState } from "react";
 import imageCompression from "browser-image-compression";
 import { CloudArrowUpIcon } from "@heroicons/react/24/outline";
-import { Size } from "@common/models/sizes.ts";
 
 export function ImageUploadInput(props: {
   onFileSelected: (image: { image: File; size: Size }) => void;

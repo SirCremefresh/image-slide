@@ -1,9 +1,9 @@
+import { classNames } from "../util/class-names.ts";
+import { Image } from "@common/models/collection.ts";
+import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { useEffect, useRef, useState } from "react";
-import { Image } from "@common/models/collection.ts";
 import { Combobox } from "@headlessui/react";
-import { classNames } from "../util/class-names.ts";
-import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
 
 function SearchListItem(props: {
   selected: boolean;

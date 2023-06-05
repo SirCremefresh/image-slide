@@ -1,14 +1,14 @@
+import { MouseState } from "./use-mouse-state.ts";
+import { PercentageBoxCornerButton } from "../../components/BoxButton.tsx";
+import LinkEditModal from "../../components/LinkEditModal.tsx";
 import {
+  PercentageRectangle,
   buildPercentageRectangle,
   fitPercentageRectangle,
-  PercentageRectangle,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
 import { Image, Link } from "@common/models/collection.ts";
 import { useEffect, useState } from "react";
-import { MouseState } from "./use-mouse-state.ts";
-import { PercentageBoxCornerButton } from "../../components/BoxButton.tsx";
-import LinkEditModal from "../../components/LinkEditModal.tsx";
 
 type Step =
   | { name: "viewing" | "link-target" }

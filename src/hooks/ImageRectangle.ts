@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-
 import { ViewportRectangle } from "@common/models/rectangles.ts";
+import { useEffect, useState } from "react";
 
 export function useImageRectangle(): [
   ViewportRectangle,

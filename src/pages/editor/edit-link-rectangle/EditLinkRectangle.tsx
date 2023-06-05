@@ -1,8 +1,8 @@
+import { useEditLinkRectangleState } from "./edit-link-rectangle-state.ts";
 import { MouseState } from "../use-mouse-state.ts";
+import { PercentageBoxCornerButton } from "../../../components/BoxButton.tsx";
 import { Link } from "@common/models/collection.ts";
 import { useEffect } from "react";
-import { PercentageBoxCornerButton } from "../../../components/BoxButton.tsx";
-import { useEditLinkRectangleState } from "./edit-link-rectangle-state.ts";
 
 export function EditLinkRectangle({
   mouseState,

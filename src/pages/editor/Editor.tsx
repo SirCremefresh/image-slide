@@ -7,13 +7,13 @@ import { useParams } from "react-router-dom";
 import { useCollection } from "../../api-client/collections.ts";
 import {
   Collection,
+  Image,
+  Link,
   collectionDeleteImageAndRemoveDependents,
   collectionDeleteLink,
   collectionUpsertImage,
   collectionUpsertLink,
   collectionUpsertTitle,
-  Image,
-  Link,
 } from "@common/models/collection.ts";
 import { ImageUploadModal } from "../../components/ImageUploadModal.tsx";
 import { PercentagePoint } from "@common/models/points.ts";

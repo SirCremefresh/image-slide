@@ -1,15 +1,15 @@
-import z from "zod";
 import {
   PercentageRectangle,
   ZPercentageRectangle,
 } from "@common/models/rectangles.ts";
-import { assertType, TypeEqualityGuard } from "@common/util/type-check.ts";
+import { TypeEqualityGuard, assertType } from "@common/util/type-check.ts";
 import { ZuUID } from "@common/models/uuid.ts";
 import {
   EXISTING_LINK_REFERENCES_REFINEMENT,
   UNIQUE_IMAGE_ID_REFINEMENT,
 } from "@common/models/collection-refinements.ts";
 import { Size, ZSize } from "@common/models/sizes.ts";
+import z from "zod";
 
 const ZLink = z.object({
   linkId: ZuUID,

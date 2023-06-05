@@ -1,7 +1,7 @@
 import {
-  moveRelativePoint,
   PercentagePoint,
   RelativePoint,
+  moveRelativePoint,
   toPercentPoint,
   toRelativePoint,
 } from "@common/models/points.ts";

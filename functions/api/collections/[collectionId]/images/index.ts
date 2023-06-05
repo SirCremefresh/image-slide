@@ -1,7 +1,7 @@
+import { getMetadataOrThrow } from "../index.js";
 import { Env } from "@function/util/env.js";
 import { parseOrThrow } from "@function/type-check.js";
 import { hashString } from "@function/util/hash.js";
-import { getMetadataOrThrow } from "../index.js";
 import { ZuUID } from "@common/models/uuid.js";
 import {
   CollectionMetadata,
