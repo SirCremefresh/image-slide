@@ -26,7 +26,6 @@ export function useImageRectangle(): [
         viewportX: imageRef.offsetLeft,
         viewportY: imageRef.offsetTop,
       };
-      console.log({ newVar });
       setImageSize(newVar);
     });
     resizeObserver.observe(imageRef);

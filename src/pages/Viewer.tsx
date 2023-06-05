@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import "./Viewer.css";
 import { useCollection } from "../api-client/collections.ts";
 import { PercentageBoxButton } from "../components/BoxButton.tsx";
@@ -8,6 +8,7 @@ import {
   isNullOrUndefined,
 } from "@common/util/assert-util.ts";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { preloadImage } from "../util/preload-image.ts";
 
 function Viewer() {
   const { collectionId, imageId } = useParams<{
@@ -51,6 +52,25 @@ function ViewerLoaded(props: { collection: Collection; image: Image }) {
       );
     });
   }, [navigate, props.collection.collectionId, props.image.links]);
+
+  useEffect(() => {
+    console.log("Preloading images");
+    const loads = props.image.links.map((link) =>
+      preloadImage(
+        "/api/collections/" +
+          props.collection.collectionId +
+          "/images/" +
+          link.targetImageId
+      )
+    );
+    Promise.allSettled(loads).then((results) => {
+      results.forEach((result) => {
+        if (result.status === "rejected") {
+          console.error("failed to preload image", result.reason);
+        }
+      });
+    });
+  }, [props.collection.collectionId, props.image.imageId, props.image.links]);
 
   return (
     <div className={"grid min-h-screen place-content-center"}>
