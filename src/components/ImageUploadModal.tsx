@@ -144,7 +144,7 @@ export function ImageUploadModal({
           <div
             className={`${
               isUploading ? "flex" : "hidden"
-            } absolute left-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center bg-white bg-opacity-80`}
+            } absolute left-0 top-0 z-10 flex h-full w-full flex-col items-center justify-center bg-white/80`}
           >
             <LoadingSpinner />
             <p className="text-center">Uploading...</p>

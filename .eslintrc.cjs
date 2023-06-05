@@ -7,6 +7,7 @@ module.exports = {
         'plugin:import/recommended',
         'plugin:import/react',
         'plugin:import/typescript',
+        "plugin:tailwindcss/recommended",
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {ecmaVersion: 'latest', sourceType: 'module'},
@@ -29,6 +30,10 @@ module.exports = {
                     "functions/tsconfig.json"
                 ],
             }
-        }
+        },
+        tailwindcss: {
+            callees: ["classnames", "classNames", "clsx", "ctl"],
+            removeDuplicates: true,
+        },
     }
 }
