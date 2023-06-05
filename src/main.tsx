@@ -20,6 +20,10 @@ const router = createBrowserRouter([
     path: "view/:collectionId",
     element: <Viewer />,
   },
+  {
+    path: "view/:collectionId/:imageId",
+    element: <Viewer />,
+  },
 ]);
 
 const queryClient = new QueryClient({

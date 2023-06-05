@@ -1,50 +1,56 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import "./Viewer.css";
 import { useCollection } from "../api-client/collections.ts";
 import { PercentageBoxButton } from "../components/BoxButton.tsx";
-import { Collection } from "@common/models/collection.ts";
-import { assertNotNullOrUndefined } from "@common/util/assert-util.ts";
-import { useParams } from "react-router-dom";
+import { Collection, Image } from "@common/models/collection.ts";
+import {
+  assertNotNullOrUndefined,
+  isNullOrUndefined,
+} from "@common/util/assert-util.ts";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 function Viewer() {
-  const { collectionId } = useParams<{ collectionId: string }>();
+  const { collectionId, imageId } = useParams<{
+    collectionId: string;
+    imageId: string;
+  }>();
   const { data } = useCollection(assertNotNullOrUndefined(collectionId));
 
+  const image = data?.images.find((image) => image.imageId === imageId);
+
   if (data === undefined) return <div>Loading...</div>;
-  return <ViewerLoaded collection={data}></ViewerLoaded>;
+
+  if (isNullOrUndefined(image)) {
+    const firstImageId = data.images.at(0)?.imageId;
+    if (isNullOrUndefined(firstImageId))
+      return <div>No images in collection</div>;
+    return <Navigate to={"/view/" + collectionId + "/" + firstImageId} />;
+  }
+  return <ViewerLoaded collection={data} image={image}></ViewerLoaded>;
 }
 
-function ViewerLoaded(props: { collection: Collection }) {
-  const [imageId, setImageId] = useState<string | undefined>(
-    props.collection.images.at(0)?.imageId
-  );
+function ViewerLoaded(props: { collection: Collection; image: Image }) {
+  const navigate = useNavigate();
 
-  const current = useMemo(() => {
-    if (imageId === undefined) return undefined;
-
-    const image = props.collection.images.find(
-      (image) => image.imageId === imageId
-    );
-    if (image === undefined) return undefined;
-
-    const links = image.links.map((link, index) => {
+  const links = useMemo(() => {
+    return props.image.links.map((link, index) => {
       return (
         <PercentageBoxButton
-          onClick={() => setImageId(link.targetImageId)}
+          onClick={() =>
+            navigate(
+              "/view/" +
+                props.collection.collectionId +
+                "/" +
+                link.targetImageId
+            )
+          }
           clickable={true}
           key={index}
           rectangle={link.rectangle}
         ></PercentageBoxButton>
       );
     });
-
-    return {
-      image,
-      links,
-    };
-  }, [props.collection, imageId]);
-
-  if (current === undefined) return <div>Loading...</div>;
+  }, [navigate, props.collection.collectionId, props.image.links]);
 
   return (
     <div className={"grid min-h-screen place-content-center"}>
@@ -55,12 +61,12 @@ function ViewerLoaded(props: { collection: Collection }) {
             "/api/collections/" +
             props.collection.collectionId +
             "/images/" +
-            current.image.imageId
+            props.image.imageId
           }
-          alt={current.image.title}
+          alt={props.image.title}
           draggable={false}
         />
-        {current.links}
+        {links}
       </div>
     </div>
   );
