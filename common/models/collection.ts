@@ -17,9 +17,9 @@ const ZLink = z.object({
   rectangle: ZPercentageRectangle,
 });
 export type Link = {
-  linkId: string;
-  targetImageId: string;
-  rectangle: PercentageRectangle;
+  readonly linkId: string;
+  readonly targetImageId: string;
+  readonly rectangle: PercentageRectangle;
 };
 assertType<TypeEqualityGuard<Link, z.infer<typeof ZLink>>>();
 
@@ -30,10 +30,10 @@ const ZImage = z.object({
   links: z.array(ZLink),
 });
 export type Image = {
-  imageId: string;
-  title: string;
-  size: Size;
-  links: Link[];
+  readonly imageId: string;
+  readonly title: string;
+  readonly size: Size;
+  readonly links: Link[];
 };
 assertType<TypeEqualityGuard<Image, z.infer<typeof ZImage>>>();
 
