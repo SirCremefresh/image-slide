@@ -30,6 +30,10 @@ function Viewer() {
   return <ViewerLoaded collection={data} image={image}></ViewerLoaded>;
 }
 
+function getImageSrc(collectionId: string, imageId: string): string {
+  return "/api/collections/" + collectionId + "/images/" + imageId;
+}
+
 function ViewerLoaded(props: { collection: Collection; image: Image }) {
   const navigate = useNavigate();
 
@@ -57,10 +61,7 @@ function ViewerLoaded(props: { collection: Collection; image: Image }) {
     console.log("Preloading images");
     const loads = props.image.links.map((link) =>
       preloadImage(
-        "/api/collections/" +
-          props.collection.collectionId +
-          "/images/" +
-          link.targetImageId
+        getImageSrc(props.collection.collectionId, link.targetImageId)
       )
     );
     Promise.allSettled(loads).then((results) => {
@@ -77,12 +78,7 @@ function ViewerLoaded(props: { collection: Collection; image: Image }) {
       <div className="relative inline-block select-none" draggable={false}>
         <img
           className="block max-h-[100%] max-w-[100%]"
-          src={
-            "/api/collections/" +
-            props.collection.collectionId +
-            "/images/" +
-            props.image.imageId
-          }
+          src={getImageSrc(props.collection.collectionId, props.image.imageId)}
           alt={props.image.title}
           draggable={false}
         />
