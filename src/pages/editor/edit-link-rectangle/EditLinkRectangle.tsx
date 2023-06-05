@@ -1,7 +1,6 @@
 import { MouseState } from "../use-mouse-state.ts";
 import { Link } from "@common/models/collection.ts";
 import { useEffect } from "react";
-import { buildPercentageRectangle } from "@common/models/rectangles.ts";
 import { PercentageBoxCornerButton } from "../../../components/BoxButton.tsx";
 import { useEditLinkRectangleState } from "./edit-link-rectangle-state.ts";
 
@@ -32,7 +31,7 @@ export function EditLinkRectangle({
       dispatch({ type: "view" });
       onUpdate({
         ...link,
-        rectangle: buildPercentageRectangle(state.rectangle),
+        rectangle: state.rectangle,
       });
     }
   }, [

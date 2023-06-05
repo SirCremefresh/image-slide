@@ -14,16 +14,3 @@ export type PaintingState =
       rectangle: PercentageRectangle;
       link: Link;
     };
-
-export function initialPaintingState(start: RelativePoint): PaintingState {
-  return {
-    mode: "create",
-    start,
-    rectangle: {
-      percentageWidth: 0,
-      percentageHeight: 0,
-      percentageX: 0,
-      percentageY: 0,
-    },
-  };
-}

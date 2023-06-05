@@ -1,10 +1,9 @@
 import {
   buildPercentageRectangle,
-  buildPercentageRectangleCorners,
-  fitPercentageRectangleCorners,
+  fitPercentageRectangle,
   getPercentagePointOfCorner,
-  moveRectanglePercentageRectangle,
-  PercentageRectangleCorners,
+  movePercentageRectangle,
+  PercentageRectangle,
   subtractPercentagePoints,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
@@ -43,16 +42,16 @@ type CurrentRectangleReducerAction =
 
 type State = {
   step: Step;
-  rectangle: PercentageRectangleCorners;
+  rectangle: PercentageRectangle;
 };
 
 function calcTopLeftOffset(
-  rectangle: PercentageRectangleCorners,
+  rectangle: PercentageRectangle,
   point: PercentagePoint
 ): PercentagePoint {
   return subtractPercentagePoints(
     point,
-    getPercentagePointOfCorner(buildPercentageRectangle(rectangle), "top-left")
+    getPercentagePointOfCorner(rectangle, "top-left")
   );
 }
 
@@ -89,17 +88,19 @@ function reducer(
       if (rectangle.step.name === "painting") {
         return {
           step: rectangle.step,
-          rectangle: fitPercentageRectangleCorners({
-            point1: action.mouseStatePosition,
-            point2: rectangle.step.fixedCorner,
-          }),
+          rectangle: fitPercentageRectangle(
+            buildPercentageRectangle(
+              action.mouseStatePosition,
+              rectangle.step.fixedCorner
+            )
+          ),
         };
       }
       if (rectangle.step.name === "moving") {
         return {
           step: rectangle.step,
-          rectangle: fitPercentageRectangleCorners(
-            moveRectanglePercentageRectangle(
+          rectangle: fitPercentageRectangle(
+            movePercentageRectangle(
               rectangle.rectangle,
               rectangle.step.topLeftOffset,
               action.mouseStatePosition
@@ -114,7 +115,7 @@ function reducer(
 function getInitialState(link: Link): State {
   return {
     step: { name: "viewing" },
-    rectangle: buildPercentageRectangleCorners(link.rectangle),
+    rectangle: link.rectangle,
   };
 }
 

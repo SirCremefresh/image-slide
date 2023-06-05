@@ -28,11 +28,6 @@ assertType<
   TypeEqualityGuard<PercentageRectangle, z.infer<typeof ZPercentageRectangle>>
 >();
 
-export type PercentageRectangleCorners = {
-  point1: PercentagePoint;
-  point2: PercentagePoint;
-};
-
 export const ZViewportRectangle = ZViewportPoint.merge(ZSize);
 export type ViewportRectangle = ViewportPoint & Size;
 assertType<
@@ -85,10 +80,9 @@ export function buildRelativeRectangle(
 }
 
 export function buildPercentageRectangle(
-  corners: PercentageRectangleCorners
+  point1: PercentagePoint,
+  point2: PercentagePoint
 ): PercentageRectangle {
-  const point1 = corners.point1;
-  const point2 = corners.point2;
   const width = Math.abs(point2.percentageX - point1.percentageX);
   const height = Math.abs(point2.percentageY - point1.percentageY);
 
@@ -104,20 +98,6 @@ export function buildPercentageRectangle(
         ? point1.percentageY - height
         : point1.percentageY,
   };
-}
-
-export function buildPercentageRectangleCorners(
-  rectangle: PercentageRectangle
-): PercentageRectangleCorners {
-  const point1: PercentagePoint = {
-    percentageX: rectangle.percentageX,
-    percentageY: rectangle.percentageY,
-  };
-  const point2: PercentagePoint = {
-    percentageX: rectangle.percentageX + rectangle.percentageWidth,
-    percentageY: rectangle.percentageY + rectangle.percentageHeight,
-  };
-  return { point1, point2 };
 }
 
 export type Corner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
@@ -183,17 +163,17 @@ export function getOppositeCorner(corner: Corner): Corner {
   }
 }
 
-export function moveRectanglePercentageRectangle(
-  rectangle: PercentageRectangleCorners,
+export function movePercentageRectangle(
+  rectangle: PercentageRectangle,
   pointOffsetTopLeft: PercentagePoint,
   newPoint: PercentagePoint
-) {
+): PercentageRectangle {
   const currentTopLeftCorner = getPercentagePointOfCorner(
-    buildPercentageRectangle(rectangle),
+    rectangle,
     "top-left"
   );
   const currentBottomRightCorner = getPercentagePointOfCorner(
-    buildPercentageRectangle(rectangle),
+    rectangle,
     "bottom-right"
   );
   const newTopLeftCorner = subtractPercentagePoints(
@@ -204,21 +184,16 @@ export function moveRectanglePercentageRectangle(
     newTopLeftCorner,
     currentTopLeftCorner
   );
-  const bottomRightCorner = addPercentagePoints(
+  const newBottomRightCorner = addPercentagePoints(
     topLeftCornerChange,
     currentBottomRightCorner
   );
-  const corners: PercentageRectangleCorners = {
-    point1: newTopLeftCorner,
-    point2: bottomRightCorner,
-  };
-  return corners;
+  return buildPercentageRectangle(newTopLeftCorner, newBottomRightCorner);
 }
 
-export function fitPercentageRectangleCorners(
-  corners: PercentageRectangleCorners
-): PercentageRectangleCorners {
-  const rectangle = buildPercentageRectangle(corners);
+export function fitPercentageRectangle(
+  rectangle: PercentageRectangle
+): PercentageRectangle {
   const topLeft = getPercentagePointOfCorner(rectangle, "top-left");
   const bottomRight = getPercentagePointOfCorner(rectangle, "bottom-right");
 
@@ -232,8 +207,8 @@ export function fitPercentageRectangleCorners(
   if (bottomRight.percentageY > 100) offsetY = 100 - bottomRight.percentageY;
 
   const offset = { percentageX: offsetX, percentageY: offsetY };
-  return {
-    point1: addPercentagePoints(topLeft, offset),
-    point2: addPercentagePoints(bottomRight, offset),
-  };
+  return buildPercentageRectangle(
+    addPercentagePoints(topLeft, offset),
+    addPercentagePoints(bottomRight, offset)
+  );
 }

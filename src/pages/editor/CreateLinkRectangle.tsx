@@ -1,7 +1,7 @@
 import {
   buildPercentageRectangle,
-  fitPercentageRectangleCorners,
-  PercentageRectangleCorners,
+  fitPercentageRectangle,
+  PercentageRectangle,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
 import { Image, Link } from "@common/models/collection.ts";
@@ -34,16 +34,16 @@ export function CreateLinkRectangle({
     name: "painting",
     fixedCorner: start,
   });
-  const [currentRectangle, setCurrentRectangle] =
-    useState<PercentageRectangleCorners>({ point1: start, point2: start });
+  const [currentRectangle, setCurrentRectangle] = useState<PercentageRectangle>(
+    { ...start, percentageWidth: 0, percentageHeight: 0 }
+  );
 
   useEffect(() => {
     if (step.name === "painting") {
       setCurrentRectangle(
-        fitPercentageRectangleCorners({
-          point1: step.fixedCorner,
-          point2: mouseState.point,
-        })
+        fitPercentageRectangle(
+          buildPercentageRectangle(step.fixedCorner, mouseState.point)
+        )
       );
       return;
     }
@@ -62,9 +62,7 @@ export function CreateLinkRectangle({
     propOnCreate({
       linkId: crypto.randomUUID(),
       targetImageId: targetImage.imageId,
-      rectangle: buildPercentageRectangle(
-        fitPercentageRectangleCorners(currentRectangle)
-      ),
+      rectangle: fitPercentageRectangle(currentRectangle),
     });
   };
 

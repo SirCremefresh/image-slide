@@ -1,12 +1,10 @@
 import { MouseEvent } from "react";
 import { classNames } from "../util/class-names.ts";
 import {
-  buildPercentageRectangle,
   Corner,
   getOppositeCorner,
   getPercentagePointOfCorner,
   PercentageRectangle,
-  PercentageRectangleCorners,
 } from "@common/models/rectangles.ts";
 import { PercentagePoint } from "@common/models/points.ts";
 import { isNullOrUndefined } from "@common/util/assert-util.ts";
@@ -39,7 +37,7 @@ export function PercentageBoxButton(props: {
 }
 
 export function PercentageBoxCornerButton(props: {
-  rectangle: PercentageRectangleCorners;
+  rectangle: PercentageRectangle;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onCornerMouseDown?: (corner: PercentagePoint) => void;
   onDeleteClick?: () => void;
@@ -50,13 +48,11 @@ export function PercentageBoxCornerButton(props: {
 }) {
   const clickable = props.clickable ?? false;
 
-  const rectangle = buildPercentageRectangle(props.rectangle);
-
   const onCornerMouseDown = (event: MouseEvent, corner: Corner) => {
     if (isNullOrUndefined(props.onCornerMouseDown)) return;
     event.stopPropagation();
     props.onCornerMouseDown(
-      getPercentagePointOfCorner(rectangle, getOppositeCorner(corner))
+      getPercentagePointOfCorner(props.rectangle, getOppositeCorner(corner))
     );
   };
 
@@ -69,10 +65,10 @@ export function PercentageBoxCornerButton(props: {
       onClick={props.onClick}
       onMouseDown={props.onMouseDown}
       style={{
-        top: rectangle.percentageY + "%",
-        left: rectangle.percentageX + "%",
-        width: rectangle.percentageWidth + "%",
-        height: rectangle.percentageHeight + "%",
+        top: props.rectangle.percentageY + "%",
+        left: props.rectangle.percentageX + "%",
+        width: props.rectangle.percentageWidth + "%",
+        height: props.rectangle.percentageHeight + "%",
       }}
     >
       {props.showToolbar === true && (
