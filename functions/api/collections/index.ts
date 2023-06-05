@@ -3,7 +3,7 @@ import { hashString } from "@function/util/hash.js";
 import { getSampleCollection } from "@function/sample-data.js";
 import { getUtcDateTimeString } from "@function/util/utc-date.js";
 
-// noinspection JSUnusedGlobalSymbols
+// eslint-disable-next-line import/no-unused-modules
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const collectionId = crypto.randomUUID();
   const collection = getSampleCollection(collectionId);

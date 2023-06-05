@@ -11,7 +11,7 @@ import {
 } from "@common/models/collection-refinements.ts";
 import { Size, ZSize } from "@common/models/sizes.ts";
 
-export const ZLink = z.object({
+const ZLink = z.object({
   linkId: ZuUID,
   targetImageId: z.string(),
   rectangle: ZPercentageRectangle,
@@ -23,7 +23,7 @@ export type Link = {
 };
 assertType<TypeEqualityGuard<Link, z.infer<typeof ZLink>>>();
 
-export const ZImage = z.object({
+const ZImage = z.object({
   imageId: ZuUID,
   title: z.string(),
   size: ZSize,

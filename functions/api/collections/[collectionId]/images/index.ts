@@ -8,7 +8,7 @@ import {
   ZCollectionMetadata,
 } from "@common/models/collection.js";
 
-// noinspection JSUnusedGlobalSymbols
+// eslint-disable-next-line import/no-unused-modules
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const collectionId = parseOrThrow(ZuUID, context.params.collectionId);
   const secret = parseOrThrow(

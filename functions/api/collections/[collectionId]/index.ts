@@ -10,7 +10,7 @@ import { parseOrThrow } from "@function/type-check.js";
 import { ZuUID } from "@common/models/uuid.js";
 import { getUtcDateTimeString } from "@function/util/utc-date.js";
 
-// noinspection JSUnusedGlobalSymbols
+// eslint-disable-next-line import/no-unused-modules
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const collectionId = parseOrThrow(ZuUID, context.params.collectionId);
 
@@ -33,7 +33,7 @@ export async function getMetadataOrThrow<Z extends z.ZodType>(
   return parseOrThrow(z, object.metadata, "server");
 }
 
-// noinspection JSUnusedGlobalSymbols
+// eslint-disable-next-line import/no-unused-modules
 export const onRequestPut: PagesFunction<Env> = async (context) => {
   const collection: Collection = parseOrThrow(
     ZCollection,
