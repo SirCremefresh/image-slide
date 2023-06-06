@@ -8,7 +8,7 @@ import {
   isNullOrUndefined,
 } from "@common/util/assert-util.ts";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { preloadImage } from "../util/preload-image.ts";
+import { preloadImages } from "../util/preload-image.ts";
 
 function Viewer() {
   const { collectionId, imageId } = useParams<{
@@ -38,7 +38,7 @@ function ViewerLoaded(props: { collection: Collection; image: Image }) {
   const navigate = useNavigate();
 
   const links = useMemo(() => {
-    return props.image.links.map((link, index) => {
+    return props.image.links.map((link) => {
       return (
         <PercentageBoxButton
           onClick={() =>
@@ -50,7 +50,7 @@ function ViewerLoaded(props: { collection: Collection; image: Image }) {
             )
           }
           clickable={true}
-          key={index}
+          key={link.linkId}
           rectangle={link.rectangle}
         ></PercentageBoxButton>
       );
@@ -59,18 +59,11 @@ function ViewerLoaded(props: { collection: Collection; image: Image }) {
 
   useEffect(() => {
     console.log("Preloading images");
-    const loads = props.image.links.map((link) =>
-      preloadImage(
-        getImageSrc(props.collection.collectionId, link.targetImageId)
-      )
+    const srcs = props.image.links.map((link) =>
+      getImageSrc(props.collection.collectionId, link.targetImageId)
     );
-    Promise.allSettled(loads).then((results) => {
-      results.forEach((result) => {
-        if (result.status === "rejected") {
-          console.error("failed to preload image", result.reason);
-        }
-      });
-    });
+    // noinspection JSIgnoredPromiseFromCall
+    preloadImages(srcs);
   }, [props.collection.collectionId, props.image.imageId, props.image.links]);
 
   return (

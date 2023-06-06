@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import Editor from "./pages/editor/Editor.tsx";
+import { Editor } from "./pages/editor/Editor.tsx";
 import Viewer from "./pages/Viewer.tsx";
 import { Home } from "./pages/Home.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
