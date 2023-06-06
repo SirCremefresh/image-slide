@@ -67,10 +67,18 @@ assertType<
 const findImageIndex = (images: Image[], imageId: string): number =>
   images.findIndex((existingImage) => existingImage.imageId === imageId);
 
+// Replaces the item at the given index with the new item.
 const updateArray = <T>(arr: T[], index: number, newItem: T): T[] => [
   ...arr.slice(0, index),
   newItem,
   ...arr.slice(index + 1),
+];
+
+// Inserts the new item at the given index. Moving the current item at that index and all subsequent items to the right.
+const insertArray = <T>(arr: T[], index: number, newItem: T): T[] => [
+  ...arr.slice(0, index),
+  newItem,
+  ...arr.slice(index),
 ];
 
 const upsertArray = <T>(
@@ -168,4 +176,19 @@ export function collectionDeleteImageAndRemoveDependents(
     ),
   }));
   return { ...collection, images: imagesWithoutLinks };
+}
+
+export function collectionMoveImage(
+  collection: Collection,
+  imageToMove: Image,
+  newIndex: number
+): Collection {
+  const imageIndex = findImageIndex(collection.images, imageToMove.imageId);
+  if (imageIndex === -1) {
+    return collection;
+  }
+  const images = deleteArrayItem(collection.images, imageIndex);
+  const correctedNewIndex = newIndex > imageIndex ? newIndex - 1 : newIndex;
+  const newImages = insertArray(images, correctedNewIndex, imageToMove);
+  return { ...collection, images: newImages };
 }

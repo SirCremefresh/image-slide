@@ -5,6 +5,7 @@ import {
   Link,
   collectionDeleteImageAndRemoveDependents,
   collectionDeleteLink,
+  collectionMoveImage,
   collectionUpsertImage,
   collectionUpsertLink,
   collectionUpsertTitle,
@@ -168,6 +169,16 @@ export function EditorLoaded(props: {
     safeCollection(newCollection).then(() => console.log("saved"));
   };
 
+  const moveImage = (image: Image, targetIndex: number) => {
+    const newCollection = collectionMoveImage(
+      cancelActiveRectangle(),
+      image,
+      targetIndex
+    );
+    setCollection(newCollection);
+    safeCollection(newCollection).then(() => console.log("saved"));
+  };
+
   return (
     <div className={"min-h-screen bg-gray-300 px-2"}>
       <div
@@ -220,21 +231,17 @@ export function EditorLoaded(props: {
             )}
           </div>
         </div>
-        <div
-          className={
-            "flex flex-col gap-1 overflow-scroll rounded-lg border border-gray-300 bg-white p-2 shadow-md"
-          }
-        >
-          <ImagesSidebar
-            collection={collection}
-            currentImage={image}
-            onDeleteImage={deleteImage}
-            onSelectImage={(image) => {
-              cancelActiveRectangle();
-              setImageId(image.imageId);
-            }}
-          />
-        </div>
+
+        <ImagesSidebar
+          collection={collection}
+          currentImage={image}
+          onDeleteImage={deleteImage}
+          onSelectImage={(image) => {
+            cancelActiveRectangle();
+            setImageId(image.imageId);
+          }}
+          moveImage={moveImage}
+        />
       </div>
 
       {action.name === "image-upload" && (
