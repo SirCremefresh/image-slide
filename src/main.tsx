@@ -1,11 +1,11 @@
-import { StrictMode } from "react";
+import { StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import { Editor } from "./pages/editor/Editor.tsx";
 import Viewer from "./pages/Viewer.tsx";
 import { Home } from "./pages/Home.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LazyEditor } from "./pages/editor/LazyEditor.tsx";
 
 const router = createBrowserRouter([
   {
@@ -14,7 +14,11 @@ const router = createBrowserRouter([
   },
   {
     path: "edit/:collectionId/:secret",
-    element: <Editor />,
+    element: (
+      <Suspense fallback={<h2>Preview</h2>}>
+        <LazyEditor />
+      </Suspense>
+    ),
   },
   {
     path: "view/:collectionId",
