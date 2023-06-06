@@ -12,8 +12,14 @@ export function ImagesSidebar(props: {
   onDeleteImage: (image: Image) => void;
   moveImage: (image: Image, targetIndex: number) => void;
 }) {
-  const [draggingImage, setDraggingImage] = useState<Image | undefined>();
-  const [targetIndex, setTargetIndex] = useState<number | undefined>();
+  const [dragState, setDragState] = useState<
+    | {
+        image: Image;
+        currentIndex: number;
+        targetIndex: number | undefined;
+      }
+    | undefined
+  >();
   return (
     <div
       className={
@@ -22,17 +28,21 @@ export function ImagesSidebar(props: {
     >
       {props.collection.images.map((image, index) => (
         <Fragment key={image.imageId}>
-          {draggingImage !== undefined && (
-            <ImageDropArea
-              setTargetIndex={setTargetIndex}
-              targetIndex={targetIndex}
-              onDrop={(targetIndex) => {
-                props.moveImage(draggingImage, targetIndex);
-              }}
-              collection={props.collection}
-              index={index}
-            />
-          )}
+          {dragState !== undefined &&
+            index !== dragState.currentIndex &&
+            index !== dragState.currentIndex + 1 && (
+              <ImageDropArea
+                setTargetIndex={(targetIndex) =>
+                  setDragState({ ...dragState, targetIndex })
+                }
+                targetIndex={dragState.targetIndex}
+                onDrop={(targetIndex) => {
+                  props.moveImage(dragState.image, targetIndex);
+                }}
+                collection={props.collection}
+                index={index}
+              />
+            )}
           <div
             draggable={true}
             onClick={() => {
@@ -40,16 +50,16 @@ export function ImagesSidebar(props: {
             }}
             style={{ backgroundColor: props.collection.backgroundColor }}
             onDragStart={(e) => {
-              console.log("drag start");
               e.dataTransfer.effectAllowed = "move";
               e.dataTransfer.dropEffect = "move";
-              setDraggingImage(image);
-              e.dataTransfer.setData("imageId", image.imageId);
+              setDragState({
+                image,
+                currentIndex: index,
+                targetIndex: undefined,
+              });
             }}
             onDragEnd={() => {
-              console.log("drag end");
-              setTargetIndex(undefined);
-              setDraggingImage(undefined);
+              setDragState(undefined);
             }}
             className={classNames(
               "flex w-[100%] flex-col",
@@ -79,17 +89,21 @@ export function ImagesSidebar(props: {
           </div>
         </Fragment>
       ))}
-      {draggingImage !== undefined && (
-        <ImageDropArea
-          setTargetIndex={setTargetIndex}
-          targetIndex={targetIndex}
-          onDrop={(targetIndex) => {
-            props.moveImage(draggingImage, targetIndex);
-          }}
-          collection={props.collection}
-          index={props.collection.images.length}
-        />
-      )}
+      {dragState !== undefined &&
+        props.collection.images.length !== dragState.currentIndex &&
+        props.collection.images.length !== dragState.currentIndex + 1 && (
+          <ImageDropArea
+            setTargetIndex={(targetIndex) =>
+              setDragState({ ...dragState, targetIndex })
+            }
+            targetIndex={dragState.targetIndex}
+            onDrop={(targetIndex) => {
+              props.moveImage(dragState.image, targetIndex);
+            }}
+            collection={props.collection}
+            index={props.collection.images.length}
+          />
+        )}
     </div>
   );
 }
