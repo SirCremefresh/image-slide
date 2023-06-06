@@ -2,10 +2,10 @@
 
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { defineConfig } from "vite";
+import { PluginOption, defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { NormalizedOutputOptions, OutputBundle, Plugin } from "rollup";
+import { NormalizedOutputOptions, OutputBundle } from "rollup";
 
 type FileEnding = "css" | "js";
 type FileType = "style" | "script";
@@ -21,14 +21,15 @@ function fileEndingToType(fileEnding: FileEnding): FileType {
 
 function earlyHints(
   options: { type: FileEnding; name: string; path: string }[]
-): Plugin {
+): PluginOption {
   return {
     name: "early-hints",
+    apply: "build",
 
     async writeBundle(
       outputOptions: NormalizedOutputOptions,
       bundle: OutputBundle
-    ) {
+    ): Promise<void> {
       const files = Object.keys(bundle);
       let out = "";
       for (const option of options) {
@@ -44,11 +45,8 @@ function earlyHints(
             }, availableFiles: ${JSON.stringify(files)}`
           );
         }
-        out += `${
-          option.path
-        }\n  Link: </${fileName}>; rel=preload; as=${fileEndingToType(
-          option.type
-        )}\n`;
+        out += `${option.path}
+  Link: </${fileName}>; rel=preload; as=${fileEndingToType(option.type)}\n`;
       }
       const headersFileName = path.join(outputOptions.dir, "_headers");
       await fs.writeFile(headersFileName, out);
