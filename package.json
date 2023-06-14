@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 8000",
-    "pages:dev": "wrangler pages dev --proxy 8000 --compatibility-date=2023-04-04 --kv=MAIN --r2=IMAGES -- npm run dev",
+    "pages:dev": "wrangler pages dev --port 8788 --proxy 8000 --compatibility-date=2023-04-04 --kv=MAIN --r2=IMAGES -- npm run dev",
     "build": "tsc && vite build",
     "build:functions": "cd functions && tsc",
     "lint": "npm run eslint && npm run prettier",

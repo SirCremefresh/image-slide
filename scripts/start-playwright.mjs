@@ -27,7 +27,7 @@ const executeCommand = (command, args = [], stdoutAction, stderrAction) => {
 };
 
 // Function to check if a site is reachable
-const waitForServer = (url) => new Promise((resolve, reject) => {
+const waitForServer = (url) => new Promise((resolve) => {
     const checkConnection = () => {
         http.get(url, (res) => {
             if (res.statusCode === 200) resolve();
@@ -65,4 +65,6 @@ try {
     console.error(`playwright test exec error: ${error}`);
 }
 
+console.log('Terminating pages:dev process');
 pagesDevProcess.kill();
+console.log('Terminated pages:dev process');
