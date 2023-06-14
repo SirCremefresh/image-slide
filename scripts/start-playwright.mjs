@@ -16,12 +16,15 @@ const exec = (command) => {
 
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
+const sendLines = (str, action) => str.split('\n').map(l => l.trimEnd()).filter(l => l.length > 0).forEach(action);
+const surroundLines = (str, prefix, suffix) => str.split('\n').map(l => l.trimEnd()).filter(l => l.length > 0).map(l => `${prefix}${l}${suffix}`).join('\n');
+
 // Function to execute a command
 const executeCommand = (command, args = [], stdoutAction, stderrAction) => {
     const process = spawn(command, args);
 
-    process.stdout.on('data', stdoutAction);
-    process.stderr.on('data', stderrAction);
+    process.stdout.on('data', data => sendLines(data?.toString(), stdoutAction));
+    process.stderr.on('data', data => sendLines(data?.toString(), stderrAction));
 
     return process;
 };
@@ -45,8 +48,8 @@ const waitForServer = (url) => new Promise((resolve) => {
 const pagesDevProcess = executeCommand(
     'npm',
     ['run', 'pages:dev'],
-    (data) => console.log(`pages:dev stdout: "${data?.trim()}"`),
-    (data) => console.error(`pages:dev stderr: "${data?.trim()}"`)
+    (data) => console.log(`pages:dev stdout: "${data}"`),
+    (data) => console.error(`pages:dev stderr: "${data}"`)
 );
 await sleep(1000)
 
@@ -60,8 +63,8 @@ let success = false;
 try {
     console.log('Running playwright test');
     const {stdout, stderr} = await exec('npm run e2e:test');
-    console.log(`playwright test stdout: "${stdout?.trim()}"`);
-    console.error(`playwright test stderr: "${stderr?.trim()}"`);
+    console.log(surroundLines(stdout, 'playwright test stdout: "', '"'));
+    console.error(surroundLines(stderr, 'playwright test stderr: "', '"'));
     success = true;
 } catch (error) {
     console.error(`playwright test exec error: "${error}"`);
