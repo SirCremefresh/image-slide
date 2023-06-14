@@ -17,6 +17,7 @@
     "preview": "vite preview",
     "prepare": "husky install",
     "test:e2e": "node scripts/start-playwright.mjs",
+    "playwright:start": "playwright test",
     "test": "vitest run",
     "test:watch": "vitest"
   },

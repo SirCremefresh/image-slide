@@ -56,15 +56,19 @@ await waitForServer('http://localhost:8788');
 console.log('Server is reachable.');
 
 // Execute the second command
+let success = false;
 try {
     console.log('Running playwright test');
-    const {stdout, stderr} = await exec('npx playwright test');
+    const {stdout, stderr} = await exec('npm run playwright:test');
     console.log(`playwright test stdout: "${stdout}"`);
     console.error(`playwright test stderr: "${stderr}"`);
+    success = true;
 } catch (error) {
     console.error(`playwright test exec error: "${error}"`);
 }
 
 console.log('Terminating pages:dev process');
-pagesDevProcess.kill();
+pagesDevProcess.kill("SIGINT");
 console.log('Terminated pages:dev process');
+
+process.exit(success ? 0 : 1);
