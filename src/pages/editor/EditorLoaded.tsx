@@ -203,6 +203,7 @@ export function EditorLoaded(props: {
               onMouseDown={createRectangle}
               alt={image.title}
               draggable={false}
+              data-testid="active-slide"
             />
             {image.links.map((link) => (
               <PercentageBoxButton
