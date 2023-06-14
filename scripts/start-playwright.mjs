@@ -59,7 +59,7 @@ console.log('Server is reachable.');
 let success = false;
 try {
     console.log('Running playwright test');
-    const {stdout, stderr} = await exec('npm run playwright:test');
+    const {stdout, stderr} = await exec('npm run playwright:start');
     console.log(`playwright test stdout: "${stdout}"`);
     console.error(`playwright test stderr: "${stderr}"`);
     success = true;
