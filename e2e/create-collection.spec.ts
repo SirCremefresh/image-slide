@@ -16,4 +16,16 @@ test("test", async ({ page }) => {
   await page.getByTestId("link-target").fill("Giswil");
   await page.getByTestId("link-target").press("Enter");
   await page.getByRole("button", { name: "Create" }).click();
+
+  await page.waitForResponse((response) =>
+    response.url().includes("/api/collections")
+  );
+
+  const collectionId = page.url().split("/").at(-2);
+
+  console.log(page.url());
+  console.log(collectionId);
+
+  await page.goto(`/view/${collectionId}`);
+  await expect(page).toHaveURL(/\/view*.\/*./);
 });
