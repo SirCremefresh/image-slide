@@ -16,9 +16,9 @@
     "prettier": "prettier --check \"./**/*.{ts,tsx,css,md,json,html}\"",
     "preview": "vite preview",
     "prepare": "husky install",
-    "test:e2e": "node scripts/start-playwright.mjs",
-    "playwright:test": "playwright test",
-    "playwright:ui": "playwright test --ui",
+    "e2e:test:ci": "node scripts/start-playwright.mjs",
+    "e2e:test": "playwright test",
+    "e2e:watch": "playwright test --ui",
     "test": "vitest run",
     "test:watch": "vitest"
   },
