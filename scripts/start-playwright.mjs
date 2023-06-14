@@ -62,7 +62,7 @@ try {
     console.log(`playwright test stdout: "${stdout}"`);
     console.error(`playwright test stderr: "${stderr}"`);
 } catch (error) {
-    console.error(`playwright test exec error: ${error}`);
+    console.error(`playwright test exec error: "${error}"`);
 }
 
 console.log('Terminating pages:dev process');
