@@ -45,8 +45,8 @@ const waitForServer = (url) => new Promise((resolve) => {
 const pagesDevProcess = executeCommand(
     'npm',
     ['run', 'pages:dev'],
-    (data) => console.log(`pages:dev stdout: ${data}`),
-    (data) => console.error(`pages:dev stderr: ${data}`)
+    (data) => console.log(`pages:dev stdout: "${data}"`),
+    (data) => console.error(`pages:dev stderr: "${data}"`)
 );
 await sleep(1000)
 
