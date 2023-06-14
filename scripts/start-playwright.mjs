@@ -59,8 +59,8 @@ console.log('Server is reachable.');
 try {
     console.log('Running playwright test');
     const {stdout, stderr} = await exec('npx playwright test');
-    console.log(`playwright test stdout: ${stdout}`);
-    console.error(`playwright test stderr: ${stderr}`);
+    console.log(`playwright test stdout: "${stdout}"`);
+    console.error(`playwright test stderr: "${stderr}"`);
 } catch (error) {
     console.error(`playwright test exec error: ${error}`);
 }
