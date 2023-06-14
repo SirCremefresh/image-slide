@@ -17,8 +17,9 @@
     "preview": "vite preview",
     "prepare": "husky install",
     "e2e:test:ci": "node scripts/start-playwright.mjs",
-    "e2e:test": "playwright test",
-    "e2e:watch": "playwright test --ui",
+    "e2e:test": "playwright test --project chromium",
+    "e2e:watch:chromium": "playwright test --ui --project chromium",
+    "e2e:watch:firefox": "playwright test --ui --project firefox",
     "e2e:open": "playwright open http://localhost:8788",
     "test": "vitest run",
     "test:watch": "vitest"
