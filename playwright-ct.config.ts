@@ -35,7 +35,7 @@ export default defineConfig({
     },
   },
 
-  testMatch: ["**/*.ct.spec.tsx"],
+  testMatch: ["**/*.ct-spec.tsx"],
 
   /* Configure projects for major browsers */
   projects: [
