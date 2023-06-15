@@ -19,6 +19,8 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npm run e2e:test:ci
+    - name: Run Playwright tests
+      run: npm run ct:test
     - uses: actions/upload-artifact@v3
       if: always()
       with:
