@@ -21,6 +21,7 @@
     "e2e:watch:chromium": "playwright test --ui --project chromium",
     "e2e:watch:firefox": "playwright test --ui --project firefox",
     "e2e:open": "playwright open http://localhost:8788",
+    "ct:test": "playwright test -c playwright-ct.config.ts --project chromium",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "4.20230518.0",
+    "@playwright/experimental-ct-react": "^1.35.0",
     "@playwright/test": "1.35.0",
     "@testing-library/react": "14.0.0",
     "@types/react": "18.2.12",

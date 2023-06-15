@@ -1,5 +1,6 @@
 import {exec as execCb, spawn} from 'child_process';
 import http from 'http';
+import {parseArgs} from 'node:util';
 
 // Promise wrapper for exec
 const exec = (command) => {
@@ -43,6 +44,32 @@ const waitForServer = (url) => new Promise((resolve) => {
 
     checkConnection();
 });
+const TEST_TYPES = ['e2e', 'ct'];
+
+const validateTestType = (testType) => {
+    if (!TEST_TYPES.includes(testType)) {
+        console.error(`Invalid test type "${testType}". Valid test types are: ${TEST_TYPES.join(', ')}`);
+        process.exit(1);
+    }
+};
+
+function parseArguments() {
+    const {
+        values,
+    } = parseArgs({
+        options: {
+            'test-type': {
+                type: 'string',
+            },
+        }
+    });
+
+    const testType = values["test-type"];
+    validateTestType(testType);
+    return {testType};
+}
+
+const {testType} = parseArguments();
 
 // Execute the first command
 const pagesDevProcess = executeCommand(
@@ -62,7 +89,7 @@ console.log('Server is reachable.');
 let success = false;
 try {
     console.log('Running playwright test');
-    const {stdout, stderr} = await exec('npm run e2e:test');
+    const {stdout, stderr} = await exec(`npm run ${testType}:test`);
     console.log(surroundLines(stdout, 'playwright test stdout: "', '"'));
     console.error(surroundLines(stderr, 'playwright test stderr: "', '"'));
     success = true;
