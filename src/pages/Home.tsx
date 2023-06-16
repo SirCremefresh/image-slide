@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CollectionCredentials } from "@common/models/collection.ts";
 
 export function Home() {
   const [collectionId, setCollectionId] = useState("");
@@ -17,7 +18,7 @@ export function Home() {
           "Content-Type": "application/json",
         },
       });
-      const data = await response.json();
+      const data: CollectionCredentials = await response.json();
       navigate(`/edit/${data.collectionId}/${data.secret}`);
     } catch (error) {
       console.error("Failed to create collection:", error);

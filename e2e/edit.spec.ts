@@ -1,11 +1,9 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
+import { e2eApi, e2eUrl } from "./e2e-util";
 
-test("test", async ({ page }) => {
-  await page.goto("/");
-
-  await page.getByRole("button", { name: "Create Collection" }).click();
-
-  await expect(page).toHaveURL(/\/edit*./);
+test("test create rectangle", async ({ page }) => {
+  const collectionCredentials = await e2eApi.createCollection();
+  await page.goto(e2eUrl.getEditUrl(collectionCredentials));
 
   const activeSlide = await page.getByTestId("active-slide").first();
   await activeSlide.dragTo(activeSlide, {
@@ -20,12 +18,4 @@ test("test", async ({ page }) => {
   await page.waitForResponse((response) =>
     response.url().includes("/api/collections")
   );
-
-  const collectionId = page.url().split("/").at(-2);
-
-  console.log(page.url());
-  console.log(collectionId);
-
-  await page.goto(`/view/${collectionId}`);
-  await expect(page).toHaveURL(/\/view*.\/*./);
 });

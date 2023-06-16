@@ -54,6 +54,21 @@ export type Collection = {
 };
 assertType<TypeEqualityGuard<Collection, z.infer<typeof ZCollection>>>();
 
+const ZCollectionCredentials = z.object({
+  collectionId: ZuUID,
+  secret: ZuUID,
+});
+export type CollectionCredentials = {
+  collectionId: string;
+  secret: string;
+};
+assertType<
+  TypeEqualityGuard<
+    CollectionCredentials,
+    z.infer<typeof ZCollectionCredentials>
+  >
+>();
+
 export const ZCollectionMetadata = z.object({
   hashedSecret: z.string(),
 });
