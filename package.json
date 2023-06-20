@@ -67,6 +67,6 @@
     "vite-tsconfig-paths": "4.2.0",
     "vitest": "0.32.1",
     "wait-on": "7.0.1",
-    "wrangler": "3.1.0"
+    "wrangler": "3.1.1"
   }
 }
