@@ -43,12 +43,12 @@ describe("Collection Management functions", () => {
   it("should upsert link correctly", () => {
     const updatedCollectionWithImage = collectionUpsertImage(
       mockCollection,
-      mockImage
+      mockImage,
     );
     const updatedCollection = collectionUpsertLink(
       updatedCollectionWithImage,
       mockImage,
-      mockLink
+      mockLink,
     );
     expect(updatedCollection.images[0].links).toContain(mockLink);
   });
@@ -56,17 +56,17 @@ describe("Collection Management functions", () => {
   it("should delete link correctly", () => {
     const updatedCollectionWithImage = collectionUpsertImage(
       mockCollection,
-      mockImage
+      mockImage,
     );
     const updatedCollectionWithLink = collectionUpsertLink(
       updatedCollectionWithImage,
       mockImage,
-      mockLink
+      mockLink,
     );
     const updatedCollection = collectionDeleteLink(
       updatedCollectionWithLink,
       mockImage,
-      mockLink
+      mockLink,
     );
     expect(updatedCollection.images[0].links).not.toContain(mockLink);
   });
@@ -80,11 +80,11 @@ describe("Collection Management functions", () => {
   it("should delete image and remove dependents correctly", () => {
     const updatedCollectionWithImage = collectionUpsertImage(
       mockCollection,
-      mockImage
+      mockImage,
     );
     const updatedCollection = collectionDeleteImageAndRemoveDependents(
       updatedCollectionWithImage,
-      mockImage
+      mockImage,
     );
     expect(updatedCollection.images).not.toContain(mockImage);
   });

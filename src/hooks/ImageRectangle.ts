@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 export function useImageRectangle(): [
   ViewportRectangle,
   HTMLImageElement | null,
-  (node: HTMLImageElement) => void
+  (node: HTMLImageElement) => void,
 ] {
   const [imageSize, setImageSize] = useState<ViewportRectangle>({
     width: 0,

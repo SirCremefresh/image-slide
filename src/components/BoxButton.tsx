@@ -21,7 +21,7 @@ export function PercentageBoxButton(props: {
     <div
       className={classNames(
         "absolute box-border rounded-md border-2 border-dashed border-indigo-500 bg-sky-500/50 shadow-sm transition-shadow hover:shadow-xl",
-        clickable ? "pointer-events-auto" : "pointer-events-none"
+        clickable ? "pointer-events-auto" : "pointer-events-none",
       )}
       onClick={(e) => {
         props.onClick?.(e);
@@ -52,7 +52,7 @@ export function PercentageBoxCornerButton(props: {
     if (isNullOrUndefined(props.onCornerMouseDown)) return;
     event.stopPropagation();
     props.onCornerMouseDown(
-      getPercentagePointOfCorner(props.rectangle, getOppositeCorner(corner))
+      getPercentagePointOfCorner(props.rectangle, getOppositeCorner(corner)),
     );
   };
 
@@ -60,7 +60,7 @@ export function PercentageBoxCornerButton(props: {
     <div
       className={classNames(
         "absolute box-border rounded-md border-2 border-dashed border-indigo-500 bg-sky-500/50 shadow-sm transition-shadow hover:shadow-xl",
-        clickable ? "pointer-events-auto" : "pointer-events-none"
+        clickable ? "pointer-events-auto" : "pointer-events-none",
       )}
       onClick={props.onClick}
       onMouseDown={props.onMouseDown}

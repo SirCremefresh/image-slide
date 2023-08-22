@@ -64,7 +64,7 @@ export function ImagesSidebar(props: {
             className={classNames(
               "flex w-[100%] flex-col",
               image.imageId === props.currentImage.imageId &&
-                "border-2 border-blue-500"
+                "border-2 border-blue-500",
             )}
           >
             <img

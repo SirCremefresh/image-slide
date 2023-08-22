@@ -37,7 +37,7 @@ assertType<TypeEqualityGuard<ViewportPoint, z.infer<typeof ZViewportPoint>>>();
 
 export function toRelativePoint(
   base: ViewportPoint,
-  point: ViewportPoint
+  point: ViewportPoint,
 ): RelativePoint {
   return {
     relativeX: point.viewportX - base.viewportX,
@@ -47,7 +47,7 @@ export function toRelativePoint(
 
 export function toPercentPoint(
   full: Size,
-  rectangle: RelativePoint
+  rectangle: RelativePoint,
 ): PercentagePoint {
   return {
     percentageX: toPercentage(full.width, rectangle.relativeX),

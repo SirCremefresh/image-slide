@@ -35,15 +35,15 @@ export function CreateLinkRectangle({
     fixedCorner: start,
   });
   const [currentRectangle, setCurrentRectangle] = useState<PercentageRectangle>(
-    { ...start, percentageWidth: 0, percentageHeight: 0 }
+    { ...start, percentageWidth: 0, percentageHeight: 0 },
   );
 
   useEffect(() => {
     if (step.name === "painting") {
       setCurrentRectangle(
         fitPercentageRectangle(
-          buildPercentageRectangle(step.fixedCorner, mouseState.point)
-        )
+          buildPercentageRectangle(step.fixedCorner, mouseState.point),
+        ),
       );
       return;
     }

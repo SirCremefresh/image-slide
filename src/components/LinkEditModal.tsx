@@ -15,7 +15,7 @@ function SearchListItem(props: {
       <span
         className={classNames(
           "block truncate",
-          props.selected && "font-semibold"
+          props.selected && "font-semibold",
         )}
       >
         {props.image.title}
@@ -25,7 +25,7 @@ function SearchListItem(props: {
         <span
           className={classNames(
             "absolute inset-y-0 right-0 flex items-center pr-4",
-            props.active ? "text-white" : "text-indigo-600"
+            props.active ? "text-white" : "text-indigo-600",
           )}
         >
           <CheckIcon className="h-5 w-5" aria-hidden="true" />
@@ -89,7 +89,7 @@ function ImageAutocomplete(props: {
               className={({ active }) =>
                 classNames(
                   "relative cursor-default select-none py-2 pl-3 pr-9",
-                  active ? "bg-indigo-600 text-white" : "text-gray-900"
+                  active ? "bg-indigo-600 text-white" : "text-gray-900",
                 )
               }
             >

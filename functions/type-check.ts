@@ -9,12 +9,12 @@ class TypeCheckException extends ResponseError {
     public readonly object: unknown,
     public readonly schema: z.ZodType,
     public readonly error: z.ZodError,
-    public readonly source: "user" | "server"
+    public readonly source: "user" | "server",
   ) {
     super(
       `Could not parse ${JSON.stringify(object)} with error ${JSON.stringify(
-        error
-      )}`
+        error,
+      )}`,
     );
     this.name = "TypeCheckException";
   }
@@ -28,7 +28,7 @@ class TypeCheckException extends ResponseError {
       }),
       {
         status,
-      }
+      },
     );
   }
 }
@@ -36,7 +36,7 @@ class TypeCheckException extends ResponseError {
 export function parseOrThrow<Z extends z.ZodType>(
   e: Z,
   object: unknown,
-  source: "user" | "server" = "user"
+  source: "user" | "server" = "user",
 ): z.infer<Z> {
   const result = e.safeParse(object);
   if (!result.success) {

@@ -19,7 +19,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         metadata: {
           hashedSecret: hashedSecret,
         },
-      }
+      },
     ),
     context.env.MAIN.put(
       "COLLECTIONS_HISTORY:" + collectionId + ":" + getUtcDateTimeString(),
@@ -29,7 +29,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           hashedSecret: hashedSecret,
         },
         expirationTtl: 60 * 60 * 24 * 30,
-      }
+      },
     ),
   ]);
 
@@ -44,6 +44,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         "Content-Type": "application/json",
         Location: "/api/collections/" + collectionId,
       },
-    }
+    },
   );
 };

@@ -13,14 +13,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const collectionId = parseOrThrow(ZuUID, context.params.collectionId);
   const secret = parseOrThrow(
     ZuUID,
-    context.request.headers.get("Authorization")
+    context.request.headers.get("Authorization"),
   );
   const secretHash = await hashString(secret);
 
   const metadata: CollectionMetadata = await getMetadataOrThrow(
     context.env.MAIN,
     "COLLECTIONS:" + collectionId,
-    ZCollectionMetadata
+    ZCollectionMetadata,
   );
 
   if (metadata.hashedSecret !== secretHash) {

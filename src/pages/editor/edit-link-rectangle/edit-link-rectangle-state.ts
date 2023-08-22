@@ -47,17 +47,17 @@ type State = {
 
 function calcTopLeftOffset(
   rectangle: PercentageRectangle,
-  point: PercentagePoint
+  point: PercentagePoint,
 ): PercentagePoint {
   return subtractPercentagePoints(
     point,
-    getPercentagePointOfCorner(rectangle, "top-left")
+    getPercentagePointOfCorner(rectangle, "top-left"),
   );
 }
 
 function reducer(
   rectangle: State,
-  action: CurrentRectangleReducerAction
+  action: CurrentRectangleReducerAction,
 ): State {
   switch (action.type) {
     case "view":
@@ -79,7 +79,7 @@ function reducer(
           name: "moving",
           topLeftOffset: calcTopLeftOffset(
             rectangle.rectangle,
-            action.mouseStatePosition
+            action.mouseStatePosition,
           ),
         },
         rectangle: rectangle.rectangle,
@@ -91,8 +91,8 @@ function reducer(
           rectangle: fitPercentageRectangle(
             buildPercentageRectangle(
               action.mouseStatePosition,
-              rectangle.step.fixedCorner
-            )
+              rectangle.step.fixedCorner,
+            ),
           ),
         };
       }
@@ -103,8 +103,8 @@ function reducer(
             movePercentageRectangle(
               rectangle.rectangle,
               rectangle.step.topLeftOffset,
-              action.mouseStatePosition
-            )
+              action.mouseStatePosition,
+            ),
           ),
         };
       }
@@ -120,7 +120,7 @@ function getInitialState(link: Link): State {
 }
 
 export function useEditLinkRectangleState(
-  link: Link
+  link: Link,
 ): [State, Dispatch<CurrentRectangleReducerAction>] {
   return useReducer(reducer, getInitialState(link));
 }

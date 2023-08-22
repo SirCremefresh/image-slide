@@ -46,7 +46,7 @@ function ViewerLoaded(props: { collection: Collection; image: Image }) {
               "/view/" +
                 props.collection.collectionId +
                 "/" +
-                link.targetImageId
+                link.targetImageId,
             )
           }
           clickable={true}
@@ -60,7 +60,7 @@ function ViewerLoaded(props: { collection: Collection; image: Image }) {
   useEffect(() => {
     console.log("Preloading images");
     const srcs = props.image.links.map((link) =>
-      getImageSrc(props.collection.collectionId, link.targetImageId)
+      getImageSrc(props.collection.collectionId, link.targetImageId),
     );
     // noinspection JSIgnoredPromiseFromCall
     preloadImages(srcs);

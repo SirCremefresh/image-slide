@@ -35,7 +35,7 @@ export function EditorLoaded(props: {
 }) {
   const [collection, setCollection] = useState<Collection>(props.collection);
   const [imageId, setImageId] = useState<string | undefined>(
-    collection.images.at(0)?.imageId
+    collection.images.at(0)?.imageId,
   );
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
   const [imageRectangle, imageRef, setImageRef] = useImageRectangle();
@@ -54,11 +54,11 @@ export function EditorLoaded(props: {
             Authorization: props.secret,
           },
           body: JSON.stringify(newCollection),
-        }
+        },
       );
       console.log(response.status);
     },
-    [props.secret]
+    [props.secret],
   );
 
   const cancelActiveRectangle = (): Collection => {
@@ -66,7 +66,7 @@ export function EditorLoaded(props: {
       const newCollection = collectionUpsertLink(
         collection,
         image,
-        action.link
+        action.link,
       );
       setCollection(newCollection);
       setAction(NONE_ACTION);
@@ -87,7 +87,7 @@ export function EditorLoaded(props: {
       const newCollection = collectionUpsertLink(
         collection,
         image,
-        action.link
+        action.link,
       );
       setCollection(newCollection);
       safeCollection(newCollection).then(() => console.log("saved"));
@@ -146,7 +146,7 @@ export function EditorLoaded(props: {
       link,
     });
     setCollection((collection) =>
-      collectionDeleteLink(collection, image, link)
+      collectionDeleteLink(collection, image, link),
     );
   };
 
@@ -161,7 +161,7 @@ export function EditorLoaded(props: {
   const deleteImage = (image: Image) => {
     const newCollection = collectionDeleteImageAndRemoveDependents(
       cancelActiveRectangle(),
-      image
+      image,
     );
     const newImageId = newCollection.images.at(0)?.imageId;
     setImageId(newImageId);
@@ -173,7 +173,7 @@ export function EditorLoaded(props: {
     const newCollection = collectionMoveImage(
       cancelActiveRectangle(),
       image,
-      targetIndex
+      targetIndex,
     );
     setCollection(newCollection);
     safeCollection(newCollection).then(() => console.log("saved"));

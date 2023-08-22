@@ -1,10 +1,10 @@
 export async function preloadImages(
   srcs: string[],
-  body: HTMLElement = document.body
+  body: HTMLElement = document.body,
 ): Promise<void> {
   const deduplicatedSrcs = [...new Set(srcs)];
   const promises = await Promise.allSettled(
-    deduplicatedSrcs.map((src) => preloadImage(src, body))
+    deduplicatedSrcs.map((src) => preloadImage(src, body)),
   );
   const rejected = promises.filter((promise) => promise.status === "rejected");
   if (rejected.length > 0) {
@@ -14,7 +14,7 @@ export async function preloadImages(
 
 function preloadImage(
   src: string,
-  body: HTMLElement = document.body
+  body: HTMLElement = document.body,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const image = new Image();
