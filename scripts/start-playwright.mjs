@@ -43,23 +43,38 @@ const waitForServer = (url) => new Promise((resolve) => {
 
     checkConnection();
 });
-const TEST_TYPES = ['e2e', 'ct'];
 
-const validateTestType = (testType) => {
-    if (!TEST_TYPES.includes(testType)) {
-        console.error(`Invalid test type "${testType}". Valid test types are: ${TEST_TYPES.join(', ')}`);
-        process.exit(1);
-    }
-};
-
-// Execute the first command
-const pagesDevProcess = executeCommand(
+const startPagesDevProcess = () => executeCommand(
     'npm',
     ['run', 'pages:dev'],
     (data) => console.log(`pages:dev stdout: "${data}"`),
     (data) => console.error(`pages:dev stderr: "${data}"`)
 );
+
+async function startAndRetryPagesDevProcess(retryCount = 0) {
+    console.log(`Starting pages:dev process (retryCount: ${retryCount})`);
+    const process = startPagesDevProcess();
+    await sleep(300);
+
+    if (process.exitCode !== null) {
+        process.kill("SIGINT");
+        if (retryCount < 3) {
+            await sleep(300);
+            return await startAndRetryPagesDevProcess(retryCount + 1);
+        } else {
+            throw new Error(`pages:dev process exited with code ${process.exitCode}`);
+        }
+    }
+
+    return process;
+
+}
+
+const pagesDevProcess = await startAndRetryPagesDevProcess();
+
 await sleep(1000)
+
+
 
 // Wait for the server to be reachable
 console.log('Waiting for server to be reachable...');
