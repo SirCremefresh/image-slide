@@ -13,7 +13,7 @@ import {
   ZSize,
 } from "@common/models/sizes.ts";
 import { TypeEqualityGuard, assertType } from "@common/util/type-check.ts";
-import z from "zod";
+import { z } from "zod";
 
 const ZRelativeRectangle = ZRelativePoint.merge(ZSize);
 type RelativeRectangle = RelativePoint & Size;

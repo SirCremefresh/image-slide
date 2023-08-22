@@ -1,5 +1,5 @@
 import { TypeEqualityGuard, assertType } from "@common/util/type-check.ts";
-import z from "zod";
+import { z } from "zod";
 
 export const ZPercentageSize = z.object({
   percentageWidth: z.number(),

@@ -1,7 +1,7 @@
 import { TypeEqualityGuard, assertType } from "@common/util/type-check.ts";
 import { Size } from "@common/models/sizes.ts";
 import { toPercentage } from "@common/util/percentage-util.ts";
-import z from "zod";
+import { z } from "zod";
 
 export const ZRelativePoint = z.object({
   relativeX: z.number(),

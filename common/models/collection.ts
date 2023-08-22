@@ -9,7 +9,7 @@ import {
   UNIQUE_IMAGE_ID_REFINEMENT,
 } from "@common/models/collection-refinements.ts";
 import { Size, ZSize } from "@common/models/sizes.ts";
-import z from "zod";
+import { z } from "zod";
 
 const ZLink = z.object({
   linkId: ZuUID,
