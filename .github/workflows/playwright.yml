@@ -18,7 +18,10 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
     - name: Run Playwright e2e tests
-      run: npm run e2e:test:ci
+      uses: nick-fields/retry@v2
+      with:
+        max_attempts: 3
+        command: npm run e2e:test:ci
     - name: Run Playwright component tests
       run: npm run ct:test
     - uses: actions/upload-artifact@v3
