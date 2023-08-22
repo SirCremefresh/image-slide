@@ -54,7 +54,7 @@ const startPagesDevProcess = () => executeCommand(
 async function startAndRetryPagesDevProcess(retryCount = 0) {
     console.log(`Starting pages:dev process (retryCount: ${retryCount})`);
     const process = startPagesDevProcess();
-    await sleep(300);
+    await sleep(1000);
 
     if (process.exitCode !== null) {
         process.kill("SIGINT");
@@ -71,9 +71,6 @@ async function startAndRetryPagesDevProcess(retryCount = 0) {
 }
 
 const pagesDevProcess = await startAndRetryPagesDevProcess();
-
-await sleep(1000)
-
 
 
 // Wait for the server to be reachable
