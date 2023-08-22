@@ -23,7 +23,7 @@ type MouseStateInternal = MouseState & {
 export function useMouseState(
   container: HTMLElement | null,
   imageRef: HTMLElement | null,
-  image: ViewportRectangle
+  image: ViewportRectangle,
 ): MouseState {
   const [mouseState, setMouseState] = useState<MouseStateInternal>({
     point: { percentageX: 0, percentageY: 0 },
@@ -45,11 +45,11 @@ export function useMouseState(
         });
         const offsetMousePosition = moveRelativePoint(
           containerRelativeMousePoint,
-          mouseState.containerScroll
+          mouseState.containerScroll,
         );
         const percentageMousePosition = toPercentPoint(
           image,
-          offsetMousePosition
+          offsetMousePosition,
         );
         return {
           ...mouseState,
@@ -67,11 +67,11 @@ export function useMouseState(
         };
         const offsetMousePosition = moveRelativePoint(
           mouseState.containerRelativeMousePoint,
-          containerScroll
+          containerScroll,
         );
         const percentageMousePosition = toPercentPoint(
           image,
-          offsetMousePosition
+          offsetMousePosition,
         );
         return {
           ...mouseState,

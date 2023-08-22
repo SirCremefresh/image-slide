@@ -35,7 +35,7 @@ assertType<
 
 export function buildPercentageRectangle(
   point1: PercentagePoint,
-  point2: PercentagePoint
+  point2: PercentagePoint,
 ): PercentageRectangle {
   const width = Math.abs(point2.percentageX - point1.percentageX);
   const height = Math.abs(point2.percentageY - point1.percentageY);
@@ -58,7 +58,7 @@ export type Corner = "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
 export function getPercentagePointOfCorner(
   rectangle: PercentageRectangle,
-  corner: Corner
+  corner: Corner,
 ): PercentagePoint {
   switch (corner) {
     case "top-left":
@@ -86,7 +86,7 @@ export function getPercentagePointOfCorner(
 
 export function subtractPercentagePoints(
   point1: PercentagePoint,
-  point2: PercentagePoint
+  point2: PercentagePoint,
 ): PercentagePoint {
   return {
     percentageX: point1.percentageX - point2.percentageX,
@@ -96,7 +96,7 @@ export function subtractPercentagePoints(
 
 function addPercentagePoints(
   point1: PercentagePoint,
-  point2: PercentagePoint
+  point2: PercentagePoint,
 ): PercentagePoint {
   return {
     percentageX: point1.percentageX + point2.percentageX,
@@ -120,33 +120,33 @@ export function getOppositeCorner(corner: Corner): Corner {
 export function movePercentageRectangle(
   rectangle: PercentageRectangle,
   pointOffsetTopLeft: PercentagePoint,
-  newPoint: PercentagePoint
+  newPoint: PercentagePoint,
 ): PercentageRectangle {
   const currentTopLeftCorner = getPercentagePointOfCorner(
     rectangle,
-    "top-left"
+    "top-left",
   );
   const currentBottomRightCorner = getPercentagePointOfCorner(
     rectangle,
-    "bottom-right"
+    "bottom-right",
   );
   const newTopLeftCorner = subtractPercentagePoints(
     newPoint,
-    pointOffsetTopLeft
+    pointOffsetTopLeft,
   );
   const topLeftCornerChange = subtractPercentagePoints(
     newTopLeftCorner,
-    currentTopLeftCorner
+    currentTopLeftCorner,
   );
   const newBottomRightCorner = addPercentagePoints(
     topLeftCornerChange,
-    currentBottomRightCorner
+    currentBottomRightCorner,
   );
   return buildPercentageRectangle(newTopLeftCorner, newBottomRightCorner);
 }
 
 export function fitPercentageRectangle(
-  rectangle: PercentageRectangle
+  rectangle: PercentageRectangle,
 ): PercentageRectangle {
   const topLeft = getPercentagePointOfCorner(rectangle, "top-left");
   const bottomRight = getPercentagePointOfCorner(rectangle, "bottom-right");
@@ -163,6 +163,6 @@ export function fitPercentageRectangle(
   const offset = { percentageX: offsetX, percentageY: offsetY };
   return buildPercentageRectangle(
     addPercentagePoints(topLeft, offset),
-    addPercentagePoints(bottomRight, offset)
+    addPercentagePoints(bottomRight, offset),
   );
 }

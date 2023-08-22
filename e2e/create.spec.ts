@@ -9,7 +9,7 @@ test("test create collection", async ({ page }) => {
   await expect(page).toHaveURL(/\/edit*./);
 
   await page.waitForResponse((response) =>
-    response.url().includes("/api/collections")
+    response.url().includes("/api/collections"),
   );
 
   const collectionId = page.url().split("/").at(-2);
@@ -17,7 +17,7 @@ test("test create collection", async ({ page }) => {
   await page.goto(`/view/${collectionId}`);
 
   const collectionResponse = await page.waitForResponse((response) =>
-    response.url().includes(`/api/collections/${collectionId}`)
+    response.url().includes(`/api/collections/${collectionId}`),
   );
   const responseJson = (await collectionResponse.json()) as Collection;
 

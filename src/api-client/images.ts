@@ -4,7 +4,7 @@ export async function uploadImage(
   collectionId: string,
   image: File,
   secret: string,
-  setUploadProgress?: (value: number) => void
+  setUploadProgress?: (value: number) => void,
 ): Promise<string> {
   const formData = new FormData();
   formData.append("file", image);
@@ -23,7 +23,7 @@ export async function uploadImage(
         const progress = Math.round((progressEvent.loaded / total) * 100);
         setUploadProgress?.(progress);
       },
-    }
+    },
   );
   return res.data.imageId;
 }

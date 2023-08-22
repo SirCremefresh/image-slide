@@ -99,7 +99,7 @@ const insertArray = <T>(arr: T[], index: number, newItem: T): T[] => [
 const upsertArray = <T>(
   arr: T[],
   newItem: T,
-  findIndex: (item: T) => boolean
+  findIndex: (item: T) => boolean,
 ): T[] => {
   const index = arr.findIndex(findIndex);
   return index === -1 ? [...arr, newItem] : updateArray(arr, index, newItem);
@@ -112,12 +112,12 @@ const deleteArrayItem = <T>(arr: T[], index: number): T[] => [
 
 export function collectionUpsertImage(
   collection: Collection,
-  image: Image
+  image: Image,
 ): Collection {
   const images = upsertArray(
     collection.images,
     image,
-    (existingImage) => existingImage.imageId === image.imageId
+    (existingImage) => existingImage.imageId === image.imageId,
   );
   return { ...collection, images };
 }
@@ -125,7 +125,7 @@ export function collectionUpsertImage(
 export function collectionUpsertLink(
   collection: Collection,
   image: Image,
-  link: Link
+  link: Link,
 ): Collection {
   const imageIndex = findImageIndex(collection.images, image.imageId);
   if (imageIndex === -1) {
@@ -135,7 +135,7 @@ export function collectionUpsertLink(
   const links = upsertArray(
     existingImage.links,
     link,
-    (existingLink) => existingLink.linkId === link.linkId
+    (existingLink) => existingLink.linkId === link.linkId,
   );
   const images = updateArray(collection.images, imageIndex, {
     ...existingImage,
@@ -147,7 +147,7 @@ export function collectionUpsertLink(
 export function collectionDeleteLink(
   collection: Collection,
   image: Image,
-  link: Link
+  link: Link,
 ): Collection {
   const imageIndex = findImageIndex(collection.images, image.imageId);
   if (imageIndex === -1) {
@@ -155,7 +155,7 @@ export function collectionDeleteLink(
   }
   const existingImage = collection.images[imageIndex];
   const linkIndex = existingImage.links.findIndex(
-    (existingLink) => existingLink.linkId === link.linkId
+    (existingLink) => existingLink.linkId === link.linkId,
   );
   if (linkIndex === -1) {
     return collection;
@@ -170,14 +170,14 @@ export function collectionDeleteLink(
 
 export function collectionUpsertTitle(
   collection: Collection,
-  title: string
+  title: string,
 ): Collection {
   return { ...collection, title };
 }
 
 export function collectionDeleteImageAndRemoveDependents(
   collection: Collection,
-  imageToDelete: Image
+  imageToDelete: Image,
 ): Collection {
   const imageIndex = findImageIndex(collection.images, imageToDelete.imageId);
   if (imageIndex === -1) {
@@ -187,7 +187,7 @@ export function collectionDeleteImageAndRemoveDependents(
   const imagesWithoutLinks = images.map((image) => ({
     ...image,
     links: image.links.filter(
-      (link) => link.targetImageId !== imageToDelete.imageId
+      (link) => link.targetImageId !== imageToDelete.imageId,
     ),
   }));
   return { ...collection, images: imagesWithoutLinks };
@@ -196,7 +196,7 @@ export function collectionDeleteImageAndRemoveDependents(
 export function collectionMoveImage(
   collection: Collection,
   imageToMove: Image,
-  newIndex: number
+  newIndex: number,
 ): Collection {
   const imageIndex = findImageIndex(collection.images, imageToMove.imageId);
   if (imageIndex === -1) {

@@ -16,7 +16,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const collection = await context.env.MAIN.get(
     "COLLECTIONS:" + collectionId,
-    "text"
+    "text",
   );
   if (collection === null) {
     return new Response("Not found", { status: 404 });
@@ -27,7 +27,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 export async function getMetadataOrThrow<Z extends z.ZodType>(
   kv: KVNamespace,
   key: string,
-  z: Z
+  z: Z,
 ): Promise<z.infer<Z>> {
   const object = await kv.getWithMetadata(key, "stream");
   return parseOrThrow(z, object.metadata, "server");
@@ -37,18 +37,18 @@ export async function getMetadataOrThrow<Z extends z.ZodType>(
 export const onRequestPut: PagesFunction<Env> = async (context) => {
   const collection: Collection = parseOrThrow(
     ZCollection,
-    await context.request.json()
+    await context.request.json(),
   );
   const secret = parseOrThrow(
     ZuUID,
-    context.request.headers.get("Authorization")
+    context.request.headers.get("Authorization"),
   );
   const secretHash = await hashString(secret);
 
   const metadata = await getMetadataOrThrow(
     context.env.MAIN,
     "COLLECTIONS:" + collection.collectionId,
-    ZCollectionMetadata
+    ZCollectionMetadata,
   );
 
   if (metadata.hashedSecret !== secretHash) {
@@ -61,7 +61,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
       JSON.stringify(collection),
       {
         metadata,
-      }
+      },
     ),
     context.env.MAIN.put(
       "COLLECTIONS_HISTORY:" +
@@ -72,7 +72,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
       {
         metadata,
         expirationTtl: 60 * 60 * 24 * 30,
-      }
+      },
     ),
   ]);
 

@@ -24,7 +24,7 @@ export function ImageDropArea(props: {
         "block rounded-lg border-blue-600 bg-blue-400 transition-[height]",
         props.targetIndex === props.index
           ? "animate-wiggle border-8"
-          : "border-4"
+          : "border-4",
       )}
     ></div>
   );

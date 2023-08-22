@@ -7,12 +7,12 @@ import { isNullOrUndefined } from "@common/util/assert-util.js";
 async function getImage(
   collectionId: string,
   imageId: string,
-  env: Env
+  env: Env,
 ): Promise<ReadableStream> {
   let stream;
   if (localImageIds.has(imageId)) {
     const response = await env.ASSETS.fetch(
-      "http://some-host/" + imageId + ".jpg"
+      "http://some-host/" + imageId + ".jpg",
     );
     stream = response.body;
   } else {

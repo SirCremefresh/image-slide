@@ -44,7 +44,7 @@ const sampleImages: Image[] = [
 ];
 
 export const localImageIds = new Set(
-  sampleImages.map((image) => image.imageId)
+  sampleImages.map((image) => image.imageId),
 );
 
 export function getSampleCollection(id: string): Collection {

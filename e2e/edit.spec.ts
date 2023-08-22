@@ -16,6 +16,6 @@ test("test create rectangle", async ({ page }) => {
   await page.getByRole("button", { name: "Create" }).click();
 
   await page.waitForResponse((response) =>
-    response.url().includes("/api/collections")
+    response.url().includes("/api/collections"),
   );
 });
