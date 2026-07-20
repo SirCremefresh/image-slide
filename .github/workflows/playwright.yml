@@ -9,23 +9,23 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v4.4.0
+    - uses: actions/setup-node@v3.9.1
       with:
-        node-version: 20
+        node-version: 20.20.2
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps chromium
     - name: Run Playwright e2e tests
-      uses: nick-fields/retry@v2
+      uses: nick-fields/retry@v2.9.0
       with:
         max_attempts: 3
         timeout_minutes: 10
         command: npm run e2e:test:ci
     - name: Run Playwright component tests
       run: npm run ct:test
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v3.2.2
       if: always()
       with:
         name: playwright-report
